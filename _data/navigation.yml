@@ -1,0 +1,13 @@
+# Site navigation links
+
+- title: About
+  url: /about/
+
+- title: Blog
+  url: /blog/
+
+- title: Blogs I read
+  url: /blogs-I-read/
+
+- title: Search
+  url: /search/
