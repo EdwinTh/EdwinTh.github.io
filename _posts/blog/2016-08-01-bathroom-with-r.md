@@ -2,7 +2,7 @@
 layout: post
 categories: blog
 title: Designing our bathroom with R
-date: "2016-08-05 16:44:50"
+date: "2016-08-06 12:05:13"
 ---
 R has been an indespensable tool since I started working with it about five years ago. Of course in my day job as a data scientis I couldn't live without it, but it can also be a great aid in private life. Recently we bought our first house and R came to the rescue several times in the process. We compared the impact of different mortgages on our finances in ten en twenty years time and I kept an eye on our spending through a Shiny app (I'll admit the latter would have been less time consumig if I would have done it in Excel, like normal people).
 
@@ -12,7 +12,7 @@ I would never had expected that R would also be the go-to tool for decorating ou
 we came to the luminous idea to the create a random pattern from a few colors we liked. It is very difficult for human beings to produce a random pattern, since we tend to avoid clutters of the same color. Of course R's random number generator does not suffer from this. Turning this into a nice design is (of course!) done with `geom_tile` from `ggplot2`. It is funny how you keep underestemating randomness, even when you work with data daily. I was looking for a nicely scattered design of the colors, rather we got *Tetris-on-steroids patterns* like this
 ![True random](/images/2016-08-01/true_random.jpg)
 
-Nature needed to be a bit constrained in order to produce the design we were after. An adjustment was made to the function by adding a parameter for the maximum number of adjacent tiles of the same color. Allowing for two adjacent tiles produced the result we were after!
+Nature needed to be a bit constrained in order to produce the design we were after. An adjustment was made to the function by adding a parameter for the maximum number of adjacent tiles of the same color. Allowing for two adjacent tiles gave us a very nice result.
 ![Bathroom](/images/2016-08-01/bathroom.jpg)
 
 Here are the functions that were used, the first two are helpers for the main function. Go ahead and redecorate your own bathroom!
@@ -35,6 +35,7 @@ check_colors <- function(cur_width,
       plot_data[Height %in% (cur_height-(m_a)):(cur_height-1) &
                   Width == cur_width, color] %>% unique
   } else {
+  
     colors_height <- NULL
   }
 
