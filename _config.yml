@@ -5,7 +5,7 @@ locale: en_US
 description: A playground for data analysis and R programming.
 logo: site-logo.png
 search: true
-url: http://127.0.0.1:4000/
+url: http://EdwinTh.github.io/
 
 # Jekyll configuration
 
@@ -43,6 +43,3 @@ owner:
   github: EdwinTh
   stackexchange: http://stackoverflow.com/users/2119315/edwin
   linkedin: edwin-thoen-3139a131?trk=hp-identity-name
-
-# enable disqus comments ons every page 
-comments: true
