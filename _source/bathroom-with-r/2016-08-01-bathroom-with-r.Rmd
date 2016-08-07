@@ -2,17 +2,20 @@
 layout: post
 categories: blog
 title: Designing our bathroom with R
+author: Edwin Thoen
 date: "`r Sys.time()`"
+base-url: https://EdwinTh.github.io
+tags: [random pattern, bathroon design, R, geom_tile]
 ---
-R has been an indespensable tool since I started working with it about five years ago. Of course in my day job as a data scientis I couldn't live without it, but it can also be a great aid in private life. Recently we bought our first house and R came to the rescue several times in the process. We compared the impact of different mortgages on our finances in ten en twenty years time and I kept an eye on our spending through a Shiny app (I'll admit the latter would have been less time consumig if I would have done it in Excel, like normal people).
+R has been an indispensable tool since I started working with it about five years ago. Of course in my day job as a data scientist I couldn't live without it, but it also proved to be a great aid in private life. Recently we bought our first house and R came to the rescue several times in the process. We compared the impact of different mortgages on our finances in ten and twenty years time and I kept an eye on our spending through a Shiny app (I'll admit the latter would have been less time consuming if I would have done it in Excel, like normal people).
 
 I would never had expected that R would also be the go-to tool for decorating our bathrooms. When looking for inspiration online and in showrooms we came across many ugly and boring examples. Just when we were about to settle for a design like this 
 ![Ugly bathroom](/images/2016-08-01/ugly_bathroom.jpg)
 
-we came to the luminous idea to the create a random pattern from a few colors we liked. It is very difficult for human beings to produce a random pattern, since we tend to avoid clutters of the same color. Of course R's random number generator does not suffer from this. Turning this into a nice design is (of course!) done with `geom_tile` from `ggplot2`. It is funny how you keep underestemating randomness, even when you work with data daily. I was looking for a nicely scattered design of the colors, rather we got *Tetris-on-steroids patterns* like this
+we came to the luminous idea to create a random pattern from a few colors we liked. It is very difficult for human beings to produce a random pattern, since we tend to avoid clutters of the same color. Of course R's random number generator does not suffer from this. Turning the random pattern into a nice design is (of course!) done with `geom_tile` from `ggplot2`. It is funny how you keep underestimating randomness, even when you work with data daily. I was looking for a nicely scattered design of the colors, rather we got *Tetris-on-steroids patterns* like this
 ![True random](/images/2016-08-01/true_random.jpg)
 
-Nature needed to be a bit constrained in order to produce the design we were after. An adjustment was made to the function by adding a parameter for the maximum number of adjacent tiles of the same color. Allowing for two adjacent tiles gave us a very nice result.
+Nature needed to be a bit constrained in order to produce the design we were after. An adjustment was made to the function by adding a parameter for the maximum number of adjacent tiles of the same color. Allowing for two adjacent tiles of the same color gave us a very nice result.
 ![Bathroom](/images/2016-08-01/bathroom.jpg)
 
 Here are the functions that were used, the first two are helpers for the main function. Go ahead and redecorate your own bathroom!
