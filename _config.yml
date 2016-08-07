@@ -5,7 +5,7 @@ locale: en_US
 description: A playground for data analysis and R programming.
 logo: site-logo.png
 search: true
-url: http://EdwinTh.github.io
+url: https://EdwinTh.github.io
 
 # Jekyll configuration
 
