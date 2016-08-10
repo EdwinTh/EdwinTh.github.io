@@ -2,8 +2,7 @@
 layout: post
 categories: blog
 title: Designing our bathroom with R
-author: Edwin Thoen
-date: "2016-08-07 12:15:16"
+date: "2016-08-10 20:28:12"
 base-url: https://EdwinTh.github.io
 tags: [random pattern, bathroon design, R, geom_tile]
 ---
