@@ -134,7 +134,7 @@
           <img src="https://EdwinTh.github.io/images/bio-photo.jpg" class="bio-photo" alt="Edwin Thoen bio photo"></a>
         
         <span class="author vcard">By <span class="fn">Edwin Thoen</span></span>
-        <span class="entry-date date published"><time datetime="2016-08-10T20:28:12+02:00"><i class="fa fa-calendar-o"></i> August 10, 2016</time></span>
+        <span class="entry-date date published"><time datetime="2016-08-10T21:14:50+02:00"><i class="fa fa-calendar-o"></i> August 10, 2016</time></span>
         
         
         
@@ -162,7 +162,8 @@
 </span><span class="c1"># helper function that checks for the next tile to be sampled if there
 # are any colors that should be excluded because the max adjacent was
 # reached either vertically or horizontally
-</span><span class="n">check_colors</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">cur_width</span><span class="p">,</span><span class="w">
+</span><span class="n">check_colors</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">plot_data</span><span class="p">,</span><span class="w">
+                         </span><span class="n">cur_width</span><span class="p">,</span><span class="w">
                          </span><span class="n">cur_height</span><span class="p">,</span><span class="w">
                          </span><span class="n">m_a</span><span class="p">){</span><span class="w">
   </span><span class="k">if</span><span class="p">(</span><span class="n">cur_height</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_a</span><span class="p">){</span><span class="w">
@@ -170,10 +171,10 @@
       </span><span class="n">plot_data</span><span class="p">[</span><span class="n">Height</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="p">(</span><span class="n">cur_height</span><span class="o">-</span><span class="p">(</span><span class="n">m_a</span><span class="p">))</span><span class="o">:</span><span class="p">(</span><span class="n">cur_height</span><span class="m">-1</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w">
                   </span><span class="n">Width</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">cur_width</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="p">]</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">unique</span><span class="w">
   </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
-  
+    
     </span><span class="n">colors_height</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kc">NULL</span><span class="w">
   </span><span class="p">}</span><span class="w">
-
+  
   </span><span class="k">if</span><span class="p">(</span><span class="n">cur_width</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_a</span><span class="p">){</span><span class="w">
     </span><span class="n">colors_width</span><span class="w"> </span><span class="o">&lt;-</span><span class="w">
       </span><span class="n">plot_data</span><span class="p">[</span><span class="n">Width</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="p">(</span><span class="n">cur_width</span><span class="o">-</span><span class="p">(</span><span class="n">m_a</span><span class="p">))</span><span class="o">:</span><span class="p">(</span><span class="n">cur_width</span><span class="m">-1</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w">
@@ -181,12 +182,12 @@
   </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="n">colors_width</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kc">NULL</span><span class="w">
   </span><span class="p">}</span><span class="w">
-
+  
   </span><span class="k">if</span><span class="p">(</span><span class="nf">length</span><span class="p">(</span><span class="n">colors_height</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="n">colors_height</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kc">NULL</span><span class="w">
   </span><span class="k">if</span><span class="p">(</span><span class="nf">length</span><span class="p">(</span><span class="n">colors_width</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="n">colors_width</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kc">NULL</span><span class="w">
   </span><span class="n">exclude</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">colors_height</span><span class="p">,</span><span class="w"> </span><span class="n">colors_width</span><span class="p">)</span><span class="w">
   </span><span class="k">if</span><span class="p">(</span><span class="nf">length</span><span class="p">(</span><span class="n">exclude</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">0</span><span class="p">)</span><span class="w"> </span><span class="n">exclude</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">0</span><span class="w">
-
+  
   </span><span class="nf">return</span><span class="p">(</span><span class="n">exclude</span><span class="p">)</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
@@ -194,11 +195,11 @@
 # excluding a color if necesarry. Returns the sample color and the vector with
 # remaining colors for the next iteration.
 </span><span class="n">sample_color</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">exclude</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w">
-                         </span><span class="n">cts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">colors_to_sample</span><span class="p">){</span><span class="w">
+                         </span><span class="n">cts</span><span class="p">){</span><span class="w">
   </span><span class="k">if</span><span class="p">(</span><span class="n">cts</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">is_in</span><span class="p">(</span><span class="n">exclude</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">all</span><span class="p">){</span><span class="w">
-    </span><span class="n">stop</span><span class="p">(</span><span class="s1">'There is no valid solution for this seed, please try another'</span><span class="p">)</span><span class="w">
+    </span><span class="n">stop</span><span class="p">(</span><span class="s1">'There is no valid solution due to adjacency constraint, please try again'</span><span class="p">)</span><span class="w">
   </span><span class="p">}</span><span class="w">
-
+  
   </span><span class="n">valid_color</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kc">FALSE</span><span class="w">
   </span><span class="k">while</span><span class="p">(</span><span class="n">valid_color</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">){</span><span class="w">
     </span><span class="n">color</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sample</span><span class="p">(</span><span class="n">cts</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w">
@@ -218,33 +219,33 @@
 </span><span class="w">  </span><span class="n">nr_of_each_col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="m">40</span><span class="p">,</span><span class="w"> </span><span class="m">4</span><span class="p">),</span><span class="w">     </span><span class="c1"># prevalence of each color in colors vector
 </span><span class="w">  </span><span class="n">nr_height</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="c1"># nr of tiles in vertical direction
 </span><span class="w">  </span><span class="n">nr_width</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="c1"># nr of tiles in horizontal directions
-</span><span class="w">  </span><span class="n">max_adjacent</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w"> </span><span class="c1"># maximimum nr of adjacent tiles of the same color
-</span><span class="w">  </span><span class="p">{</span><span class="w">
-
+</span><span class="w">  </span><span class="n">max_adjacent</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w">  </span><span class="c1"># maximimum nr of adjacent tiles of the same color
+</span><span class="p">{</span><span class="w">
+  
   </span><span class="k">if</span><span class="p">(</span><span class="nf">length</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">nr_of_each_col</span><span class="p">)){</span><span class="w">
     </span><span class="n">stop</span><span class="p">(</span><span class="s1">'nr_of_each_col vector should be same length as the colors vector'</span><span class="p">)</span><span class="w">
   </span><span class="p">}</span><span class="w">
   </span><span class="k">if</span><span class="p">(</span><span class="nf">sum</span><span class="p">(</span><span class="n">nr_of_each_col</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">nr_height</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">nr_width</span><span class="p">){</span><span class="w">
     </span><span class="n">stop</span><span class="p">(</span><span class="s1">'Sum nr_of_each_col should equal nr_height * nr_width'</span><span class="p">)</span><span class="w">
   </span><span class="p">}</span><span class="w">
-
+  
   </span><span class="n">plot_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">expand.grid</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="n">nr_height</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="n">nr_width</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">as.data.table</span><span class="w">
   </span><span class="n">colnames</span><span class="p">(</span><span class="n">plot_data</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s1">'Height'</span><span class="p">,</span><span class="w"> </span><span class="s1">'Width'</span><span class="p">)</span><span class="w">
   </span><span class="n">plot_data</span><span class="o">$</span><span class="n">color</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">integer</span><span class="p">(</span><span class="n">nrow</span><span class="p">(</span><span class="n">plot_data</span><span class="p">))</span><span class="w">
-
+  
   </span><span class="n">colors_to_sample</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="nf">length</span><span class="p">(</span><span class="n">colors</span><span class="p">),</span><span class="w"> </span><span class="n">nr_of_each_col</span><span class="p">)</span><span class="w">
-
+  
   </span><span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="p">(</span><span class="n">nr_width</span><span class="p">)){</span><span class="w">
     </span><span class="k">for</span><span class="p">(</span><span class="n">j</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="n">nr_height</span><span class="p">){</span><span class="w">
-      </span><span class="n">exclude_iter</span><span class="w">     </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">check_colors</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">max_adjacent</span><span class="p">)</span><span class="w">
+      </span><span class="n">exclude_iter</span><span class="w">     </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">check_colors</span><span class="p">(</span><span class="n">plot_data</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">max_adjacent</span><span class="p">)</span><span class="w">
       </span><span class="n">color_iter</span><span class="w">       </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sample_color</span><span class="p">(</span><span class="n">exclude_iter</span><span class="p">,</span><span class="w"> </span><span class="n">colors_to_sample</span><span class="p">)</span><span class="w">
       </span><span class="n">plot_data</span><span class="p">[</span><span class="n">Height</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Width</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">color_iter</span><span class="o">$</span><span class="n">color</span><span class="p">]</span><span class="w">
       </span><span class="n">colors_to_sample</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">color_iter</span><span class="o">$</span><span class="n">cts</span><span class="w">
     </span><span class="p">}</span><span class="w">
   </span><span class="p">}</span><span class="w">
-
+  
   </span><span class="n">plot_data</span><span class="p">[</span><span class="w"> </span><span class="p">,</span><span class="n">color</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">color</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">as.character</span><span class="p">]</span><span class="w">
-
+  
   </span><span class="c1"># build the plot
 </span><span class="w">  </span><span class="n">ggplot</span><span class="p">(</span><span class="n">plot_data</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">Width</span><span class="p">,</span><span class="w"> </span><span class="n">Height</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
     </span><span class="n">geom_tile</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">color</span><span class="p">),</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'grey'</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
