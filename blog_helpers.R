@@ -60,3 +60,4 @@ run_jekyll <- function() {
 }
 
 new_post("tmp")
+

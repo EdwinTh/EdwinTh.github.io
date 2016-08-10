@@ -43,3 +43,6 @@ owner:
   github: EdwinTh
   stackexchange: http://stackoverflow.com/users/2119315/edwin
   linkedin: edwin-thoen-3139a131?trk=hp-identity-name
+
+# will place Disqus at every post automatically
+comments: true
