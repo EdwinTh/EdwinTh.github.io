@@ -5,6 +5,8 @@ title: Designing our bathroom with R
 date: "`r Sys.time()`"
 base-url: https://EdwinTh.github.io
 tags: [random pattern, bathroon design, R, geom_tile]
+image:
+  feature: maligne_lake.jpg
 ---
 R has been an indispensable tool since I started working with it about five years ago. Of course in my day job as a data scientist I couldn't live without it, but it also proved to be a great aid in private life. Recently we bought our first house and R came to the rescue several times in the process. We compared the impact of different mortgages on our finances in ten and twenty years time and I kept an eye on our spending through a Shiny app (I'll admit the latter would have been less time consuming if I would have done it in Excel, like normal people).
 
