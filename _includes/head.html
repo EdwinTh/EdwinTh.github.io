@@ -1,4 +1,5 @@
 <meta charset="utf-8">
+<head>{% if jekyll.environment == 'production' %}{% include analytics.html %}{% endif %}</head>
 <title>{% if page.title %}{{ page.title }} &#8211; {% endif %}{{ site.title }}</title>
 {% if page.excerpt %}<meta name="description" content="{{ page.excerpt | strip_html }}">{% endif %}
 {% if page.tags %}<meta name="keywords" content="{{ page.tags | join: ', ' }}">{% endif %}
@@ -56,6 +57,5 @@
 <!-- 144x144 (precomposed) for iPad 3rd and 4th generation -->
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ site.url }}/images/apple-touch-icon-144x144-precomposed.png">
 
-{% if jekyll.environment == 'production' %}
-{% include analytics.html %}
-{% endif %}
+
+
