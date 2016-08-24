@@ -46,3 +46,6 @@ owner:
 
 # will place Disqus at every post automatically
 comments: true
+
+# Google services
+google_analytics: UA-83126401-1
