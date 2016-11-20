@@ -1,0 +1,66 @@
+---
+layout: post
+categories: blog
+title: Dates and Times in R, part 1 Dates
+base-url: https://EdwinTh.github.io
+tags: [date, time, R, POSIXct, POSIXlt]
+---
+
+Working with dates and times in R can be a challenging and dauntig task. A number of packages are implemented, like the elaborate `lubridate` adn the recent helper `anydate`, that take a way a big part of the hassle of working with the classes `Date`, `POSIXct`, and `POSIXlt`. Still it can't heart to have a thorough understanding of the implementations of these classes. As I have found at my recent work of writing the `padr` package.
+
+### Converting a character
+
+Dates are fairly straightforward to use and understand, since complexities like time zones and daylight savings time do not apply to them. The most common way to create a variable of class `Date` is by converting a `character` to it with the `as.Date` function.
+
+```{r}
+today <- as.Date('2016-11-20')
+today
+```
+
+In the above the character string is automatically converts to a variable of class date, because it is a format the functions expects. Besides the format *yyyy-mm-dd*, also the format *yyyy/mm/dd* is automatically recognized. If your character string has the date in a different format, you should tell the function what it is at the `format` argument. Now R uses the Unix timestamp, which comes with a specific list of abbreviations to indicate the format, which you can find for instance [here](http://man7.org/linux/man-pages/man3/strftime.3.html). So if you have for instance a German data set, where is the custom is to represent date as *dd.mm.yyyy*, you don't have to reformat your string but you simply do:
+
+```{r}
+today <- as.Date('20.11.2016', format = '%d.%m.%Y')
+```
+
+### Calculations with Dates
+
+The following might puzzle users just starting to use dates and times a litte at first:
+
+```{r}
+as.numeric(today)
+```
+
+Why does a day in November in the year 2016 convert to this number? As mentioned, R uses the Unix timestamp, which has its origin on January 1, 1970. For dates we are counting the days from this day onwards, where January 1, 1970 is 0 and January 2, 1970 is 1. The `Date` class is thus implemented as number, not as a characters as it seems when printing it.
+
+```{r}
+typeof(today)
+attributes(today)
+```
+So date objects are saved as doubles, with a date class to it that contains the additional information about how to handle it, like how to print it. Saving a date as a count since an origin is a pretty sensible thing to do, as it allows us to do all kinds of calculations with it, for instance how many days left untill useR2017?
+
+```{r}
+useR2017 <- as.Date('2017-07-04')
+useR2017 - today
+```
+
+A second way to create a `Date` class is specifying the number of days since the origin directly. Which is helpful if your date variable is exported from a computer system that saves it as a numeric. The origin doesn't have to be the Linux epoch, but can be everything you want. This is can be very helpful when programming with dates. Say we want to give an indication where to set a project deadline based on the number of office days.
+
+```{r}
+deadline <- function(project_start,
+                     nr_of_days) {
+  office_days <- floor(nr_of_days / 5) * 2 + nr_of_days
+  due <- as.Date(office_days, origin = project_start)
+  paste("We expect to be finished at", due)
+}
+deadline('2016-12-05', 60)
+```
+
+
+### Extracting Information
+
+```{r}
+strftime()
+```
+
+
