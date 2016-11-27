@@ -1,12 +1,3 @@
----
-layout: post
-categories: blog
-title: Building a column selector
-base-url: https://EdwinTh.github.io
-date: "2016-11-27 11:45:00"
-tags: [Shiny gadget, column selection, R]
----
-
 ```{r, echo = FALSE, message = FALSE}
 library(shiny)
 library(miniUI)
