@@ -3,9 +3,8 @@ layout: post
 categories: blog
 title: Builiding a column selecter
 base-url: https://EdwinTh.github.io
+date: "2016-11-27 11:45:00"
 tags: [Shiny gadget, column selection, R]
-output: md_document
-date: "2016-11-26 22:46:36"
 ---
 
 ```{r, echo = FALSE, message = FALSE}
@@ -60,12 +59,7 @@ You simply run the function `col_select` on a data frame and the mini ui opens. 
 Batting_rel <- col_select(Lahman::Batting)
 ```
 
-
-
-```{r}
-2 + 2
-```
-
+![screenshot](/images/2016-11-26/col_sel_screenshot.png)
 
 The downside of applying the function in this way is its lack of reproducibility. Therefore, it is possible to return the `dplyr` code that makes the selection, instead of the selection itself. The code will be inserted in the R script. In the next example the second line is inserted by running the app and selecting the first four columns.
 
