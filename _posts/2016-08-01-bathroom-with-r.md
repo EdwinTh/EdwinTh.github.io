@@ -2,10 +2,11 @@
 layout: post
 categories: blog
 title: Designing our bathroom with R
-date: "2016-08-10 21:14:50"
 base-url: https://EdwinTh.github.io
+date: "2016-08-10 21:14:50"
 tags: [random pattern, bathroon design, R, geom_tile]
 ---
+
 R has been an indispensable tool since I started working with it about five years ago. Of course in my day job as a data scientist I couldn't live without it, but it also proved to be a great aid in private life. Recently we bought our first house and R came to the rescue several times in the process. We compared the impact of different mortgages on our finances in ten and twenty years time and I kept an eye on our spending through a Shiny app (I'll admit the latter would have been less time consuming if I would have done it in Excel, like normal people).
 
 I would never had expected that R would also be the go-to tool for decorating our bathrooms. When looking for inspiration online and in showrooms we came across many ugly and boring examples. Just when we were about to settle for a design like this 
@@ -24,6 +25,14 @@ Here are the functions that were used, the first two are helpers for the main fu
 library(ggplot2)
 library(dplyr)
 library(data.table)
+```
+
+```
+## 
+## This data.table install has not detected OpenMP support. It will work but slower in single threaded mode.
+```
+
+```r
 library(magrittr)
 
 # helper function that checks for the next tile to be sampled if there

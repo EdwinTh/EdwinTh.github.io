@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>https://EdwinTh.github.io/blog/column-selecter/</loc>
+<lastmod>2016-11-26T22:46:36+01:00</lastmod>
+</url>
+<url>
 <loc>https://EdwinTh.github.io/blog/bathroom-with-r/</loc>
 <lastmod>2016-08-10T21:14:50+02:00</lastmod>
 </url>
 <url>
 <loc>https://EdwinTh.github.io/</loc>
+</url>
+<url>
+<loc>https://EdwinTh.github.io/tags/</loc>
 </url>
 <url>
 <loc>https://EdwinTh.github.io/blogs-I-read/</loc>
@@ -14,16 +21,10 @@
 <loc>https://EdwinTh.github.io/blog/</loc>
 </url>
 <url>
-<loc>https://EdwinTh.github.io/about/</loc>
-</url>
-<url>
-<loc>https://EdwinTh.github.io/tags/</loc>
-</url>
-<url>
 <loc>https://EdwinTh.github.io/articles/</loc>
 </url>
 <url>
-<loc>https://EdwinTh.github.io/theme-setup/</loc>
+<loc>https://EdwinTh.github.io/about/</loc>
 </url>
 <url>
 <loc>https://EdwinTh.github.io/google9abe4e0644de6ef7.html</loc>

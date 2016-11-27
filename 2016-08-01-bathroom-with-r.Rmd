@@ -2,8 +2,8 @@
 layout: post
 categories: blog
 title: Designing our bathroom with R
-date: "`r Sys.time()`"
 base-url: https://EdwinTh.github.io
+date: "2016-08-10 21:14:50"
 tags: [random pattern, bathroon design, R, geom_tile]
 ---
 
