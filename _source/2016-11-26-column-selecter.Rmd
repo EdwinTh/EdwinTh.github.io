@@ -1,7 +1,7 @@
 ---
 layout: post
 categories: blog
-title: Building a column selector
+title: Building a column selecter
 base-url: https://EdwinTh.github.io
 date: "2016-11-27 11:45:00"
 tags: [Shiny gadget, column selection, R]
