@@ -79,7 +79,7 @@ coffee_full %>% fill_by_value(total) %>%
   ggplot(aes(time_stamp_day, total)) + geom_line()
 ```
 
-![Coffee plot](/images/2017-01-18/coffee_plot.png)
+![Coffee plot](/images/patch_dir/coffee_plot.png)
 
 So here we have our plot, and here we have our quick overview of `padr`. A more thorough introduction can be found in `vignette("padr")`. Here I also get into more detail on the meaning of "interval" within the package. Feedback is very welcome, either send me an email, open an issue on github, or do a pull request. The code is maintained [here](https://github.com/edwinth/padr). Finally, I'd like to thank Barret Schloerke for his contributions at making this package CRAN ready.
 
