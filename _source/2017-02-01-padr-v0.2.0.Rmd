@@ -1,0 +1,59 @@
+---
+layout: post
+categories: blog
+title: "padr::pad does now do group padding"
+base-url: https://EdwinTh.github.io
+tags: [padr, CRAN, R, datetime, data preparation]
+---
+
+A few weeks ago `padr` was introduced on CRAN, allowing you to quickly get datetime data ready for analysis. If you have missed this, see [the introduction blog](https://edwinth.github.io/blog/padr-intro/) or `vignette("padr")` for a general introduction. In v.0.2.0 the `pad` function is extended with a `group` argument, which makes your life a little easier when you want to do padding within groups.
+
+In the Examples of `padr` in v.0.1.0 I showed that padding over multiple groups could be done by using `padr` in conjunction with `dplyr` and `tidyr`.
+
+```{r, message=FALSE, eval=FALSE}
+library(dplyr)
+library(padr)
+# padding a data.frame on group level
+day_var <- seq(as.Date('2016-01-01'), length.out = 12, by = 'month')
+x_df_grp <- data.frame(grp  = rep(LETTERS[1:3], each = 4),
+                       y    = runif(12, 10, 20) %>% round(0),
+                       date = sample(day_var, 12, TRUE)) %>%
+ arrange(grp, date)
+
+x_df_grp %>% group_by(grp) %>% do(pad(.)) %>% ungroup %>%
+  tidyr::fill(grp) 
+```
+
+I now think this is an unsatisfactory solution for two reasons:
+
+1) It is a bit of a hassle. It is the goal of `padr` to make datetime preparation as swift and pain free as possible. Having to manually fill your grouping variable(s) after padding is not exactly in concordance with that goal.
+2) It does not work when one or both of the `start_val` and `end_val` parameters are specified. The start and/or the end of the time series are then no longer bounded by an original observation, and thus a value of the grouping variable(s). Forward filling with `tidyr::fill` will incorrectly fill the grouping variable(s) as a result.
+
+It was therefore necessary to expand `pad`, so the filling within groups would happen within the function. The `group` argument takes a character vector with the column name(s) of the variables to group by. Padding will be done on each of the groups formed by the unique combination of the grouping variables. This is of course just the distinct of the variable, if there is only one grouping variable. The result of the date padding will be exactly the same as before this addition (as in the datetime variable does not change). However, the returned data frame will no longer have missing values for the grouping variables on the padded rows.
+
+The new version of the section in the Examples of `padr` is:
+
+```{r, eval=FALSE}
+day_var <- seq(as.Date('2016-01-01'), length.out = 12, by = 'month')
+x_df_grp <- data.frame(grp1 = rep(LETTERS[1:3], each =4),
+                       grp2 = letters[1:2],
+                       y    = runif(12, 10, 20) %>% round(0),
+                       date = sample(day_var, 12, TRUE)) %>%
+ arrange(grp1, grp2, date)
+
+# pad by one grouping var
+x_df_grp %>% pad(group = 'grp1')
+
+# pad by two groups vars
+x_df_grp %>% pad(group = c('grp1', 'grp2'))
+```
+
+### Bug fixes
+
+Besides the additional argument there were two bug fixes in this version:
+
+* `pad` does no longer break when datetime variable contains one value only. Returns x and a warning if `start_val` and `end_val` are `NULL`, and will do proper padding when one or both are specified.
+
+* In the `fill_` function now a meaningful error is thrown, when forgetting to specify at least one column to apply the function on.
+
+I hope you (still) enjoy working with `padr`, [let me know](https://github.com/edwinth/padr) when you find a bug or got ideas for improvement.
