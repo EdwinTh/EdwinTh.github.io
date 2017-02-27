@@ -1,7 +1,7 @@
 ---
 layout: post
 categories: blog
-title: "padr::pad does now do group padding"
+title: "Tree-based univariate testing"
 base-url: https://EdwinTh.github.io
 tags: [R, univariate testing, gini, trees, Cohen's kappa]
 ---
