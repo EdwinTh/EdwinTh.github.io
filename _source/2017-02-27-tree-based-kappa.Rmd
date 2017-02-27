@@ -1,8 +1,9 @@
 ---
-title: "Tree-based univariate testing"
-author: "Edwin Thoen"
-date: "2017-02-27"
-output: html_document
+layout: post
+categories: blog
+title: "padr::pad does now do group padding"
+base-url: https://EdwinTh.github.io
+tags: [R, univariate testing, gini, trees, Cohen's kappa]
 ---
 
 ```{r setup, include=FALSE}
