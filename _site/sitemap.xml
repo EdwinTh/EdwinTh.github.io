@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>https://EdwinTh.github.io/padr-examples/</loc>
+<lastmod>2017-03-19T14:25:28+01:00</lastmod>
+</url>
+<url>
 <loc>https://EdwinTh.github.io/blog/tree-based-kappa/</loc>
 <lastmod>2017-02-27T00:00:00+01:00</lastmod>
 </url>
@@ -28,9 +32,6 @@
 <loc>https://EdwinTh.github.io/</loc>
 </url>
 <url>
-<loc>https://EdwinTh.github.io/blogs-I-read/</loc>
-</url>
-<url>
 <loc>https://EdwinTh.github.io/blog/</loc>
 </url>
 <url>
@@ -41,6 +42,9 @@
 </url>
 <url>
 <loc>https://EdwinTh.github.io/tags/</loc>
+</url>
+<url>
+<loc>https://EdwinTh.github.io/blogs-I-read/</loc>
 </url>
 <url>
 <loc>https://EdwinTh.github.io/google9abe4e0644de6ef7.html</loc>
