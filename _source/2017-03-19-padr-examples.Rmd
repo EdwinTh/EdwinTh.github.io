@@ -1,8 +1,10 @@
 ---
-title: "Preparing Datetime Data for Analysis with `padr` and `dplyr`"
-author: "Edwin Thoen"
+layout: post
+categories: blog
+title: "Preparing Datetime Data for Analysis with padr and dplyr"
+base-url: https://EdwinTh.github.io
 date: "2017-03-19 14:25:28"
-output: html_document
+tags: [R, data preparation, time series, padr, dplyr]
 ---
 
 Two months ago `padr` was introduced, followed by an improved version that allowed for applying `pad` on group level. See the [introduction blogs](https://edwinth.github.io/blog/padr-intro/) or the `vignette("padr")` for more package information. In this blog I give four more elaborate examples on how to go from raw data to insight with `padr`, `dplyr` and `ggplot2`. 
