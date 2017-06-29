@@ -25,7 +25,7 @@ regular_system %>% head
 ```
 
 ```
-## # A tibble: 6 x 2
+## # A tibble: 6 × 2
 ##             timestamp  value
 ##                <dttm>  <dbl>
 ## 1 2017-03-01 00:00:00 423.69
@@ -68,7 +68,7 @@ regular_system %>%
 ```
 
 ```
-## # A tibble: 2 x 3
+## # A tibble: 2 × 3
 ##             timestamp value check_var
 ##                <dttm> <dbl>     <dbl>
 ## 1 2017-06-08 11:55:00    NA        NA
@@ -87,7 +87,7 @@ irregular_system %>% head
 ```
 
 ```
-## # A tibble: 6 x 2
+## # A tibble: 6 × 2
 ##            time_stamp  message
 ##                <dttm>    <chr>
 ## 1 2016-10-09 00:02:01  QL2341@
@@ -98,7 +98,7 @@ irregular_system %>% head
 ## 6 2016-10-09 00:17:01     WW#5
 ```
 
-Also here are server might be temporarily down, however, this is not so easy to locate. It is helpful here to apply `thicken`, then aggregate, pad, and fill, and finally plot the result. We might want to look at several different interval, lets make it as generic as possible. 
+Also here our server might be temporarily down, however, this is not so easy to locate. It is helpful here to apply `thicken`, then aggregate, pad, and fill, and finally plot the result. We might want to look at several different interval, lets make it as generic as possible. 
 
 
 ```r
@@ -140,4 +140,35 @@ thicken_plot(irregular_system, "30 min")
 
 Now we see a dip at the middle of the day for October 10th, where for all the other days there is ample activty during these hours. There must be something wrong here that has to be sorted out. That will wrap up these two quick examples of how to use `padr` for data quality checking.
 
-I will present the package during a lightning talk at useR next week (Wednesday 5:50 pm at 4.02 Wild Gallery). Hope to meet many of you during the conference!
+I will present the package during a lightning talk at useR next week (Thursday 5:50 pm at 4.02 Wild Gallery). Hope to meet many of you during the conference!
+
+
+## Edit: creation of the two data sets
+
+The two data sets were created manually for demonstrations purposes. Since it was requested to provide the code that created these sets, see below.
+
+
+```r
+library(tidyverse)
+library(padr)
+library(lubridate)
+set.seed(234)
+n <- 32456
+regular_system <- data_frame(timestamp = seq(ymd_hms("20170301 000000"), 
+                                             length.out = n, by = "5 min"),
+                                             value = round(runif(n, 200, 500) 
+                                                           ,2))
+regular_system <- regular_system[-c(28656, 28657), ]
+
+attr(emergency$time_stamp, 'tzone') <- "UTC"
+irregular_system <- emergency %>% thicken("week") %>% 
+  filter(time_stamp_week == as.Date("2016-10-09")) %>% 
+  select(time_stamp)
+
+messages <- c("#A222IWL", "WW34", "WW#5", "QL2341@")
+irregular_system <- irregular_system %>% 
+  mutate(message = sample(messages, n(), TRUE)) %>% 
+  filter(time_stamp < ymd_hms("2016-10-10 16:55:02") |
+         time_stamp > ymd_hms("2016-10-10 18:08:32"))
+```
+

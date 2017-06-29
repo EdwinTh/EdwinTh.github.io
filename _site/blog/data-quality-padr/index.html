@@ -157,7 +157,7 @@
 </span></code></pre>
 </div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## # A tibble: 6 x 2
+<div class="highlighter-rouge"><pre class="highlight"><code>## # A tibble: 6 × 2
 ##             timestamp  value
 ##                &lt;dttm&gt;  &lt;dbl&gt;
 ## 1 2017-03-01 00:00:00 423.69
@@ -199,7 +199,7 @@
 </code></pre>
 </div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## # A tibble: 2 x 3
+<div class="highlighter-rouge"><pre class="highlight"><code>## # A tibble: 2 × 3
 ##             timestamp value check_var
 ##                &lt;dttm&gt; &lt;dbl&gt;     &lt;dbl&gt;
 ## 1 2017-06-08 11:55:00    NA        NA
@@ -217,7 +217,7 @@
 </span></code></pre>
 </div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## # A tibble: 6 x 2
+<div class="highlighter-rouge"><pre class="highlight"><code>## # A tibble: 6 × 2
 ##            time_stamp  message
 ##                &lt;dttm&gt;    &lt;chr&gt;
 ## 1 2016-10-09 00:02:01  QL2341@
@@ -229,7 +229,7 @@
 </code></pre>
 </div>
 
-<p>Also here are server might be temporarily down, however, this is not so easy to locate. It is helpful here to apply <code class="highlighter-rouge">thicken</code>, then aggregate, pad, and fill, and finally plot the result. We might want to look at several different interval, lets make it as generic as possible.</p>
+<p>Also here our server might be temporarily down, however, this is not so easy to locate. It is helpful here to apply <code class="highlighter-rouge">thicken</code>, then aggregate, pad, and fill, and finally plot the result. We might want to look at several different interval, lets make it as generic as possible.</p>
 
 <div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">thicken_plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">interval</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="n">x</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">thicken</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span><span class="w"> </span><span class="s2">"ts_thick"</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
@@ -268,7 +268,36 @@
 
 <p>Now we see a dip at the middle of the day for October 10th, where for all the other days there is ample activty during these hours. There must be something wrong here that has to be sorted out. That will wrap up these two quick examples of how to use <code class="highlighter-rouge">padr</code> for data quality checking.</p>
 
-<p>I will present the package during a lightning talk at useR next week (Wednesday 5:50 pm at 4.02 Wild Gallery). Hope to meet many of you during the conference!</p>
+<p>I will present the package during a lightning talk at useR next week (Thursday 5:50 pm at 4.02 Wild Gallery). Hope to meet many of you during the conference!</p>
+
+<h2 id="edit-creation-of-the-two-data-sets">Edit: creation of the two data sets</h2>
+
+<p>The two data sets were created manually for demonstrations purposes. Since it was requested to provide the code that created these sets, see below.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">padr</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">lubridate</span><span class="p">)</span><span class="w">
+</span><span class="n">set.seed</span><span class="p">(</span><span class="m">234</span><span class="p">)</span><span class="w">
+</span><span class="n">n</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">32456</span><span class="w">
+</span><span class="n">regular_system</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data_frame</span><span class="p">(</span><span class="n">timestamp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">seq</span><span class="p">(</span><span class="n">ymd_hms</span><span class="p">(</span><span class="s2">"20170301 000000"</span><span class="p">),</span><span class="w"> 
+                                             </span><span class="n">length.out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"5 min"</span><span class="p">),</span><span class="w">
+                                             </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="n">runif</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="m">500</span><span class="p">)</span><span class="w"> 
+                                                           </span><span class="p">,</span><span class="m">2</span><span class="p">))</span><span class="w">
+</span><span class="n">regular_system</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">regular_system</span><span class="p">[</span><span class="o">-</span><span class="nf">c</span><span class="p">(</span><span class="m">28656</span><span class="p">,</span><span class="w"> </span><span class="m">28657</span><span class="p">),</span><span class="w"> </span><span class="p">]</span><span class="w">
+
+</span><span class="nf">attr</span><span class="p">(</span><span class="n">emergency</span><span class="o">$</span><span class="n">time_stamp</span><span class="p">,</span><span class="w"> </span><span class="s1">'tzone'</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s2">"UTC"</span><span class="w">
+</span><span class="n">irregular_system</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">emergency</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">thicken</span><span class="p">(</span><span class="s2">"week"</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">filter</span><span class="p">(</span><span class="n">time_stamp_week</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">as.Date</span><span class="p">(</span><span class="s2">"2016-10-09"</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">select</span><span class="p">(</span><span class="n">time_stamp</span><span class="p">)</span><span class="w">
+
+</span><span class="n">messages</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s2">"#A222IWL"</span><span class="p">,</span><span class="w"> </span><span class="s2">"WW34"</span><span class="p">,</span><span class="w"> </span><span class="s2">"WW#5"</span><span class="p">,</span><span class="w"> </span><span class="s2">"QL2341@"</span><span class="p">)</span><span class="w">
+</span><span class="n">irregular_system</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">irregular_system</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">mutate</span><span class="p">(</span><span class="n">message</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sample</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">(),</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">filter</span><span class="p">(</span><span class="n">time_stamp</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">ymd_hms</span><span class="p">(</span><span class="s2">"2016-10-10 16:55:02"</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w">
+         </span><span class="n">time_stamp</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">ymd_hms</span><span class="p">(</span><span class="s2">"2016-10-10 18:08:32"</span><span class="p">))</span><span class="w">
+</span></code></pre>
+</div>
+
 
         
           <div id="disqus_thread"></div><!-- /#disqus_thread -->
