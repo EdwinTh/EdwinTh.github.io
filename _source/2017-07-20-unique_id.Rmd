@@ -1,0 +1,58 @@
+---
+layout: post
+categories: blog
+title: "Quickly Check your id Variables"
+base-url: https://EdwinTh.github.io
+date: "2017-07-20 08:30:00"
+output: html_document
+tags: [R, unique key, dplyr]
+---
+
+```{r, echo = FALSE, warning=FALSE, message=FALSE}
+library(dplyr)
+unique_id <- function(x, ...) {
+  vars <- quos(...)
+  id_set <- x %>% select(!!!vars)
+  id_set_dist <- id_set %>% distinct
+  if (nrow(id_set) == nrow(id_set_dist)) {
+    TRUE
+  } else {
+    non_unique_ids <- id_set %>% 
+      filter(id_set %>% duplicated) %>% 
+      distinct()
+    suppressMessages(
+      inner_join(non_unique_ids, x) %>% arrange(!!!vars)
+    )
+  }
+}
+```
+
+Virtually every dataset has them; id variables that link a record to a subject and/or time point. Often one column, or a combination of columns, forms the unique id of a record. For instance, the combination of patient_id and visit_id, or ip_adress and visit_time. The first step in most of my analyses is almost always checking the uniqueness of a variable, or a combination of variables. If it is not unique, may assumptions about the data may be wrong, or there are data quality issues. Since I do this so often, I decided to make a little wrapper around this procedure. The `unique_id` function will return `TRUE` if the evaluated variables indeed are the unique key to a record. If not, it will return all the records for which the id variable(s) are duplicated so we can pinpoint the problem right away. It uses `dplyr` v.0.7.1, so make sure that it is loaded.
+
+```{r, message=FALSE, warning=FALSE}
+library(dplyr)
+some_df <- data_frame(a = c(1, 2, 3, 3, 4), b = 101:105, val = round(rnorm(5), 1))
+some_df %>% unique_id(a)
+some_df %>% unique_id(a, b)
+```
+
+Here you find the source code of the function. You can also obtain it by installing the package accompanying this blog using `devtools::install.github(edwinth/thatssorandom)`.
+
+```{r}
+unique_id <- function(x, ...) {
+  vars <- quos(...)
+  id_set <- x %>% select(!!!vars)
+  id_set_dist <- id_set %>% distinct
+  if (nrow(id_set) == nrow(id_set_dist)) {
+    TRUE
+  } else {
+    non_unique_ids <- id_set %>% 
+      filter(id_set %>% duplicated) %>% 
+      distinct()
+    suppressMessages(
+      inner_join(non_unique_ids, x) %>% arrange(!!!vars)
+    )
+  }
+}
+```
+
