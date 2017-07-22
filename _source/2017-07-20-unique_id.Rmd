@@ -45,7 +45,7 @@ unique_id <- function(x, ...) {
     TRUE
   } else {
     non_unique_ids <- id_set %>% 
-      filter(id_set %>% duplicated) %>% 
+      filter(id_set %>% duplicated()) %>% 
       distinct()
     suppressMessages(
       inner_join(non_unique_ids, x) %>% arrange(...)
