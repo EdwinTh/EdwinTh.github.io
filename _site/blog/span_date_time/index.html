@@ -1,0 +1,333 @@
+<!doctype html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if (IE 7)&!(IEMobile)]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if (IE 8)&!(IEMobile)]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"><!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<head></head>
+<title>Span Dates and Times without Overhead &#8211; That's so Random</title>
+<meta name="description" content="I am working on v.0.4.0 of the padr package this summer. Two new features that will be added are wrappers around seq.Date and seq.POSIXt. Since it is going to take a while before the new release is on CRAN, I go ahead and do an early presentation of these functions. Date and datetime parsing in base R are powerful and comprehensive, but also tedious. They can slow you down in your programming or analysis. Luckily, good wrappers and alternatives exist, at least the ymd{_h}{m}{s} suite from lubridate and Dirk Eddelbuettel’s anytime. These functions remove much of the overhead of date and datetime parsing, allowing for quick formatting of vectors in all kinds of formats. They also alleviate the pain of using seq.Date() and seq.POSIXt a little, because the from and the to arguments should be parsed dates or datetimes. Take the following example.
+
+">
+<meta name="keywords" content="padr, seq.Date, seq.POSIXt, date span, time span">
+
+
+<!-- Twitter Cards -->
+<meta name="twitter:title" content="Span Dates and Times without Overhead">
+<meta name="twitter:description" content="I am working on v.0.4.0 of the padr package this summer. Two new features that will be added are wrappers around seq.Date and seq.POSIXt. Since it is going to take a while before the new release is on CRAN, I go ahead and do an early presentation of these functions. Date and datetime parsing in base R are powerful and comprehensive, but also tedious. They can slow you down in your programming or analysis. Luckily, good wrappers and alternatives exist, at least the ymd{_h}{m}{s} suite from lubridate and Dirk Eddelbuettel’s anytime. These functions remove much of the overhead of date and datetime parsing, allowing for quick formatting of vectors in all kinds of formats. They also alleviate the pain of using seq.Date() and seq.POSIXt a little, because the from and the to arguments should be parsed dates or datetimes. Take the following example.
+
+">
+<meta name="twitter:site" content="@edwin_thoen">
+<meta name="twitter:creator" content="@edwin_thoen">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://EdwinTh.github.io/images/site-logo.png">
+
+<!-- Open Graph -->
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Span Dates and Times without Overhead">
+<meta property="og:description" content="I am working on v.0.4.0 of the padr package this summer. Two new features that will be added are wrappers around seq.Date and seq.POSIXt. Since it is going to take a while before the new release is on CRAN, I go ahead and do an early presentation of these functions. Date and datetime parsing in base R are powerful and comprehensive, but also tedious. They can slow you down in your programming or analysis. Luckily, good wrappers and alternatives exist, at least the ymd{_h}{m}{s} suite from lubridate and Dirk Eddelbuettel’s anytime. These functions remove much of the overhead of date and datetime parsing, allowing for quick formatting of vectors in all kinds of formats. They also alleviate the pain of using seq.Date() and seq.POSIXt a little, because the from and the to arguments should be parsed dates or datetimes. Take the following example.
+
+">
+<meta property="og:url" content="https://EdwinTh.github.io/blog/span_date_time/">
+<meta property="og:site_name" content="That's so Random">
+
+
+
+
+
+<link rel="canonical" href="https://EdwinTh.github.io/blog/span_date_time/">
+<link href="https://EdwinTh.github.io/feed.xml" type="application/atom+xml" rel="alternate" title="That's so Random Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="https://EdwinTh.github.io/assets/css/main.css">
+<!-- Webfonts -->
+<script src="https://use.edgefonts.net/source-sans-pro:n2,i2,n3,i3,n4,i4,n6,i6,n7,i7,n9,i9;source-code-pro:n4,n7;volkhov.js"></script>
+
+<meta http-equiv="cleartype" content="on">
+
+<!-- HTML5 Shiv and Media Query Support -->
+<!--[if lt IE 9]>
+  <script src="https://EdwinTh.github.io/assets/js/vendor/html5shiv.min.js"></script>
+  <script src="https://EdwinTh.github.io/assets/js/vendor/respond.min.js"></script>
+<![endif]-->
+
+<!-- Modernizr -->
+<script src="https://EdwinTh.github.io/assets/js/vendor/modernizr-2.7.1.custom.min.js"></script>
+
+
+<!-- MathJax -->
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+<!-- Icons -->
+<!-- 16x16 -->
+<link rel="shortcut icon" href="https://EdwinTh.github.io/favicon.ico">
+<!-- 32x32 -->
+<link rel="shortcut icon" href="https://EdwinTh.github.io/favicon.png">
+<!-- 57x57 (precomposed) for iPhone 3GS, pre-2011 iPod Touch and older Android devices -->
+<link rel="apple-touch-icon-precomposed" href="https://EdwinTh.github.io/images/apple-touch-icon-precomposed.png">
+<!-- 72x72 (precomposed) for 1st generation iPad, iPad 2 and iPad mini -->
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="https://EdwinTh.github.io/images/apple-touch-icon-72x72-precomposed.png">
+<!-- 114x114 (precomposed) for iPhone 4, 4S, 5 and post-2011 iPod Touch -->
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="https://EdwinTh.github.io/images/apple-touch-icon-114x114-precomposed.png">
+<!-- 144x144 (precomposed) for iPad 3rd and 4th generation -->
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://EdwinTh.github.io/images/apple-touch-icon-144x144-precomposed.png">
+
+
+
+
+</head>
+
+<body id="post">
+
+<div class="navigation-wrapper">
+	<nav role="navigation" id="site-nav" class="animated drop">
+	    <ul>
+      
+		    
+		    <li><a href="https://EdwinTh.github.io/about/" >About</a></li>
+		  
+		    
+		    <li><a href="https://EdwinTh.github.io/blog/" >Blog</a></li>
+		  
+		    
+		    <li><a href="https://EdwinTh.github.io/blogs-I-read/" >Blogs I read</a></li>
+		  
+	    </ul>
+	</nav>
+</div><!-- /.navigation-wrapper -->
+
+<!--[if lt IE 9]><div class="upgrade"><strong><a href="http://whatbrowser.org/">Your browser is quite old!</strong> Why not upgrade to a different browser to better enjoy this site?</a></div><![endif]-->
+
+<header class="masthead">
+	<div class="wrap">
+      
+  		<a href="https://EdwinTh.github.io/" class="site-logo" rel="home" title="That's so Random"><img src="https://EdwinTh.github.io/images/site-logo.png" width="200" height="200" alt="That's so Random logo" class="animated fadeInDown"></a>
+      
+      <h1 class="site-title animated fadeIn"><a href="https://EdwinTh.github.io/">That's so Random</a></h1>
+		<h2 class="site-description animated fadeIn" itemprop="description">A playground for data analysis and R programming.</h2>
+	</div>
+</header><!-- /.masthead -->
+
+<div class="js-menu-screen menu-screen"></div>
+
+
+<div id="main" role="main">
+  <article class="hentry">
+    
+    <div class="entry-wrapper">
+      <header class="entry-header">
+        <ul class="entry-tags">
+          <li><a href="https://EdwinTh.github.io/tags/#padr" title="Pages tagged padr">padr</a></li><li><a href="https://EdwinTh.github.io/tags/#seq.Date" title="Pages tagged seq.Date">seq.Date</a></li><li><a href="https://EdwinTh.github.io/tags/#seq.POSIXt" title="Pages tagged seq.POSIXt">seq.POSIXt</a></li><li><a href="https://EdwinTh.github.io/tags/#date span" title="Pages tagged date span">date span</a></li><li><a href="https://EdwinTh.github.io/tags/#time span" title="Pages tagged time span">time span</a></li>
+        </ul>
+        
+          <h1 class="entry-title">Span Dates and Times without Overhead</h1>
+        
+      </header>
+      <footer class="entry-meta">
+        
+        
+          <img src="https://EdwinTh.github.io/images/bio-photo.jpg" class="bio-photo" alt="Edwin Thoen bio photo"></a>
+        
+        <span class="author vcard">By <span class="fn">Edwin Thoen</span></span>
+        <span class="entry-date date published"><time datetime="2017-07-26T19:00:00+02:00"><i class="fa fa-calendar-o"></i> July 26, 2017</time></span>
+        
+        <span class="entry-comments"><i class="fa fa-comment-o"></i> <a href="#disqus_thread">Comment</a></span>
+        
+        
+      </footer>
+      <div class="entry-content">
+        <p>I am working on v.0.4.0 of the <a href="https://cran.r-project.org/web/packages/padr/vignettes/padr.html">padr package</a> this summer. Two new features that will be added are wrappers around <code class="highlighter-rouge">seq.Date</code> and <code class="highlighter-rouge">seq.POSIXt</code>. Since it is going to take a while before the new release is on CRAN, I go ahead and do an early presentation of these functions. Date and datetime parsing in base R are powerful and comprehensive, but also tedious. They can slow you down in your programming or analysis. Luckily, good wrappers and alternatives exist, at least the <code class="highlighter-rouge">ymd{_h}{m}{s}</code> suite from <a href="https://cran.r-project.org/web/packages/lubridate/vignettes/lubridate.html">lubridate</a> and Dirk Eddelbuettel’s <a href="https://cran.r-project.org/web/packages/anytime/README.html">anytime</a>. These functions remove much of the overhead of date and datetime parsing, allowing for quick formatting of vectors in all kinds of formats. They also alleviate the pain of using <code class="highlighter-rouge">seq.Date()</code> and <code class="highlighter-rouge">seq.POSIXt</code> a little, because the <code class="highlighter-rouge">from</code> and the <code class="highlighter-rouge">to</code> arguments should be parsed dates or datetimes. Take the following example.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">seq</span><span class="p">(</span><span class="n">as.POSIXct</span><span class="p">(</span><span class="s2">"2017-07-25 00:00:00"</span><span class="p">),</span><span class="w"> </span><span class="n">as.POSIXct</span><span class="p">(</span><span class="s2">"2017-07-25 03:00:00"</span><span class="p">),</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"hour"</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "2017-07-25 00:00:00 CEST" "2017-07-25 01:00:00 CEST"
+## [3] "2017-07-25 02:00:00 CEST" "2017-07-25 03:00:00 CEST"
+</code></pre>
+</div>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">lubridate</span><span class="p">)</span><span class="w">
+</span><span class="n">seq</span><span class="p">(</span><span class="n">ymd_h</span><span class="p">(</span><span class="s2">"20170725 00"</span><span class="p">),</span><span class="w"> </span><span class="n">ymd_h</span><span class="p">(</span><span class="s2">"20170725 03"</span><span class="p">),</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"hour"</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "2017-07-25 00:00:00 UTC" "2017-07-25 01:00:00 UTC"
+## [3] "2017-07-25 02:00:00 UTC" "2017-07-25 03:00:00 UTC"
+</code></pre>
+</div>
+
+<p>I think, however, that there is still some overhead in the second specification. By overhead I mean specifying things that feel redundant, things that could be set to some kind of default. Since the whole idea behind <code class="highlighter-rouge">padr</code> is automating away redundant and tedious actions in preparing datetime data, providing alternative functions that ask for as little as possible are a natural addition. This resulted in <code class="highlighter-rouge">span_date</code> and <code class="highlighter-rouge">span_time</code>. They remove overhead by:</p>
+
+<ul>
+  <li>
+    <p>allowing for specification of <code class="highlighter-rouge">from</code> and <code class="highlighter-rouge">to</code> directly as integer or character in <em>lubridatish</em> format.</p>
+  </li>
+  <li>
+    <p>setting the unspecified datetime parts to a default of 1 for month and day, and 0 for hour, minute, and second.</p>
+  </li>
+  <li>
+    <p>assuming the desired interval (the <code class="highlighter-rouge">by</code> statement in <code class="highlighter-rouge">seq.Date</code> and <code class="highlighter-rouge">seq.POSIXt</code>) as the lowest of the datetime parts specified in either <code class="highlighter-rouge">from</code> or <code class="highlighter-rouge">two</code>.</p>
+  </li>
+</ul>
+
+<p>If this is a little abstract still, let me give some examples. The above becomes example becomes:</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">devtools</span><span class="o">::</span><span class="n">install_github</span><span class="p">(</span><span class="s2">"EdwinTh/padr"</span><span class="p">)</span><span class="w"> </span><span class="c1"># download the dev version
+</span><span class="n">library</span><span class="p">(</span><span class="n">padr</span><span class="p">)</span><span class="w">
+</span><span class="n">span_time</span><span class="p">(</span><span class="s2">"20170725 00"</span><span class="p">,</span><span class="w"> </span><span class="s2">"20170725 03"</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "2017-07-25 00:00:00 UTC" "2017-07-25 01:00:00 UTC"
+## [3] "2017-07-25 02:00:00 UTC" "2017-07-25 03:00:00 UTC"
+</code></pre>
+</div>
+<p>We can simplify this even further, specifying the 00 for the hour in <code class="highlighter-rouge">from</code> is not strictly necesarry. Since the hour is specified in <code class="highlighter-rouge">to</code> already the <code class="highlighter-rouge">interval</code> will remain hour if we omit it.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">span_time</span><span class="p">(</span><span class="s2">"20170725"</span><span class="p">,</span><span class="w"> </span><span class="s2">"20170725 03"</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "2017-07-25 00:00:00 UTC" "2017-07-25 01:00:00 UTC"
+## [3] "2017-07-25 02:00:00 UTC" "2017-07-25 03:00:00 UTC"
+</code></pre>
+</div>
+<p>We can even use an integer instead of a character for <code class="highlighter-rouge">from</code>. When there are no time parts involved, a character is not necesarry. Since we use it in <code class="highlighter-rouge">span_time</code> it will be parsed to <code class="highlighter-rouge">POSIXct</code>, not to <code class="highlighter-rouge">Date</code>.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">span_time</span><span class="p">(</span><span class="m">20170725</span><span class="p">,</span><span class="w"> </span><span class="s2">"20170725 03"</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "2017-07-25 00:00:00 UTC" "2017-07-25 01:00:00 UTC"
+## [3] "2017-07-25 02:00:00 UTC" "2017-07-25 03:00:00 UTC"
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">to</code> does not have to be specified, we can use <code class="highlighter-rouge">len_out</code> instead. The <code class="highlighter-rouge">interval</code> is derived only from <code class="highlighter-rouge">from</code> then. To get Jan 1st, from 2010 to 2014 we can do both</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">span_date</span><span class="p">(</span><span class="m">2010</span><span class="p">,</span><span class="w"> </span><span class="m">2014</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "2010-01-01" "2011-01-01" "2012-01-01" "2013-01-01" "2014-01-01"
+</code></pre>
+</div>
+<p>and</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">span_date</span><span class="p">(</span><span class="m">2010</span><span class="p">,</span><span class="w"> </span><span class="n">len_out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "2010-01-01" "2011-01-01" "2012-01-01" "2013-01-01" "2014-01-01"
+</code></pre>
+</div>
+
+<p>If you want the <code class="highlighter-rouge">interval</code> to be different from the default, you can specify it.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">span_date</span><span class="p">(</span><span class="m">2016</span><span class="p">,</span><span class="w"> </span><span class="m">2017</span><span class="p">,</span><span class="w"> </span><span class="n">interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"month"</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>##  [1] "2016-01-01" "2016-02-01" "2016-03-01" "2016-04-01" "2016-05-01"
+##  [6] "2016-06-01" "2016-07-01" "2016-08-01" "2016-09-01" "2016-10-01"
+## [11] "2016-11-01" "2016-12-01" "2017-01-01"
+</code></pre>
+</div>
+
+<p>Note however, that you can often also specify the <code class="highlighter-rouge">interval</code> by providing more information in <code class="highlighter-rouge">from</code> or <code class="highlighter-rouge">to</code>.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">span_date</span><span class="p">(</span><span class="m">201601</span><span class="p">,</span><span class="w"> </span><span class="m">2017</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>##  [1] "2016-01-01" "2016-02-01" "2016-03-01" "2016-04-01" "2016-05-01"
+##  [6] "2016-06-01" "2016-07-01" "2016-08-01" "2016-09-01" "2016-10-01"
+## [11] "2016-11-01" "2016-12-01" "2017-01-01"
+</code></pre>
+</div>
+
+<p>I hope you find these little wrappers around <code class="highlighter-rouge">seq.Date</code> and <code class="highlighter-rouge">seq.POSIXt</code> useful and that they will enable you to conquer dates and datetimes a little quicker. You can obtain the function by downloading the dev version of <code class="highlighter-rouge">padr</code> as I did above. If you can think of improvements of the functions before it hits CRAN please tell me. Issues filed, pull requests, emails, and tweets are much appreciated.</p>
+
+        
+          <div id="disqus_thread"></div><!-- /#disqus_thread -->
+          
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'thats-so-random'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = 'https://' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+        
+      </div><!-- /.entry-content -->
+    </div><!-- /.entry-wrapper -->
+    <nav class="pagination" role="navigation">
+      
+        <a href="https://EdwinTh.github.io/blog/unique_id/" class="btn" title="Quickly Check your ID Variables">Previous</a>
+      
+      
+    </nav><!-- /.pagination -->
+  </article>
+</div><!-- /#main -->
+
+<div class="footer-wrapper">
+  <footer role="contentinfo" class="entry-wrapper">
+    
+
+<span>&copy; 2017 Edwin Thoen. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> using the <a href="https://mademistakes.com/work/so-simple-jekyll-theme/" rel="nofollow">So Simple Theme</a>.</span>
+<div class="social-icons">
+	<a href="https://twitter.com/edwin_thoen" title="Edwin Thoen on Twitter" target="_blank"><i class="fa fa-twitter-square fa-2x"></i></a>
+	
+	
+	<a href="https://linkedin.com/in/edwin-thoen-3139a131?trk=hp-identity-name" title="Edwin Thoen on LinkedIn" target="_blank"><i class="fa fa-linkedin-square fa-2x"></i></a>
+	<a href="http://stackoverflow.com/users/2119315/edwin" title="Edwin Thoen on StackExchange" target="_blank"><i class="fa fa-stack-exchange fa-2x"></i></a>
+	
+	
+	<a href="https://github.com/EdwinTh" title="Edwin Thoen on Github" target="_blank"><i class="fa fa-github-square fa-2x"></i></a>
+	
+  
+	
+  <a href="https://EdwinTh.github.io/feed.xml" title="Atom/RSS feed"><i class="fa fa-rss-square fa-2x"></i></a>
+</div><!-- /.social-icons -->
+
+  </footer>
+</div><!-- /.footer-wrapper -->
+
+<script type="text/javascript">
+  var BASE_URL = 'https://EdwinTh.github.io';
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="https://EdwinTh.github.io/assets/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+<script src="https://EdwinTh.github.io/assets/js/scripts.min.js"></script>
+
+
+
+
+</body>
+</html>
