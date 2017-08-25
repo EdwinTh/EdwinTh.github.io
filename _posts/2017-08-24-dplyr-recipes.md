@@ -66,10 +66,8 @@ quo_to_text <- function(x, var) {
   var_enq <- enquo(var)
   ggplot(x, aes_string(rlang::quo_text(var_enq))) + geom_density()
 }
-quo_to_text(mtcars, cyl)
+plt <- quo_to_text(mtcars, cyl)
 ```
-
-![plot of chunk unnamed-chunk-5](/figure/source/2017-08-24-dplyr-recipes/unnamed-chunk-5-1.png)
 
 Note that tidy evaluation is not yet implemented in `ggplot2`, but this will be in future versions. This is a workaround for the meantime, when combining `dplyr` and `ggplot2`.
 
