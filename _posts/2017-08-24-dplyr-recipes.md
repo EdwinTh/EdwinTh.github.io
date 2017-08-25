@@ -1,0 +1,151 @@
+---
+layout: post
+categories: blog
+title: "Tidy evaluation, most common actions"
+base-url: https://EdwinTh.github.io
+date: "2017-08-25 20:30:00"
+output: html_document
+tags: [R, dplyr, tidy evaluation, programming]
+---
+
+Tidy evaluation is a bit challenging to get your head around. Even after reading [programming with dplyr](https://cran.r-project.org/web/packages/dplyr/vignettes/programming.html) several times, I still struggle when creating functions from time to time. I made a small summary of the most common actions I perform, so I don't have to dig in the vignettes and on stackoverflow over and over. Each is accompanied with a minimal example on how to implement it. I thought others might find this useful too, so here it is in a blog post. This list is meant to be a living thing so additions and improvements are most welcome. Please do a PR on [this file](https://github.com/EdwinTh/EdwinTh.github.io/tree/master/_source/2017-08-24-dplyr-recipes.Rmd) or send an email.
+
+
+```r
+library(tidyverse)
+```
+#### bare to quosure: `quo`
+
+```r
+bare_to_quo <- function(x, var){
+  x %>% select(!!var) %>% head(1)
+}
+bare_to_quo(mtcars, quo(cyl))
+```
+
+```
+##           cyl
+## Mazda RX4   6
+```
+
+#### bare to quosure in function: `enquo`
+
+```r
+bare_to_quo_in_func <- function(x, var) {
+  var_enq <- enquo(var)
+  x %>% select(!!var_enq) %>% head(1)
+}
+bare_to_quo_in_func(mtcars, mpg)
+```
+
+```
+##           mpg
+## Mazda RX4  21
+```
+
+#### quosure to a name: `quo_name`
+
+```r
+bare_to_name <- function(x, nm) {
+  nm_name <- quo_name(nm)
+  x %>% mutate(!!nm_name := 42) %>% head(1) %>% 
+    select(!!nm)
+}
+bare_to_name(mtcars, quo(this_is_42))
+```
+
+```
+##   this_is_42
+## 1         42
+```
+
+#### quosure to text: `quo_text`
+
+```r
+quo_to_text <- function(x, var) {
+  var_enq <- enquo(var)
+  ggplot(x, aes_string(rlang::quo_text(var_enq))) + geom_density()
+}
+quo_to_text(mtcars, cyl)
+```
+
+![plot of chunk unnamed-chunk-5](/figure/source/2017-08-24-dplyr-recipes/unnamed-chunk-5-1.png)
+
+Note that tidy evaluation is not yet implemented in `ggplot2`, but this will be in future versions. This is a workaround for the meantime, when combining `dplyr` and `ggplot2`.
+
+#### character to quosure: `sym`
+
+
+```r
+char_to_quo <- function(x, var) {
+  var_enq <- rlang::sym(var)
+  x %>% select(!!var_enq) %>% head(1)
+}
+char_to_quo(mtcars, "vs")
+```
+
+```
+##           vs
+## Mazda RX4  0
+```
+
+#### multiple bares to quosure: `quos`
+
+```r
+bare_to_quo_mult <- function(x, ...) {
+  grouping <- quos(...)
+  x %>% group_by(!!!grouping) %>% summarise(nr = n())
+}
+bare_to_quo_mult(mtcars, vs, cyl)
+```
+
+```
+## # A tibble: 5 x 3
+## # Groups:   vs [?]
+##      vs   cyl    nr
+##   <dbl> <dbl> <int>
+## 1     0     4     1
+## 2     0     6     3
+## 3     0     8    14
+## 4     1     4    10
+## 5     1     6     4
+```
+
+#### multiple characters to quosure: `syms`
+
+```r
+bare_to_quo_mult_chars <- function(x, ...) {
+  grouping <- rlang::syms(...)
+  x %>% group_by(!!!grouping) %>% summarise(nr = n())
+}
+bare_to_quo_mult_chars(mtcars, list("vs", "cyl"))
+```
+
+```
+## # A tibble: 5 x 3
+## # Groups:   vs [?]
+##      vs   cyl    nr
+##   <dbl> <dbl> <int>
+## 1     0     4     1
+## 2     0     6     3
+## 3     0     8    14
+## 4     1     4    10
+## 5     1     6     4
+```
+#### quoting full expressions
+
+Altough quoting column names is most often used, it is by no means the only option. We can use the above to quote full expressions.
+
+
+```r
+filter_func <- function(x, filter_exp) {
+  filter_exp_enq <- enquo(filter_exp)
+  x %>% filter(!!filter_exp_enq)
+}
+filter_func(mtcars, hp == 93)
+```
+
+```
+##    mpg cyl disp hp drat   wt  qsec vs am gear carb
+## 1 22.8   4  108 93 3.85 2.32 18.61  1  1    4    1
+```
