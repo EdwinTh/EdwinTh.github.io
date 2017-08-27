@@ -71,7 +71,7 @@ plt <- quo_to_text(mtcars, cyl)
 
 Note that tidy evaluation is not yet implemented in `ggplot2`, but this will be in future versions. This is a workaround for the meantime, when combining `dplyr` and `ggplot2`.
 
-#### character to quosure: `sym`
+#### character to name: `sym` (edited)
 
 
 ```r
@@ -109,7 +109,7 @@ bare_to_quo_mult(mtcars, vs, cyl)
 ## 5     1     6     4
 ```
 
-#### multiple characters to quosure: `syms`
+#### multiple characters to names: `syms` (edited)
 
 ```r
 bare_to_quo_mult_chars <- function(x, ...) {
@@ -130,6 +130,7 @@ bare_to_quo_mult_chars(mtcars, list("vs", "cyl"))
 ## 4     1     4    10
 ## 5     1     6     4
 ```
+
 #### quoting full expressions
 
 Altough quoting column names is most often used, it is by no means the only option. We can use the above to quote full expressions.
@@ -147,3 +148,28 @@ filter_func(mtcars, hp == 93)
 ##    mpg cyl disp hp drat   wt  qsec vs am gear carb
 ## 1 22.8   4  108 93 3.85 2.32 18.61  1  1    4    1
 ```
+
+#### Edit notes
+
+I mistakingly thought that `rlang::sym(s)` created quosures. However, as pointed out to me by a reader, this creates a `name`, not a `quosure`. A `name` however can also be unquoted. See this [github discussion](https://github.com/tidyverse/rlang/issues/116).
+
+
+```r
+just_a_name <- rlang::sym("cyl")
+class(just_a_name)
+```
+
+```
+## [1] "name"
+```
+
+```r
+mtcars %>% select(!!just_a_name) %>% head(1)
+```
+
+```
+##           cyl
+## Mazda RX4   6
+```
+
+

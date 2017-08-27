@@ -207,7 +207,7 @@
 
 <p>Note that tidy evaluation is not yet implemented in <code class="highlighter-rouge">ggplot2</code>, but this will be in future versions. This is a workaround for the meantime, when combining <code class="highlighter-rouge">dplyr</code> and <code class="highlighter-rouge">ggplot2</code>.</p>
 
-<h4 id="character-to-quosure-sym">character to quosure: <code class="highlighter-rouge">sym</code></h4>
+<h4 id="character-to-name-sym-edited">character to name: <code class="highlighter-rouge">sym</code> (edited)</h4>
 
 <div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">char_to_quo</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">var</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="n">var_enq</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">rlang</span><span class="o">::</span><span class="n">sym</span><span class="p">(</span><span class="n">var</span><span class="p">)</span><span class="w">
@@ -244,7 +244,7 @@
 </code></pre>
 </div>
 
-<h4 id="multiple-characters-to-quosure-syms">multiple characters to quosure: <code class="highlighter-rouge">syms</code></h4>
+<h4 id="multiple-characters-to-names-syms-edited">multiple characters to names: <code class="highlighter-rouge">syms</code> (edited)</h4>
 
 <div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">bare_to_quo_mult_chars</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="n">grouping</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">rlang</span><span class="o">::</span><span class="n">syms</span><span class="p">(</span><span class="n">...</span><span class="p">)</span><span class="w">
@@ -265,7 +265,8 @@
 ## 5     1     6     4
 </code></pre>
 </div>
-<p>#### quoting full expressions</p>
+
+<h4 id="quoting-full-expressions">quoting full expressions</h4>
 
 <p>Altough quoting column names is most often used, it is by no means the only option. We can use the above to quote full expressions.</p>
 
@@ -281,6 +282,29 @@
 ## 1 22.8   4  108 93 3.85 2.32 18.61  1  1    4    1
 </code></pre>
 </div>
+
+<h4 id="edit-notes">Edit notes</h4>
+
+<p>I mistakingly thought that <code class="highlighter-rouge">rlang::sym(s)</code> created quosures. However, as pointed out to me by a reader, this creates a <code class="highlighter-rouge">name</code>, not a <code class="highlighter-rouge">quosure</code>. A <code class="highlighter-rouge">name</code> however can also be unquoted. See this <a href="https://github.com/tidyverse/rlang/issues/116">github discussion</a>.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">just_a_name</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">rlang</span><span class="o">::</span><span class="n">sym</span><span class="p">(</span><span class="s2">"cyl"</span><span class="p">)</span><span class="w">
+</span><span class="nf">class</span><span class="p">(</span><span class="n">just_a_name</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "name"
+</code></pre>
+</div>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">mtcars</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">select</span><span class="p">(</span><span class="o">!!</span><span class="n">just_a_name</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">head</span><span class="p">(</span><span class="m">1</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>##           cyl
+## Mazda RX4   6
+</code></pre>
+</div>
+
 
         
           <div id="disqus_thread"></div><!-- /#disqus_thread -->
