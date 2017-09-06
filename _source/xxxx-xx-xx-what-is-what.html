@@ -121,111 +121,13 @@ $(document).ready(function () {
 </div>
 
 
-<p>Tidy evaluation is a bit challenging to get your head around. Even after reading <a href="https://cran.r-project.org/web/packages/dplyr/vignettes/programming.html">programming with dplyr</a> several times, I still struggle when creating functions from time to time. I made a small summary of the most common actions I perform, so I don’t have to dig in the vignettes and on stackoverflow over and over. Each is accompanied with a minimal example on how to implement it. I thought others might find this useful too, so here it is in a blog post. This list is meant to be a living thing so additions and improvements are most welcome. Please do a PR on <a href="https://github.com/EdwinTh/EdwinTh.github.io/tree/master/_source/2017-08-24-dplyr-recipes.Rmd">this file</a> or send an email.</p>
-<pre class="r"><code>library(tidyverse)</code></pre>
-<div id="bare-to-quosure-quo" class="section level4">
-<h4>bare to quosure: <code>quo</code></h4>
-<pre class="r"><code>bare_to_quo &lt;- function(x, var){
-  x %&gt;% select(!!var) %&gt;% head(1)
-}
-bare_to_quo(mtcars, quo(cyl))</code></pre>
-<pre><code>##           cyl
-## Mazda RX4   6</code></pre>
+<p>This a bit of a follow-up to a blog post I did earlier on <a href="https://edwinth.github.io/blog/dplyr-recipes/">tidy evaluation</a>, where I gave a reference list to the most common actions. This time I want to explore the different objects that come with tidy eval programming. As with the actions blog, this is a mere collection of information that is available in other documentation. I’d like to think of it as an equivalent of the <strong>Who is who</strong> books that I used when I was still a history student. A lookup guide.</p>
+<div id="tidy-eval-vs-base" class="section level4">
+<h4>Tidy eval vs base</h4>
+<p>As with many aspects of the tidyverse, most of the concepts within tidy evaluation are not new, but rather a reimplementation of base R objects. What makes this so challenging however, is that the <a href="http://maraaverick.rbind.io/2017/08/tidyeval-resource-roundup/">Honorable Doctor Sir Lord General</a> and friends brought concepts to the realm of the mortals that many of us had no or only a vague understanding of. I therefore will also try to stipulate the difference between the tidy eval and the base version. We’ll go through the following concepts: <code>name</code>, <code>formula</code>, <code>expression</code>, <code>closure</code>, <code>quote</code>, <code>quosure</code>.</p>
 </div>
-<div id="bare-to-quosure-in-function-enquo" class="section level4">
-<h4>bare to quosure in function: <code>enquo</code></h4>
-<pre class="r"><code>bare_to_quo_in_func &lt;- function(x, var) {
-  var_enq &lt;- enquo(var)
-  x %&gt;% select(!!var_enq) %&gt;% head(1)
-}
-bare_to_quo_in_func(mtcars, mpg)</code></pre>
-<pre><code>##           mpg
-## Mazda RX4  21</code></pre>
-</div>
-<div id="quosure-to-a-name-quo_name" class="section level4">
-<h4>quosure to a name: <code>quo_name</code></h4>
-<pre class="r"><code>bare_to_name &lt;- function(x, nm) {
-  nm_name &lt;- quo_name(nm)
-  x %&gt;% mutate(!!nm_name := 42) %&gt;% head(1) %&gt;% 
-    select(!!nm)
-}
-bare_to_name(mtcars, quo(this_is_42))</code></pre>
-<pre><code>##   this_is_42
-## 1         42</code></pre>
-</div>
-<div id="quosure-to-text-quo_text" class="section level4">
-<h4>quosure to text: <code>quo_text</code></h4>
-<pre class="r"><code>quo_to_text &lt;- function(x, var) {
-  var_enq &lt;- enquo(var)
-  ggplot(x, aes_string(rlang::quo_text(var_enq))) + geom_density()
-}
-plt &lt;- quo_to_text(mtcars, cyl)</code></pre>
-<p>Note that tidy evaluation is not yet implemented in <code>ggplot2</code>, but this will be in future versions. This is a workaround for the meantime, when combining <code>dplyr</code> and <code>ggplot2</code>.</p>
-</div>
-<div id="character-to-name-sym-edited" class="section level4">
-<h4>character to name: <code>sym</code> (edited)</h4>
-<pre class="r"><code>char_to_quo &lt;- function(x, var) {
-  var_enq &lt;- rlang::sym(var)
-  x %&gt;% select(!!var_enq) %&gt;% head(1)
-}
-char_to_quo(mtcars, &quot;vs&quot;)</code></pre>
-<pre><code>##           vs
-## Mazda RX4  0</code></pre>
-</div>
-<div id="multiple-bares-to-quosure-quos" class="section level4">
-<h4>multiple bares to quosure: <code>quos</code></h4>
-<pre class="r"><code>bare_to_quo_mult &lt;- function(x, ...) {
-  grouping &lt;- quos(...)
-  x %&gt;% group_by(!!!grouping) %&gt;% summarise(nr = n())
-}
-bare_to_quo_mult(mtcars, vs, cyl)</code></pre>
-<pre><code>## # A tibble: 5 x 3
-## # Groups:   vs [?]
-##      vs   cyl    nr
-##   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;
-## 1     0     4     1
-## 2     0     6     3
-## 3     0     8    14
-## 4     1     4    10
-## 5     1     6     4</code></pre>
-</div>
-<div id="multiple-characters-to-names-syms-edited" class="section level4">
-<h4>multiple characters to names: <code>syms</code> (edited)</h4>
-<pre class="r"><code>bare_to_quo_mult_chars &lt;- function(x, ...) {
-  grouping &lt;- rlang::syms(...)
-  x %&gt;% group_by(!!!grouping) %&gt;% summarise(nr = n())
-}
-bare_to_quo_mult_chars(mtcars, list(&quot;vs&quot;, &quot;cyl&quot;))</code></pre>
-<pre><code>## # A tibble: 5 x 3
-## # Groups:   vs [?]
-##      vs   cyl    nr
-##   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;
-## 1     0     4     1
-## 2     0     6     3
-## 3     0     8    14
-## 4     1     4    10
-## 5     1     6     4</code></pre>
-</div>
-<div id="quoting-full-expressions" class="section level4">
-<h4>quoting full expressions</h4>
-<p>Altough quoting column names is most often used, it is by no means the only option. We can use the above to quote full expressions.</p>
-<pre class="r"><code>filter_func &lt;- function(x, filter_exp) {
-  filter_exp_enq &lt;- enquo(filter_exp)
-  x %&gt;% filter(!!filter_exp_enq)
-}
-filter_func(mtcars, hp == 93)</code></pre>
-<pre><code>##    mpg cyl disp hp drat   wt  qsec vs am gear carb
-## 1 22.8   4  108 93 3.85 2.32 18.61  1  1    4    1</code></pre>
-</div>
-<div id="edit-notes" class="section level4">
-<h4>Edit notes</h4>
-<p>I mistakingly thought that <code>rlang::sym(s)</code> created quosures. However, as pointed out to me by a reader, this creates a <code>name</code>, not a <code>quosure</code>. A <code>name</code> however can also be unquoted. See this <a href="https://github.com/tidyverse/rlang/issues/116">github discussion</a>.</p>
-<pre class="r"><code>just_a_name &lt;- rlang::sym(&quot;cyl&quot;)
-class(just_a_name)</code></pre>
-<pre><code>## [1] &quot;name&quot;</code></pre>
-<pre class="r"><code>mtcars %&gt;% select(!!just_a_name) %&gt;% head(1)</code></pre>
-<pre><code>##           cyl
-## Mazda RX4   6</code></pre>
+<div id="name" class="section level2">
+<h2><code>name</code></h2>
 </div>
 
 
