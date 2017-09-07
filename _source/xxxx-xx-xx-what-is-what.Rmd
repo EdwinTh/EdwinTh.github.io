@@ -8,28 +8,29 @@ output: html_document
 tags: [R, dplyr, tidy evaluation, programming, non-standard evaluation]
 ---
 
-This a bit of a follow-up to a post I did earlier on [tidy evaluation](https://edwinth.github.io/blog/dplyr-recipes/). This time I want to explore the different objects that come with NSE programming. Where the previous blog was a quick *How-to* reference guide, this is one a more lengthy *what-is-what in NSE*. As with many aspects of the tidyverse, most of the concepts within tidy evaluation are not new, but rather a reimplementation of base R concepts. What makes this one so challenging however, is that the [Honorable Doctor Sir Lord General](http://maraaverick.rbind.io/2017/08/tidyeval-resource-roundup/) and friends brought concepts to the realm of the mortals that many of us had no or only a vague understanding of. Writing this blog post was a way for me to understand the terms used. What they are in base R and how they are different in tidy eval. Therefore it is almost surely incomplete and it is possibly erroneous at places. People with a deeper understanding than I have, are encouraged to improve this writing by PR or email.
+This a bit of a follow-up to a post I did earlier on [tidy evaluation](https://edwinth.github.io/blog/dplyr-recipes/). This time I want to explore the different objects that come with NSE programming. Where the previous blog was a quick *How-to* reference guide, this one is a more lengthy *what-is-what in NSE*. As with many aspects of the tidyverse, most of the concepts within tidy evaluation are not new, but rather a reimplementation of base R concepts. What makes this one so challenging however, is that the [Honorable Doctor Sir Lord General](http://maraaverick.rbind.io/2017/08/tidyeval-resource-roundup/) and friends brought concepts to the realm of the mortals that many of us had no, or only a vague understanding of. Writing this blog post was a way for me to understand those terms used on a deeper level. What they are in base R and how they are different in tidy eval. Therefore it is almost surely incomplete and even possibly erroneous at times People with a deeper understanding than I have, are encouraged to improve this writing by PR or email. Note, however, I sometimes omitted parts that I did not think were crucial to understand, like pairlists. This way I tried to keep this overview somewhat concise.
 
-I listed a number of terms and started studying them. Mainly consulting chapters 17 and 18 of [Advanced R](http://adv-r.hadley.nz/) and the [R Language Definiton](ftp://cran.r-project.org/pub/R/doc/manuals/r-release/R-lang.html).
+I listed a number of terms and started studying them. Mainly consulting chapters 17 and 18 of [Advanced R](http://adv-r.hadley.nz/) and the [R Language Definiton](ftp://cran.r-project.org/pub/R/doc/manuals/r-release/R-lang.html). For the `tidy eval` I lean heavily on the [Programming with dplyr vignette](https://cran.r-project.org/web/packages/dplyr/vignettes/programming.html) and the function documentation.
 
 # Base R, non-standard evaluation
 
 ## `expression`
 
-In standard evaluation R is like a child receiving candy from his grandmother and puts in his mouth directly. Every input is evaluated right away. This can be collecting the value of an object or letting a function make a calculation. An `expression` is some R code that is ready to be evaluated (a statemetn), but is not evaluated yet. This is the child's parent telling he can't have the candy untill they get home. The typical way of creating an expression is by using `parse(text = "<string input>")`. Here we are creating an expression of length 1. Note that the `text` argument is not the first argument of `parse()` and thus must be named.
+In standard evaluation R is like a child that receives candy from his grandmother and puts it in his mouth inmediately. Every input is evaluated right away. This can be collecting the value of an object or letting a function do a calculation. An **expression** is some R code that is ready to be evaluated (a statement), but is not evaluated yet. Rather it is captured and saved for later. Think of it as the child's father telling he can't have the candy untill they get home. The typical way of creating an expression is by using `parse(text = "<string input>")`. Here we are creating an expression of length 1. 
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
 expr <- parse(text = "5 + 5")
 expr
 ```
 
-To **evaluate** expression we run it by `eval()`.
+Note that the `text` argument is not the first argument of `parse()` and thus must be named. To **evaluate** expression we run `eval()` on the expression.
 
 ```{r}
 eval(expr)
 ```
 
-When giving multiple lines to `parse()` it will create a list-like object of multiple `expressions`. When passing the full expression to `eval()`, only the evaluation of the last element is returned.
+When giving multiple lines to `parse()` it will create a list-like object of multiple `expressions`. 
 
 ```{r}
 multi_exp <- parse(text = c(
@@ -42,46 +43,45 @@ multi_exp[[1]]
 multi_exp[[1]] %>% class()
 ```
 
-Hmmm, the first element of the expression is of class `name`. What's up with that?
+Strange, the first element of the expression is of class `name` instead of `expression`. What's up with that?
 
 ## `name`
 
-When creating an object in R, you are binding the name of the object to a value. In the following the name `x` gets associated with the value 50.
+When creating an object in R, you are binding the name of the object to a value. This binding of value and name is done in an **environment**. In the following the name `x` gets associated with the value 50. Since we did not create a specific environment for this, this binding is in the global environment.
 
 ```{r}
 x <- 50
 ```
 
-Normally we type this name to request it value. However in NSE we delay evaluation and we just save the name to be requested later. So the `name` is a subset of the `expression` where the unevaluated R code is retrieving the value of an object.
+Normally we type the object name to retrieve its value. However, when we save the objects name as an expression, it is not evaluated but stored as `name` object. (Confusingly, when the expression of length 1, it of class `expression` instead of class `name`). So the `name` is a subset of the `expression` where the unevaluated R code will retrieve the value of an object once evaluated.
 
 ```{r}
-x <- parse(text = "x")
-eval(x)
+exp_x <- parse(text = "x")
+eval(exp_x)
 ```
 
-This way we can build a request for later. The variable requested for doesn't even have to exist at creation time. (Like granny having no candy herself, but telling the kid that he can have candy when he gets back at his parent's place).
+This way we can build a request for later. The variable requested for doesn't even have to exist at creation time. (Little like granny having no candy herself, but telling the kid that he can have candy when he gets back at his parent's place).
 
-```{r}
+```{r error=TRUE}
 eval_me <- parse(text = "y")
 eval(eval_me)
 y <- "I am ready"
 eval(eval_me)
 ```
 
-Now you might wonder, in the `tidyverse` packages I can convenienently pass bare object names, there is no need to provide strings. This is possible in base R with the functions `quote()` and `substitute()`. They quote, which is capturing the expression.
+Now you might wonder, in the tidyverse packages I can convenienently pass bare object names, there is no need to provide strings. This is possible in base R too, with the function `quote()`. It quotes its input, which is capturing the expression as provided.
 
 ```{r}
+quote(x)
 quote(x) %>% class()
 ```
-
-`quote()` simply quotes its imput (creating an expression of the input without looking at it). 
 
 If we want to quickly create a `name` from a string, instead of running `parse()` we can use `as.name`.
 
 ```{r}
 as.name("x")
 ```
-And finally to make matters nice and unclear, a name is also called as a `symbol` and the function `as.symbol()` does exactly the same as `as.name()`. Perfect, what's next? Lets call some functions.
+And finally to make matters nice and unclear, a name is also called as a `symbol` and the function `as.symbol()` does exactly the same as `as.name()`. Perfect, we have a good idea about quoting variable names and call them later. Now, lets call some functions.
 
 ## `call`
 
@@ -94,28 +94,28 @@ x <- 3; y <- 8
 eval(wait_for_it)
 ```
 
-Note, that `+` is a function, like every action that happens in R. We have already seen that from a string we can get to an expression with `parse()`. Not surprisingly, `deparse()` gives a string from an expression. Allowing is to do stuff like.
+Note that `+` is a function, like every action that happens in R. We have already seen that from a string we can get to an expression with `parse()`. Not surprisingly, `deparse()` gives a string from an expression. Allowing us to do stuff like
 
 ```{r}
 print_func <- function(expr){
   paste("The value of", deparse(expr), "is", eval(expr))
 }
 print_func(wait_for_it)
-x <- 24
+print_func(quote(log(42) %>% round(1)))
 print_func(quote(x))
 ```
 
 When the expression is a name, we print the name and the value of the object associated with the name. When it is a call, we print the function call and the evaluation of it.
 
-## `closure`
+## `environment` and `closure`
 
-Ow wait, in the last block we are writing a function in which we used some NSE stuff. No coincedence, NSE and functions are a strong and natural pair. We need to touch environments and closures here. I told you that an object is the binding of a name and a value, but I ommitted something here. It is the binding of a name and a value in an **environment**. When starting an R session, you act in the global environment. All objects created live in the global. 
+In the last block we were writing a function in which we used some NSE stuff. No coincedence, NSE and functions are a strong and natural pair. With NSE we can create powerful and user-friendly functions. We need to elaborate on **environments** and **closures** here. I told you that an object is the binding of a name and a value in an environment. When starting an R session, you act in the global environment [Adv-R](http://adv-r.hadley.nz/environments.html). All objects created live happily in the global. 
 
 ```{r}
 z <- 25
 ```
 
-A function creates a new environment, objects of the same name can live here with different values binded to them.
+A function creates a new environment, objects of the same name as objects in the global can live here with different values binded to them.
 
 ```{r}
 z_func <- function() {
@@ -126,19 +126,19 @@ z_func()
 z
 ```
 
-The z_func did not change the global environment, but created an object in its own environment. Now functions are of the strange type called a `closure`. 
+The z_func did not change the global environment, but created an object in its own environment. Now functions are of a type called a `closure`. 
 
 ```{r}
 typeof(z_func)
 ```
 
-They are called this way because they *enclose* their environment. At the time they are created they have a look around in the environment in which they are created (called the parent environment) and capture all the names that are available there. It thus does not only know the names of the objects in it own environment, but also in his parent's. And it can acces them. [Adv-R](http://adv-r.hadley.nz/functional-programming.html#closures). 
+They are called this way because they *enclose* their environment. At creation they have a look around in the environment in which they are created and capture all the names and values that are available there. It thus does not only know the names of the objects in it own environment, but also in the environment in which it was created [Adv-R](http://adv-r.hadley.nz/functional-programming.html#closures). 
 
-Not sure why I am telling you this, read on to formulas.
+Keep the concept of a closure in mind, we will revisit it.
 
-## `promise`
+## `substitute` and `promise`
 
-With the knowledge gained in the above we can start and try to write our own NSE function. Lets make a function that adds a column to a data frame that raises another column to a given power.
+With the knowledge gained in the above we can start and try to write our own NSE functions. Lets make a function that adds a column to a data frame that is the square of a column that is already in it.
 
 ```{r}
 add_squared <- function(x, col_name) {
@@ -146,10 +146,10 @@ add_squared <- function(x, col_name) {
   x[, new_colname] <- x[ ,deparse(col_name)]^2
   x
 }
-add_squared(mtcars, quote(cyl)) %>% head()
+add_squared(mtcars, quote(cyl)) %>% head(1)
 ```
 
-You might say, "that is not too convenient, I still need to quote the col_name". Well, you are very right, it would be more helpful if the function did the quoting for you. Unfortunately placing `quote(col_name)` inside the function body is of no use. `quote()` makes a literal quote of its input. So it would make the `name` *col_name* here, rather than quoting the value that was provided to this argument. 
+You might say, "that is not too convenient, I still need to quote the col_name myself". Well, you are very right, it would be more helpful if the function did the quoting for you. Unfortunately placing `quote(col_name)` inside the function body is of no use. `quote()` makes a literal quote of its input. So it would make the `name` *col_name* here, rather than quoting the value that was provided to this argument. 
 
 Here we need `substitute()`. This will lookup all the object names provided to it, and if it finds a value for that name, it will substitute the name for its value [Adv-R](http://adv-r.hadley.nz/nse.html#substitute). Lets do a filter function to demonstrate.
 
@@ -162,36 +162,94 @@ my_filt <- function(x, filt_cond) {
 my_filt(mtcars, mpg == 21)
 ```
 
-Wait a minute, how does `eval()` now that *mpg* is a column in `x`. You provided `x` to the function, but how does this work. Well, the data frame `x`, was provided to the `envir` argument of `eval`. A data frame, thus, is a valid environment in which we can evaluate expressions. *mpg* lives in the data frame, so the evaluation of `filt_cond_q` here gives a valid result.
+Yeah, that works. But, wait a minute. How does `eval()` now know that *mpg* is a column in `x`. You provided `x` to the function, but how does this work. Well, the data frame `x`, was provided to the `envir` argument of `eval()`. A data frame, thus, is a valid environment in which we can evaluate expressions. *mpg* lives in the data frame, so the evaluation of `filt_cond_q` here gives a valid result.
 
-We need to get one more definition straight before we shift to tidy eval. When you think about it a little longer, NSE is only possible when function arguments are not evaluated right away. If the function was the inpatient kid that wanted to put `filt_cond` in its mouth right away, it would have failed to find an object with the name *mpg* in the above example. When the function is called, rather than evaluated right away, the provided argument are stored in a **promise**. The promise of the argument contains the value of the argument, but also an expression of the argument. The function does not bother about the value of the promise until the function argument is actually used in the function. The `substitute()` function can enter the expression of the promise. In the `my_filt()` example, the promise associated with the `x` argument will have the actual data frame belonging to the object `mtcars` as its value, and the name *mtcars* as its expression. In the second and third line of the function, the value is accessed. The promise associated with the `filt_cond` argument, does not have a value, only a call as an expression. As soon as we use this argument, the function would fail. We don't do this however, with `substitute()` we only access the expression of the promise.
+We need to get one more definition straight before we shift to tidy eval. When you think about it a little longer, NSE is only possible when function arguments are not evaluated right away. If the function was the inpatient kid that wanted to put `filt_cond` in its mouth right away, it would have failed to find an object with the name *mpg* in the global environment. When the function is called, rather than being evaluated right away, the provided arguments are stored in a **promise**. The promise of the argument contains the value of the argument, but also an expression of the argument. The function does not bother about the value of the promise until the function argument is actually used in the function. The `substitute()` function does only enter the expression part of the promise. In the `my_filt()` example, the promise associated with the `x` argument will have the actual data frame belonging to the object `mtcars` as its value, and the name *mtcars* as its expression. In the second and third line of the function, the value of the first argument is accessed. The promise associated with the `filt_cond` argument, however. does not have a value. It only has a call as an expression. As soon as we use this argument, the function would fail. We don't use the argument however, with `substitute()` we only access the expression of the promise.
 
-Pff, that was a lot to swallow. Get a beer or a coffee, depending the time of the day. Maybe continue reading tomorrow. Anyway, we will continue with how tidy eval is different from base R NSE.
+## `formula`
 
-TODO formula
-
-# Tidy eval
-
-So we know that in the tidy verse, most things are reimplemented the way the H.D.S.L.G. sees fit. Now we know how base R does NSE, the easiest way to go is see how tidy eval does things differently.
-
-## quosure
-
-As we can guess from its name, this is a hybrid from a *quote* and a *closure*. Recapping what both are. When we quote a piece of R code we don't evaluate it, but rather store it to evaluate it later. A closure is an object that looks around at the time it is created, and sees what variables are available. Because of the enclosing you can build expressions that mix variables that live in the global environment, with the ones living in your data frame. Take the following `dplyr` example.
-
-```{r, warning=FALSE, message=FALSE}
-library(tidyverse)
-global_var <- 1:32
-mtcars %>% filter(mpg == 21 & global_var == 1)
-```
+Before we move to `tidy eval` there is one more concept we have to elaborate on, the `formula`. Probably you have used them alot, but did you ever think about how odd they are? Take the following example
 
 ```{r}
-mtcars %>% my_filt(mpg == 21 & global_var == 1)
+mod <- lm(vs ~ mpg + cyl, data = mtcars)
 ```
 
+No R user would have trouble reading the above, but picture yourself coming from another programming language and stumbling upon it... It as an example of a domain specific language (DSL). DSLs exploit R's NSE possibilities by giving alternative meaning to the language in specific context. Other examples are `ggplot2` and `dplyr`. Just like functions, do formulas enclose the environment they are created in. Meaning that when the formula is evaluated later in a different environment, it can still access all the object that lived in its original environment.
 
+These are, to my understanding, the core elements of NSE in base R. If you don't care about `tidyeval` you can stop reading here and try to build your own NSE functions. Thanks for making it this far.
 
+# `tidy evaluation`
 
+There are two key additions of `tidyeval` on top of base R NSE. It uses **quasiquotation** and it introduces a new type of quoted object, called a **quosure**. Let's find out about them one by one.
 
+## `quasiquotation`
 
+We know that in normal quotation the expression is captured to be evaluated later, rather than swallowed right away. The key to quasiquotation is that it enables the user to swallow parts of the expression right away, while quoting other. Let's find out with an example. We can qoute the following simple function.
 
+```{r}
+quote(z - x + 4)
+```
 
+Say we know the value of `x` already at the moment of quoting. How can we let the second part to be evaluated right away and quote `z -` the resul of this evaluation? In other words how do we **unquote** the `x + 4` part? In base R this is not going to happen, but with tidy eval this can be done.
+
+```{r}
+x <- 4
+rlang::expr(z - !!x + 4)
+```
+
+Everything after the `!!` (bang bang) is unquoted. If we do not use unquoting, there is no reason to use `rlang::expr()` instead of `quote()`. They have the exact same result. There is also an equivalent for `substitute()`, namely `enexpr()`. 
+
+Now the appeal of functions that have implemented quasiquotation is that all the advantages of easy-to-use NSE interfaces remain. While at the same time enabling the user to easily pack the functions in custom-made wrappers. Example please! Something I do often is creating a frequency table of the values of a variable in a data frame. I want this in a function with the data frame and column name as arguments. Wrapping `dplyr` functions in the following way:
+
+```{r, message=FALSE, warning=FALSE}
+freq_table <- function(x, col) {
+  col_q   <- rlang::enexpr(col)
+  total_n <- x %>% nrow()
+  x %>% group_by(!!col_q) %>% summarise(freq = n() / total_n)
+}
+mtcars %>% freq_table(cyl)
+mtcars %>% freq_table(vs)
+```
+
+So the functions that use tidy eval, like those in `dplyr`, automatically quote their input. That is what enables you to type away and get results as quickly as you can when doing data analysis. However if you want to write programs around them you have to take care of two steps. First, quote the expression you want to be evaluated and (b) unquote the expression again when calling the function that does the quoting for you.
+
+## `quosure`
+
+Very nice, that quaisquoting. Now what's up with quosures. From its name you might guess they are hybrids of `quotes` and `closures`. We have seen that combination before when we looked at formulas. But formulas are not expressions, they are a DSL that is created through NSE. If we look at quosures, we will see that they behave both like expressions and as formulas.
+
+```{r}
+quo(z) %>% class()
+quo(z) %>% rlang::is_expr()
+```
+
+Quosures are one-sided fomulas, capturing their environment, but not indicating a modelling relationship. By the way, we've seen the `quo()` function in action. This litterally quotes its input, just like `quote()` and `rlang::expr()` do. The quosure equivalent of `substitute()` and `enexpr()` is `enquo()`.
+
+Just like names, calls can be converted to a quosure too.
+```{r}
+quo(2 + 2) %>% class()
+```
+Note that quosures don't make a lower level distinction between calls and names. Every expression becomes a quosure.
+
+But when is this capturing of the environment actually useful? When the quosure is created in one environment and evaluated in another. This typically when they are created in a function and evaluated in the global environment or another function.
+
+In base NSE we can evaluate a quoted argument within a function, we can quote a bare statement, we can even create a quosure. What we cannot do however, is giving the expression memory of the variables that were present at creation. 
+
+```{r error=TRUE}
+base_NSE_example <- function(some_arg) {
+  some_var <- 10
+  quote(some_var + some_arg)
+}
+base_NSE_example(4) %>% eval()
+```
+
+The quosure is not memoryless, it will retrieve the values that were present at creation.
+
+```{r}
+tidy_eval_example <- function(some_arg) {
+  some_var <- 10
+  quo(some_var + some_arg)
+}
+tidy_eval_example(4) %>% rlang::eval_tidy()
+```
+
+Quosures are self-evaluating. As soon as they 
