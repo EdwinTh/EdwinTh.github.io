@@ -81,7 +81,7 @@ bare_to_quo_mult_chars(mtcars, list("vs", "cyl"))
 
 #### quoting full expressions
 
-Altough quoting column names is most often used, it is by no means the only option. We can use the above to quote full expressions.
+Although quoting column names is most often used, it is by no means the only option. We can use the above to quote full expressions.
 
 ```{r}
 filter_func <- function(x, filter_exp) {
