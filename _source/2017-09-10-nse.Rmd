@@ -3,7 +3,7 @@ layout: post
 categories: blog
 title: "Non-standard evaluation, how tidy eval builds on base R"
 base-url: https://EdwinTh.github.io
-date: "2017-08-25 20:30:00"
+date: "2017-09-10 14:30:00"
 output: html_document
 tags: [R, tidy evaluation, programming, non-standard evaluation, base R]
 ---
