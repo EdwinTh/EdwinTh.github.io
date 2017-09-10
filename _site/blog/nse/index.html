@@ -1,0 +1,684 @@
+<!doctype html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if (IE 7)&!(IEMobile)]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if (IE 8)&!(IEMobile)]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"><!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<head></head>
+<title>Non-standard evaluation, how tidy eval builds on base R &#8211; That's so Random</title>
+<meta name="description" content="As with many aspects of the tidyverse, its non-standard evaluation (NSE) implementation is not something entirely new, but built on top of base R. What makes this one so challenging to get your mind around, is that the Honorable Doctor Sir Lord General and friends brought concepts to the realm of the mortals that many of us had no, or only a vague, understanding of. Earlier, I gave an overview of the most common actions in tidy eval. Although appreciated by many, it left me unsatisfied, because it made clear to me I did not really understand NSE. Neither in base R, nor in tidy eval. Therefore, I bit the bullet and really studied it for a few evenings. Starting with base R NSE, and later learning what tidy eval actually adds to it. I decided to share the things I learned in this, rather lengthy, blog. I think it captures the essentials in NSE, although it surely is incomplete and might be even erronous at places. Still, I hope you find it worthwhile and it will help you understand NSE better and apply it with more confidence.
+
+">
+<meta name="keywords" content="R, tidy evaluation, programming, non-standard evaluation, base R">
+
+
+<!-- Twitter Cards -->
+<meta name="twitter:title" content="Non-standard evaluation, how tidy eval builds on base R">
+<meta name="twitter:description" content="As with many aspects of the tidyverse, its non-standard evaluation (NSE) implementation is not something entirely new, but built on top of base R. What makes this one so challenging to get your mind around, is that the Honorable Doctor Sir Lord General and friends brought concepts to the realm of the mortals that many of us had no, or only a vague, understanding of. Earlier, I gave an overview of the most common actions in tidy eval. Although appreciated by many, it left me unsatisfied, because it made clear to me I did not really understand NSE. Neither in base R, nor in tidy eval. Therefore, I bit the bullet and really studied it for a few evenings. Starting with base R NSE, and later learning what tidy eval actually adds to it. I decided to share the things I learned in this, rather lengthy, blog. I think it captures the essentials in NSE, although it surely is incomplete and might be even erronous at places. Still, I hope you find it worthwhile and it will help you understand NSE better and apply it with more confidence.
+
+">
+<meta name="twitter:site" content="@edwin_thoen">
+<meta name="twitter:creator" content="@edwin_thoen">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://EdwinTh.github.io/images/site-logo.png">
+
+<!-- Open Graph -->
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Non-standard evaluation, how tidy eval builds on base R">
+<meta property="og:description" content="As with many aspects of the tidyverse, its non-standard evaluation (NSE) implementation is not something entirely new, but built on top of base R. What makes this one so challenging to get your mind around, is that the Honorable Doctor Sir Lord General and friends brought concepts to the realm of the mortals that many of us had no, or only a vague, understanding of. Earlier, I gave an overview of the most common actions in tidy eval. Although appreciated by many, it left me unsatisfied, because it made clear to me I did not really understand NSE. Neither in base R, nor in tidy eval. Therefore, I bit the bullet and really studied it for a few evenings. Starting with base R NSE, and later learning what tidy eval actually adds to it. I decided to share the things I learned in this, rather lengthy, blog. I think it captures the essentials in NSE, although it surely is incomplete and might be even erronous at places. Still, I hope you find it worthwhile and it will help you understand NSE better and apply it with more confidence.
+
+">
+<meta property="og:url" content="https://EdwinTh.github.io/blog/nse/">
+<meta property="og:site_name" content="That's so Random">
+
+
+
+
+
+<link rel="canonical" href="https://EdwinTh.github.io/blog/nse/">
+<link href="https://EdwinTh.github.io/feed.xml" type="application/atom+xml" rel="alternate" title="That's so Random Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="https://EdwinTh.github.io/assets/css/main.css">
+<!-- Webfonts -->
+<script src="https://use.edgefonts.net/source-sans-pro:n2,i2,n3,i3,n4,i4,n6,i6,n7,i7,n9,i9;source-code-pro:n4,n7;volkhov.js"></script>
+
+<meta http-equiv="cleartype" content="on">
+
+<!-- HTML5 Shiv and Media Query Support -->
+<!--[if lt IE 9]>
+  <script src="https://EdwinTh.github.io/assets/js/vendor/html5shiv.min.js"></script>
+  <script src="https://EdwinTh.github.io/assets/js/vendor/respond.min.js"></script>
+<![endif]-->
+
+<!-- Modernizr -->
+<script src="https://EdwinTh.github.io/assets/js/vendor/modernizr-2.7.1.custom.min.js"></script>
+
+
+<!-- MathJax -->
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+<!-- Icons -->
+<!-- 16x16 -->
+<link rel="shortcut icon" href="https://EdwinTh.github.io/favicon.ico">
+<!-- 32x32 -->
+<link rel="shortcut icon" href="https://EdwinTh.github.io/favicon.png">
+<!-- 57x57 (precomposed) for iPhone 3GS, pre-2011 iPod Touch and older Android devices -->
+<link rel="apple-touch-icon-precomposed" href="https://EdwinTh.github.io/images/apple-touch-icon-precomposed.png">
+<!-- 72x72 (precomposed) for 1st generation iPad, iPad 2 and iPad mini -->
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="https://EdwinTh.github.io/images/apple-touch-icon-72x72-precomposed.png">
+<!-- 114x114 (precomposed) for iPhone 4, 4S, 5 and post-2011 iPod Touch -->
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="https://EdwinTh.github.io/images/apple-touch-icon-114x114-precomposed.png">
+<!-- 144x144 (precomposed) for iPad 3rd and 4th generation -->
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://EdwinTh.github.io/images/apple-touch-icon-144x144-precomposed.png">
+
+
+
+
+</head>
+
+<body id="post">
+
+<div class="navigation-wrapper">
+	<nav role="navigation" id="site-nav" class="animated drop">
+	    <ul>
+      
+		    
+		    <li><a href="https://EdwinTh.github.io/about/" >About</a></li>
+		  
+		    
+		    <li><a href="https://EdwinTh.github.io/blog/" >Blog</a></li>
+		  
+		    
+		    <li><a href="https://EdwinTh.github.io/blogs-I-read/" >Blogs I read</a></li>
+		  
+	    </ul>
+	</nav>
+</div><!-- /.navigation-wrapper -->
+
+<!--[if lt IE 9]><div class="upgrade"><strong><a href="http://whatbrowser.org/">Your browser is quite old!</strong> Why not upgrade to a different browser to better enjoy this site?</a></div><![endif]-->
+
+<header class="masthead">
+	<div class="wrap">
+      
+  		<a href="https://EdwinTh.github.io/" class="site-logo" rel="home" title="That's so Random"><img src="https://EdwinTh.github.io/images/site-logo.png" width="200" height="200" alt="That's so Random logo" class="animated fadeInDown"></a>
+      
+      <h1 class="site-title animated fadeIn"><a href="https://EdwinTh.github.io/">That's so Random</a></h1>
+		<h2 class="site-description animated fadeIn" itemprop="description">A playground for data analysis and R programming.</h2>
+	</div>
+</header><!-- /.masthead -->
+
+<div class="js-menu-screen menu-screen"></div>
+
+
+<div id="main" role="main">
+  <article class="hentry">
+    
+    <div class="entry-wrapper">
+      <header class="entry-header">
+        <ul class="entry-tags">
+          <li><a href="https://EdwinTh.github.io/tags/#R" title="Pages tagged R">R</a></li><li><a href="https://EdwinTh.github.io/tags/#tidy evaluation" title="Pages tagged tidy evaluation">tidy evaluation</a></li><li><a href="https://EdwinTh.github.io/tags/#programming" title="Pages tagged programming">programming</a></li><li><a href="https://EdwinTh.github.io/tags/#non-standard evaluation" title="Pages tagged non-standard evaluation">non-standard evaluation</a></li><li><a href="https://EdwinTh.github.io/tags/#base R" title="Pages tagged base R">base R</a></li>
+        </ul>
+        
+          <h1 class="entry-title">Non-standard evaluation, how tidy eval builds on base R</h1>
+        
+      </header>
+      <footer class="entry-meta">
+        
+        
+          <img src="https://EdwinTh.github.io/images/bio-photo.jpg" class="bio-photo" alt="Edwin Thoen bio photo"></a>
+        
+        <span class="author vcard">By <span class="fn">Edwin Thoen</span></span>
+        <span class="entry-date date published"><time datetime="2017-09-10T14:30:00+02:00"><i class="fa fa-calendar-o"></i> September 10, 2017</time></span>
+        
+        <span class="entry-comments"><i class="fa fa-comment-o"></i> <a href="#disqus_thread">Comment</a></span>
+        
+        
+      </footer>
+      <div class="entry-content">
+        <p>As with many aspects of the tidyverse, its non-standard evaluation (NSE) implementation is not something entirely new, but built on top of base R. What makes this one so challenging to get your mind around, is that the <a href="http://maraaverick.rbind.io/2017/08/tidyeval-resource-roundup/">Honorable Doctor Sir Lord General</a> and friends brought concepts to the realm of the mortals that many of us had no, or only a vague, understanding of. Earlier, I gave an overview of <a href="https://edwinth.github.io/blog/dplyr-recipes/">the most common actions in tidy eval</a>. Although appreciated by many, it left me unsatisfied, because it made clear to me I did not really understand NSE. Neither in base R, nor in tidy eval. Therefore, I bit the bullet and really studied it for a few evenings. Starting with base R NSE, and later learning what tidy eval actually adds to it. I decided to share the things I learned in this, rather lengthy, blog. I think it captures the essentials in NSE, although it surely is incomplete and might be even erronous at places. Still, I hope you find it worthwhile and it will help you understand NSE better and apply it with more confidence.</p>
+
+<p>My approach was listing a number of terms and study them one by one. Mainly consulting <a href="http://adv-r.hadley.nz/">Advanced R</a> and the <a href="ftp://cran.r-project.org/pub/R/doc/manuals/r-release/R-lang.html">R Language Definition</a>. For tidy eval I leaned heavily on the <a href="https://cran.r-project.org/web/packages/dplyr/vignettes/programming.html">Programming with dplyr vignette</a> and the function documentations. This is also how this blog post is built. We are hopping from term to term, to we see how they relate. You will find references to the sources in the text, in case you want to read more about a topic.</p>
+
+<h1 id="base-r-non-standard-evaluation">Base R, non-standard evaluation</h1>
+
+<h2 id="expression"><code class="highlighter-rouge">expression</code></h2>
+
+<p>In standard evaluation R is like a child that receives candy from his grandmother and puts it in his mouth immediately. Every input is evaluated right away. This can be collecting the value of an object or letting a function do a calculation. An <strong>expression</strong> is some R code that is ready to be evaluated, but is not evaluated yet. Rather it is captured and saved for later. Think of it as the child’s father telling he can’t have the candy until they get home. The base R way of creating an expression is by using <code class="highlighter-rouge">parse(text = "&lt;string input&gt;")</code>.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span><span class="w">
+</span><span class="n">expr</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">parse</span><span class="p">(</span><span class="n">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"5 + 5"</span><span class="p">)</span><span class="w">
+</span><span class="n">expr</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## expression(5 + 5)
+</code></pre>
+</div>
+
+<p>Note that the <code class="highlighter-rouge">text</code> argument is not the first argument of <code class="highlighter-rouge">parse()</code> and thus must be named. To <strong>evaluate</strong> expression we run <code class="highlighter-rouge">eval()</code> on the expression.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">eval</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] 10
+</code></pre>
+</div>
+
+<p>When giving multiple lines to <code class="highlighter-rouge">parse()</code> it will create a list-like object of multiple expressions.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">multi_exp</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">parse</span><span class="p">(</span><span class="n">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="w">
+  </span><span class="s2">"x
+   3 + 3"</span><span class="w">
+</span><span class="p">))</span><span class="w">
+</span><span class="n">multi_exp</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">class</span><span class="p">()</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "expression"
+</code></pre>
+</div>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">multi_exp</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">length</span><span class="p">()</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] 2
+</code></pre>
+</div>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">multi_exp</span><span class="p">[[</span><span class="m">1</span><span class="p">]]</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## x
+</code></pre>
+</div>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">multi_exp</span><span class="p">[[</span><span class="m">1</span><span class="p">]]</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">class</span><span class="p">()</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "name"
+</code></pre>
+</div>
+
+<p>Strange, the first element of the expression is not an <code class="highlighter-rouge">expression</code>, but a <code class="highlighter-rouge">name</code>. What’s up with that?</p>
+
+<h2 id="name"><code class="highlighter-rouge">name</code></h2>
+
+<p>When creating an object in R, you are binding the name of the object to a value. This binding of value and name is done in an <strong>environment</strong>. In the following, the name <code class="highlighter-rouge">x</code> gets associated with the value 50. Since we did not create a specific environment, this is a binding in the global environment.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">50</span><span class="w">
+</span></code></pre>
+</div>
+
+<p>Normally, we give R the object name to retrieve the corresponding value. However, when we save the objects name as an expression, it is not evaluated but stored as <code class="highlighter-rouge">name</code> object. (Confusingly, when the expression of length 1, it is of class <code class="highlighter-rouge">expression</code> instead of class <code class="highlighter-rouge">name</code>). So <code class="highlighter-rouge">name</code> is a subclass of expression, it is created when the unevaluated R code will retrieve the value of an object once evaluated.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">exp_x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">parse</span><span class="p">(</span><span class="n">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"x"</span><span class="p">)</span><span class="w">
+</span><span class="n">eval</span><span class="p">(</span><span class="n">exp_x</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] 50
+</code></pre>
+</div>
+<p>This way we can build a request for later. The variable requested for doesn’t even have to exist at creation time. (Like granny having no candy herself, but telling the kid that he can have candy when he gets back at his parent’s place).</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">eval_me</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">parse</span><span class="p">(</span><span class="n">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"y"</span><span class="p">)</span><span class="w">
+</span><span class="n">eval</span><span class="p">(</span><span class="n">eval_me</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## Error in eval(eval_me): object 'y' not found
+</code></pre>
+</div>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s2">"I am ready"</span><span class="w">
+</span><span class="n">eval</span><span class="p">(</span><span class="n">eval_me</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "I am ready"
+</code></pre>
+</div>
+
+<p>Now you might wonder, in the tidyverse packages I can conveniently pass bare object names, there is no need to provide strings. This is possible in base R too, with the function <code class="highlighter-rouge">quote()</code>. It quotes its input, which is capturing the R code as provided.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="nf">quote</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## x
+</code></pre>
+</div>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="nf">quote</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">class</span><span class="p">()</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "name"
+</code></pre>
+</div>
+
+<p>If we want to quickly create a <code class="highlighter-rouge">name</code> from a string, instead of running <code class="highlighter-rouge">parse()</code> we can also use <code class="highlighter-rouge">as.name</code>.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">as.name</span><span class="p">(</span><span class="s2">"x"</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## x
+</code></pre>
+</div>
+<p>And finally to make matters nice and unclear, a name is also called a <code class="highlighter-rouge">symbol</code> and the function <code class="highlighter-rouge">as.symbol()</code> does the same as <code class="highlighter-rouge">as.name()</code>. Perfect, we have a good idea about quoting variable names and how to retrieve their value later. Now, lets call some functions.</p>
+
+<h2 id="call"><code class="highlighter-rouge">call</code></h2>
+
+<p>When we delaying the evaluation of a function call, we arrive at the second subcategory of expressions: the <code class="highlighter-rouge">call</code>. The function to be called, with the names of the objects used for the arguments, are stored until further notice.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">wait_for_it</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">quote</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w">
+</span><span class="nf">class</span><span class="p">(</span><span class="n">wait_for_it</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "call"
+</code></pre>
+</div>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">3</span><span class="p">;</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">8</span><span class="w">
+</span><span class="n">eval</span><span class="p">(</span><span class="n">wait_for_it</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] 11
+</code></pre>
+</div>
+
+<p>Note that <code class="highlighter-rouge">+</code> is a function, like every action that happens in R. We have already seen that from a string we can get to an expression with <code class="highlighter-rouge">parse()</code>. Not surprisingly, <code class="highlighter-rouge">deparse()</code> returns the expression as a string. This allows us to do stuff like:</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">print_func</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">expr</span><span class="p">){</span><span class="w">
+  </span><span class="n">paste</span><span class="p">(</span><span class="s2">"The value of"</span><span class="p">,</span><span class="w"> </span><span class="n">deparse</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span><span class="w"> </span><span class="s2">"is"</span><span class="p">,</span><span class="w"> </span><span class="n">eval</span><span class="p">(</span><span class="n">expr</span><span class="p">))</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="n">print_func</span><span class="p">(</span><span class="n">wait_for_it</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "The value of x + y is 11"
+</code></pre>
+</div>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">print_func</span><span class="p">(</span><span class="nf">quote</span><span class="p">(</span><span class="nf">log</span><span class="p">(</span><span class="m">42</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="m">1</span><span class="p">)))</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "The value of log(42) %&gt;% round(1) is 3.7"
+</code></pre>
+</div>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">print_func</span><span class="p">(</span><span class="nf">quote</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "The value of x is 3"
+</code></pre>
+</div>
+
+<p>When the expression is a name, we print the name and the value of the object associated with the name. When it is a call, we print the function call and the evaluation of it.</p>
+
+<h2 id="environment-and-closure"><code class="highlighter-rouge">environment</code> and <code class="highlighter-rouge">closure</code></h2>
+
+<p>In the last block we used a function in which we applied NSE. No coincidence, NSE and functions are a strong and natural pair. With NSE we can create powerful and user-friendly functions, like the ones in <code class="highlighter-rouge">ggplot2</code> and <code class="highlighter-rouge">dplyr</code>. We need to elaborate on <strong>environments</strong> and <strong>closures</strong> here. I told you that an object is the binding of a name and a value in an environment. When starting an R session, you are in the global environment <a href="http://adv-r.hadley.nz/environments.html">Adv-R</a>. All objects created live happily in the global.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">z</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">25</span><span class="w">
+</span></code></pre>
+</div>
+
+<p>A function creates a new environment, objects of the same name as objects in the global can live here with different values bound to them.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">z_func</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">z</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">12</span><span class="w">
+  </span><span class="n">z</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="n">z_func</span><span class="p">()</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] 12
+</code></pre>
+</div>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">z</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] 25
+</code></pre>
+</div>
+
+<p>The z_func did not change the global environment, but created an object in its own environment. Now functions are of a type called a <code class="highlighter-rouge">closure</code>.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">typeof</span><span class="p">(</span><span class="n">z_func</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "closure"
+</code></pre>
+</div>
+
+<p>They are called this way because they <em>enclose</em> their environment. At creation they have a look around in the environment in which they are created and capture all the names and values that are available there. They don’t just know the names of the objects in their own environment, but also in the environment in which they were created <a href="http://adv-r.hadley.nz/functional-programming.html#closures">Adv-R</a>.</p>
+
+<p>Keep the concept of a closure in mind, we will revisit it.</p>
+
+<h2 id="substitute-and-promise"><code class="highlighter-rouge">substitute</code> and <code class="highlighter-rouge">promise</code></h2>
+
+<p>With the knowledge gained in the above we can start and try to write our own NSE functions. Lets make a function that adds a column to a data frame that is the square of a column that is already in it.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">add_squared</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">col_name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">new_colname</span><span class="w">      </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">paste0</span><span class="p">(</span><span class="n">deparse</span><span class="p">(</span><span class="n">col_name</span><span class="p">),</span><span class="w"> </span><span class="s2">"_sq"</span><span class="p">)</span><span class="w">
+  </span><span class="n">x</span><span class="p">[,</span><span class="w"> </span><span class="n">new_colname</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="w"> </span><span class="p">,</span><span class="n">deparse</span><span class="p">(</span><span class="n">col_name</span><span class="p">)]</span><span class="o">^</span><span class="m">2</span><span class="w">
+  </span><span class="n">x</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="n">add_squared</span><span class="p">(</span><span class="n">mtcars</span><span class="p">,</span><span class="w"> </span><span class="nf">quote</span><span class="p">(</span><span class="n">cyl</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">head</span><span class="p">(</span><span class="m">1</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>##           mpg cyl disp  hp drat   wt  qsec vs am gear carb cyl_sq
+## Mazda RX4  21   6  160 110  3.9 2.62 16.46  0  1    4    4     36
+</code></pre>
+</div>
+
+<p>You might say, “that is not too convenient, I still need to quote the col_name myself”. Well, you are very right, it would be more helpful if the function did the quoting for you. Unfortunately placing <code class="highlighter-rouge">quote(col_name)</code> inside the function body is of no use. <code class="highlighter-rouge">quote()</code> makes a literal quote of its input. So it would make the <code class="highlighter-rouge">name</code> <em>col_name</em> here each time it was called, no matter the value that was given to the argument. Rather than quoting the value that was provided to this argument.</p>
+
+<p>Here we need <code class="highlighter-rouge">substitute()</code>. This will lookup all the object names provided to it, and if it finds a value for that name, it will substitute the name for its value <a href="http://adv-r.hadley.nz/nse.html#substitute">Adv-R</a>. Lets do a filter function to demonstrate.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">my_filt</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">filt_cond</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">filt_cond_q</span><span class="w">  </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">substitute</span><span class="p">(</span><span class="n">filt_cond</span><span class="p">)</span><span class="w">
+  </span><span class="n">rows_to_keep</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">eval</span><span class="p">(</span><span class="n">filt_cond_q</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w">
+  </span><span class="n">x</span><span class="p">[</span><span class="n">rows_to_keep</span><span class="p">,</span><span class="w"> </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="n">my_filt</span><span class="p">(</span><span class="n">mtcars</span><span class="p">,</span><span class="w"> </span><span class="n">mpg</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">21</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>##               mpg cyl disp  hp drat    wt  qsec vs am gear carb
+## Mazda RX4      21   6  160 110  3.9 2.620 16.46  0  1    4    4
+## Mazda RX4 Wag  21   6  160 110  3.9 2.875 17.02  0  1    4    4
+</code></pre>
+</div>
+
+<p>Yeah, that works. But, wait a minute. How does <code class="highlighter-rouge">eval()</code> now know that <em>mpg</em> is a column in <code class="highlighter-rouge">x</code>? We provided <code class="highlighter-rouge">x</code> to the <code class="highlighter-rouge">eval</code> function, but how does this work? Well, the data frame <code class="highlighter-rouge">x</code> was provided to the <code class="highlighter-rouge">envir</code> argument of <code class="highlighter-rouge">eval()</code>. A data frame, thus, is a valid environment in which we can evaluate expressions. <em>mpg</em> lives in <code class="highlighter-rouge">x</code>, so the evaluation of <code class="highlighter-rouge">filt_cond_q</code> here gives the desired result.</p>
+
+<p>When you think about it a little longer, NSE is only possible when function arguments are not evaluated directly. If the function was the inpatient kid that wanted to put <code class="highlighter-rouge">filt_cond</code> in its mouth right away, it would have failed to find an object with the name <em>mpg</em> in the global environment. When the function is called, a provided arguments is stored in a <strong>promise</strong>. The promise of the argument contains the value of the argument, but also an expression of the argument. The function does not bother about the value of the promise, until the function argument is actually used in the function. The <code class="highlighter-rouge">substitute()</code> function does only enter the expression part of the promise. In the <code class="highlighter-rouge">my_filt()</code> example, the promise associated with the <code class="highlighter-rouge">x</code> argument will have the actual data frame belonging to the object <code class="highlighter-rouge">mtcars</code> as its value, and the name <em>mtcars</em> as its expression. In the second and third line of the function, the value of this argument is accessed. The promise associated with the <code class="highlighter-rouge">filt_cond</code> argument, however. does not have a value. But it does have a call as its expression. As soon as we use this argument, the function would fail. But we don’t. With <code class="highlighter-rouge">substitute()</code> we only access the expression of the promise <a href="https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Promise-objects">R lang</a>.</p>
+
+<h2 id="formula"><code class="highlighter-rouge">formula</code></h2>
+
+<p>Before we move to tidy eval there is one more concept we have to elaborate on, the <code class="highlighter-rouge">formula</code>. Probably you have used formulas a lot, but did you ever think about how odd they are? Take the following example</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">mod</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">vs</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">mpg</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">cyl</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mtcars</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<p>No R user would have trouble reading the above, but picture yourself coming from another programming language and stumbling upon it. It as an example of a domain specific language (DSL). DSLs exploit R’s NSE possibilities by giving alternative meaning to the language in specific contexts. Other examples are <code class="highlighter-rouge">ggplot2</code> and <code class="highlighter-rouge">dplyr</code>. Just like functions, do formulas enclose the environment they are created in. Meaning that when the formula is evaluated later in a different environment, it can still access all the object that lived in its original environment.</p>
+
+<p>These are, to my understanding, the core elements of NSE in base R. If you don’t care about  tidy eval you can stop reading here and try to build your own NSE functions. Thanks for making it this far.</p>
+
+<h1 id="tidy-evaluation"><code class="highlighter-rouge">tidy evaluation</code></h1>
+
+<p>There are two key additions of tidy eval to base R NSE. It uses <strong>quasiquotation</strong> and it introduces a new type of quoted object, called a <strong>quosure</strong>. Let’s find out about them one by one.</p>
+
+<h2 id="quasiquotation"><code class="highlighter-rouge">quasiquotation</code></h2>
+
+<p>We now know that in normal quotation the expression is captured to be evaluated later, rather than swallowed right away. Quasiquotation enables the user to swallow parts of the expression right away, while quoting the rest. Let’s find out with an example. We can quote the following simple function.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="nf">quote</span><span class="p">(</span><span class="n">z</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">4</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## z - x + 4
+</code></pre>
+</div>
+
+<p>Say we know the value of <code class="highlighter-rouge">x</code> already at the moment of quoting. How can we let the second part to be evaluated right away and quote <code class="highlighter-rouge">z -</code> the result of this evaluation? In other words how do we <strong>unquote</strong> the <code class="highlighter-rouge">x + 4</code> part? In base R this is not going to happen, but with tidy eval this can be done.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">4</span><span class="w">
+</span><span class="n">rlang</span><span class="o">::</span><span class="n">expr</span><span class="p">(</span><span class="n">z</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="o">!!</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">4</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## z - 8
+</code></pre>
+</div>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">rlang</span><span class="o">::</span><span class="n">expr</span><span class="p">(</span><span class="n">z</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="o">!!</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">4</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">class</span><span class="p">()</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "call"
+</code></pre>
+</div>
+
+<p>Everything after the <code class="highlighter-rouge">!!</code> (bang bang) is unquoted. If we do not use unquoting, there is no reason to use <code class="highlighter-rouge">rlang::expr()</code> instead of <code class="highlighter-rouge">quote()</code>. They have the exact same result. There is also a tidy eval equivalent for <code class="highlighter-rouge">substitute()</code>, namely <code class="highlighter-rouge">enexpr()</code>.</p>
+
+<p>Now the appeal of functions that have implemented quasiquotation is that all the advantages of easy-to-use NSE interfaces remain. At the same time they enable the user to pack the functions that already quote, in custom-made wrappers. Example please! Something I do often is creating a frequency table of the values of a variable in a data frame. I want this in a function with the data frame and column name as arguments. Wrapping <code class="highlighter-rouge">dplyr</code> functions in the following way:</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">freq_table</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">col_q</span><span class="w">   </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">rlang</span><span class="o">::</span><span class="n">enexpr</span><span class="p">(</span><span class="n">col</span><span class="p">)</span><span class="w">
+  </span><span class="n">total_n</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">nrow</span><span class="p">()</span><span class="w">
+  </span><span class="n">x</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">group_by</span><span class="p">(</span><span class="o">!!</span><span class="n">col_q</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">summarise</span><span class="p">(</span><span class="n">freq</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">()</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">total_n</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="n">mtcars</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">freq_table</span><span class="p">(</span><span class="n">cyl</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## # A tibble: 3 x 2
+##     cyl    freq
+##   &lt;dbl&gt;   &lt;dbl&gt;
+## 1     4 0.34375
+## 2     6 0.21875
+## 3     8 0.43750
+</code></pre>
+</div>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">mtcars</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">freq_table</span><span class="p">(</span><span class="n">vs</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## # A tibble: 2 x 2
+##      vs   freq
+##   &lt;dbl&gt;  &lt;dbl&gt;
+## 1     0 0.5625
+## 2     1 0.4375
+</code></pre>
+</div>
+
+<p>So the functions that use tidy eval, like those in <code class="highlighter-rouge">dplyr</code>, automatically quote their input. That is what enables you to type away and get results as quickly as you can when doing data analysis. However if you want to write programs around them you have to take care of two steps. First, quote the argument that is going to be evaluated by the functions used. If we don’t do this our wrapper function would fail because we have provided a name or call that cannot be found in the environment the function is called from. Second, since the <code class="highlighter-rouge">dplyr</code> functions quote their input themselves, we have to unquote the quoted arguments in these functions. If we don’t do this the <code class="highlighter-rouge">dplyr</code> function will quote the variable name rather than its content.</p>
+
+<h2 id="quosure"><code class="highlighter-rouge">quosure</code></h2>
+
+<p>Very nice, that quaisquoting. Now what’s up with quosures? From their name you might guess they are hybrids of <code class="highlighter-rouge">quotes</code> and <code class="highlighter-rouge">closures</code>. We have seen that combination before when we looked at formulas. But formulas are not expressions, they are a DSL that is created through NSE. If we look at quosures, we will see that they behave both like expressions and as formulas.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">quo</span><span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">class</span><span class="p">()</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "quosure" "formula"
+</code></pre>
+</div>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">quo</span><span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">rlang</span><span class="o">::</span><span class="n">is_expr</span><span class="p">()</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] TRUE
+</code></pre>
+</div>
+
+<p>Quosures are one-sided fomulas, capturing their environment, but not indicating a modelling relationship. By the way, we’ve seen the <code class="highlighter-rouge">quo()</code> function in action. This literally quotes its input, just like <code class="highlighter-rouge">quote()</code> and <code class="highlighter-rouge">rlang::expr()</code> do. The quosure equivalent of <code class="highlighter-rouge">substitute()</code> and <code class="highlighter-rouge">enexpr()</code> is <code class="highlighter-rouge">enquo()</code>.</p>
+
+<p>Just like names, calls can be converted to a quosure too.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">quo</span><span class="p">(</span><span class="m">2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">class</span><span class="p">()</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "quosure" "formula"
+</code></pre>
+</div>
+<p>Note that quosures don’t make a lower level distinction between calls and names. Every expression becomes a quosure.</p>
+
+<p>But when is this capturing of the environment actually useful? When the quosure is created in one environment and evaluated in another. This typically happens when they are created in a function and evaluated in the global environment or another function.</p>
+
+<p>In base R NSE a function can evaluate a quoted argument, it can quote a bare statement, it can even return an expression. What it cannot do however, is giving the expression memory of the variables that were present at creation.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">base_NSE_example</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">some_arg</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">some_var</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">10</span><span class="w">
+  </span><span class="nf">quote</span><span class="p">(</span><span class="n">some_var</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">some_arg</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="n">base_NSE_example</span><span class="p">(</span><span class="m">4</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">eval</span><span class="p">()</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## Error in eval(.): object 'some_var' not found
+</code></pre>
+</div>
+
+<p>The quosure is not memoryless, it will retrieve the values that were present at creation.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">tidy_eval_example</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">some_arg</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">some_var</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">10</span><span class="w">
+  </span><span class="n">quo</span><span class="p">(</span><span class="n">some_var</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">some_arg</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="n">tidy_eval_example</span><span class="p">(</span><span class="m">4</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">rlang</span><span class="o">::</span><span class="n">eval_tidy</span><span class="p">()</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] 14
+</code></pre>
+</div>
+
+<p>Note that we do need to apply <code class="highlighter-rouge">eval_tidy()</code> instead of <code class="highlighter-rouge">eval()</code> to make use of the memory of the quosure.</p>
+
+<h1 id="how-do-base-r-nse-and-tidy-eval-play-together">How do base R NSE and tidy eval play together?</h1>
+
+<p>So tidy eval is build on top of base R NSE and the two can even work together. We have seen that in quasiquotation the parts to be unquoted don’t have to be quosures, we can also unquote base objects like calls and names.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">using_base_r_in_tidy_eval</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">col_q</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">substitute</span><span class="p">(</span><span class="n">col</span><span class="p">)</span><span class="w">
+  </span><span class="n">x</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">select</span><span class="p">(</span><span class="o">!!</span><span class="n">col_q</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="n">mtcars</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">using_base_r_in_tidy_eval</span><span class="p">(</span><span class="n">cyl</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">head</span><span class="p">(</span><span class="m">1</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>##           cyl
+## Mazda RX4   6
+</code></pre>
+</div>
+
+<p>If want to use the quasiquotation of tidy eval, but prefer base R quotation, you can combine the two. It does not work the other way around. Since quosures are a new kid on the block, <code class="highlighter-rouge">eval()</code> does not know how to unquote them and will throw an error. Familiar expression objects created with tidy eval can be evaluated with <code class="highlighter-rouge">eval()</code>, since the objects do not differ from the ones created with base R functions.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">all.equal</span><span class="p">(</span><span class="nf">quote</span><span class="p">(</span><span class="n">some_name</span><span class="p">),</span><span class="w"> </span><span class="n">rlang</span><span class="o">::</span><span class="n">expr</span><span class="p">(</span><span class="n">some_name</span><span class="p">))</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] TRUE
+</code></pre>
+</div>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">all.equal</span><span class="p">(</span><span class="nf">quote</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">5</span><span class="p">),</span><span class="w"> </span><span class="n">rlang</span><span class="o">::</span><span class="n">expr</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="w"> </span><span class="m">5</span><span class="p">))</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] TRUE
+</code></pre>
+</div>
+
+<p>The only difference between these functions is on capture, objects after capture are of base types.</p>
+
+<h1 id="thank-you">Thank You</h1>
+
+<p>I took you along my NSE learning path, thank you for making it all the way through. If there is anything you think is incomplete or incorrect, let me know! This document is a living thing. You would do me and everybody who uses it as a reference a great favor by correcting it. The blog is maintained <a href="https://github.com/EdwinTh/EdwinTh.github.io/blob/master/_source/2017-09-10-nse.Rmd">here</a>, do a PR or send an email.</p>
+
+        
+          <div id="disqus_thread"></div><!-- /#disqus_thread -->
+          
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'thats-so-random'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = 'https://' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+        
+      </div><!-- /.entry-content -->
+    </div><!-- /.entry-wrapper -->
+    <nav class="pagination" role="navigation">
+      
+        <a href="https://EdwinTh.github.io/blog/dplyr-recipes/" class="btn" title="Tidy evaluation, most common actions">Previous</a>
+      
+      
+    </nav><!-- /.pagination -->
+  </article>
+</div><!-- /#main -->
+
+<div class="footer-wrapper">
+  <footer role="contentinfo" class="entry-wrapper">
+    
+
+<span>&copy; 2017 Edwin Thoen. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> using the <a href="https://mademistakes.com/work/so-simple-jekyll-theme/" rel="nofollow">So Simple Theme</a>.</span>
+<div class="social-icons">
+	<a href="https://twitter.com/edwin_thoen" title="Edwin Thoen on Twitter" target="_blank"><i class="fa fa-twitter-square fa-2x"></i></a>
+	
+	
+	<a href="https://linkedin.com/in/edwin-thoen-3139a131?trk=hp-identity-name" title="Edwin Thoen on LinkedIn" target="_blank"><i class="fa fa-linkedin-square fa-2x"></i></a>
+	<a href="http://stackoverflow.com/users/2119315/edwin" title="Edwin Thoen on StackExchange" target="_blank"><i class="fa fa-stack-exchange fa-2x"></i></a>
+	
+	
+	<a href="https://github.com/EdwinTh" title="Edwin Thoen on Github" target="_blank"><i class="fa fa-github-square fa-2x"></i></a>
+	
+  
+	
+  <a href="https://EdwinTh.github.io/feed.xml" title="Atom/RSS feed"><i class="fa fa-rss-square fa-2x"></i></a>
+</div><!-- /.social-icons -->
+
+  </footer>
+</div><!-- /.footer-wrapper -->
+
+<script type="text/javascript">
+  var BASE_URL = 'https://EdwinTh.github.io';
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="https://EdwinTh.github.io/assets/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+<script src="https://EdwinTh.github.io/assets/js/scripts.min.js"></script>
+
+
+
+
+</body>
+</html>
