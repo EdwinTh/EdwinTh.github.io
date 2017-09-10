@@ -276,4 +276,4 @@ The only difference between these functions is on capture, objects after capture
 
 # Thank You
 
-I took you along my NSE learning path, thank you for making it all the way through. If there is anything you think is incomplete or incorrect, let me know! This document is a living thing. You would do me and everybody who uses it as a reference a great favor by correcting it. The blog is maintained [here](), do a PR or send an email.
+I took you along my NSE learning path, thank you for making it all the way through. If there is anything you think is incomplete or incorrect, let me know! This document is a living thing. You would do me and everybody who uses it as a reference a great favor by correcting it. The blog is maintained [here](https://github.com/EdwinTh/EdwinTh.github.io/blob/master/_source/2017-09-10-nse.Rmd), do a PR or send an email.
