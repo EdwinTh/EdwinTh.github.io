@@ -1,64 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.1.6">Jekyll</generator><link href="https://EdwinTh.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://EdwinTh.github.io/" rel="alternate" type="text/html" /><updated>2017-09-10T14:46:07+02:00</updated><id>https://EdwinTh.github.io/</id><title>That&#39;s so Random</title><subtitle>A playground for data analysis and R programming.</subtitle><entry><title>Non-standard evaluation, how tidy eval builds on base R</title><link href="https://EdwinTh.github.io/blog/nse/" rel="alternate" type="text/html" title="Non-standard evaluation, how tidy eval builds on base R" /><published>2017-09-10T14:30:00+02:00</published><updated>2017-09-10T14:30:00+02:00</updated><id>https://EdwinTh.github.io/blog/nse</id><content type="html" xml:base="https://EdwinTh.github.io/blog/nse/">&lt;p&gt;As with many aspects of the tidyverse, its non-standard evaluation (NSE) implementation is not something entirely new, but built on top of base R. What makes this one so challenging to get your mind around, is that the &lt;a href=&quot;http://maraaverick.rbind.io/2017/08/tidyeval-resource-roundup/&quot;&gt;Honorable Doctor Sir Lord General&lt;/a&gt; and friends brought concepts to the realm of the mortals that many of us had no, or only a vague, understanding of. Earlier, I gave an overview of &lt;a href=&quot;https://edwinth.github.io/blog/dplyr-recipes/&quot;&gt;the most common actions in tidy eval&lt;/a&gt;. Although appreciated by many, it left me unsatisfied, because it made clear to me I did not really understand NSE. Neither in base R, nor in tidy eval. Therefore, I bit the bullet and really studied it for a few evenings. Starting with base R NSE, and later learning what tidy eval actually adds to it. I decided to share the things I learned in this, rather lengthy, blog. I think it captures the essentials in NSE, although it surely is incomplete and might be even erronous at places. Still, I hope you find it worthwhile and it will help you understand NSE better and apply it with more confidence.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.1.6">Jekyll</generator><link href="https://EdwinTh.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://EdwinTh.github.io/" rel="alternate" type="text/html" /><updated>2017-09-11T20:32:47+02:00</updated><id>https://EdwinTh.github.io/</id><title>That&#39;s so Random</title><subtitle>A playground for data analysis and R programming.</subtitle><entry><title>Non-standard evaluation, how tidy eval builds on base R</title><link href="https://EdwinTh.github.io/blog/nse/" rel="alternate" type="text/html" title="Non-standard evaluation, how tidy eval builds on base R" /><published>2017-09-10T14:30:00+02:00</published><updated>2017-09-10T14:30:00+02:00</updated><id>https://EdwinTh.github.io/blog/nse</id><content type="html" xml:base="https://EdwinTh.github.io/blog/nse/">&lt;p&gt;As with many aspects of the tidyverse, its non-standard evaluation (NSE) implementation is not something entirely new, but built on top of base R. What makes this one so challenging to get your mind around, is that the &lt;a href=&quot;http://maraaverick.rbind.io/2017/08/tidyeval-resource-roundup/&quot;&gt;Honorable Doctor Sir Lord General&lt;/a&gt; and friends brought concepts to the realm of the mortals that many of us had no, or only a vague, understanding of. Earlier, I gave an overview of &lt;a href=&quot;https://edwinth.github.io/blog/dplyr-recipes/&quot;&gt;the most common actions in tidy eval&lt;/a&gt;. Although appreciated by many, it left me unsatisfied, because it made clear to me I did not really understand NSE. Neither in base R, nor in tidy eval. Therefore, I bit the bullet and really studied it for a few evenings. Starting with base R NSE, and later learning what tidy eval actually adds to it. I decided to share the things I learned in this, rather lengthy, blog. I think it captures the essentials in NSE, although it surely is incomplete and might be even erronous at places. Still, I hope you find it worthwhile and it will help you understand NSE better and apply it with more confidence.&lt;/p&gt;
 
 &lt;p&gt;My approach was listing a number of terms and study them one by one. Mainly consulting &lt;a href=&quot;http://adv-r.hadley.nz/&quot;&gt;Advanced R&lt;/a&gt; and the &lt;a href=&quot;ftp://cran.r-project.org/pub/R/doc/manuals/r-release/R-lang.html&quot;&gt;R Language Definition&lt;/a&gt;. For tidy eval I leaned heavily on the &lt;a href=&quot;https://cran.r-project.org/web/packages/dplyr/vignettes/programming.html&quot;&gt;Programming with dplyr vignette&lt;/a&gt; and the function documentations. This is also how this blog post is built. We are hopping from term to term, to we see how they relate. You will find references to the sources in the text, in case you want to read more about a topic.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Note this is v2, in which the &lt;code class=&quot;highlighter-rouge&quot;&gt;expression&lt;/code&gt; section is rewritten. To see earlier versions see &lt;a href=&quot;https://github.com/EdwinTh/EdwinTh.github.io/releases&quot;&gt;here&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
 &lt;h1 id=&quot;base-r-non-standard-evaluation&quot;&gt;Base R, non-standard evaluation&lt;/h1&gt;
 
 &lt;h2 id=&quot;expression&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;expression&lt;/code&gt;&lt;/h2&gt;
 
-&lt;p&gt;In standard evaluation R is like a child that receives candy from his grandmother and puts it in his mouth immediately. Every input is evaluated right away. This can be collecting the value of an object or letting a function do a calculation. An &lt;strong&gt;expression&lt;/strong&gt; is some R code that is ready to be evaluated, but is not evaluated yet. Rather it is captured and saved for later. Think of it as the child’s father telling he can’t have the candy until they get home. The base R way of creating an expression is by using &lt;code class=&quot;highlighter-rouge&quot;&gt;parse(text = &quot;&amp;lt;string input&amp;gt;&quot;)&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;In standard evaluation R is like a child that receives candy from his grandmother and puts it in his mouth immediately. Every input is evaluated right away. An &lt;strong&gt;expression&lt;/strong&gt; is some R code that is ready to be evaluated, but is not evaluated yet. Rather it is captured and saved for later. Think of it as the child’s father telling he can’t have the candy until they get home. Expressions break down in four categories; constants (like 4, TRUE), names (variable names referring to an object), calls (letting functions do a calculation) and pairlists. We will only look at &lt;code class=&quot;highlighter-rouge&quot;&gt;names&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;calls&lt;/code&gt; here. Constants are equal to their value when captured in an expression, if you want to learn about pairlists see &lt;a href=&quot;http://adv-r.hadley.nz/metaprogramming.html#pairlists&quot;&gt;Adv-R&lt;/a&gt;. The act of capturing the expression instead of evaluating it, is called quoting. This is done by the &lt;code class=&quot;highlighter-rouge&quot;&gt;quote()&lt;/code&gt; function.&lt;/p&gt;
 
 &lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tidyverse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;expr&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;5 + 5&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;expr&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## expression(5 + 5)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Note that the &lt;code class=&quot;highlighter-rouge&quot;&gt;text&lt;/code&gt; argument is not the first argument of &lt;code class=&quot;highlighter-rouge&quot;&gt;parse()&lt;/code&gt; and thus must be named. To &lt;strong&gt;evaluate&lt;/strong&gt; expression we run &lt;code class=&quot;highlighter-rouge&quot;&gt;eval()&lt;/code&gt; on the expression.&lt;/p&gt;
-
-&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;eval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;expr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## [1] 10
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;When giving multiple lines to &lt;code class=&quot;highlighter-rouge&quot;&gt;parse()&lt;/code&gt; it will create a list-like object of multiple expressions.&lt;/p&gt;
-
-&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;multi_exp&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;x
-   3 + 3&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;multi_exp&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## [1] &quot;expression&quot;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;multi_exp&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## [1] 2
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;multi_exp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## x
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;multi_exp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;quote&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
@@ -66,7 +19,15 @@
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;Strange, the first element of the expression is not an &lt;code class=&quot;highlighter-rouge&quot;&gt;expression&lt;/code&gt;, but a &lt;code class=&quot;highlighter-rouge&quot;&gt;name&lt;/code&gt;. What’s up with that?&lt;/p&gt;
+&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nf&quot;&gt;quote&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mean&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## [1] &quot;call&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Confusingly, there is also the class &lt;code class=&quot;highlighter-rouge&quot;&gt;expression&lt;/code&gt;, created by the &lt;code class=&quot;highlighter-rouge&quot;&gt;parse()&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;expression()&lt;/code&gt; functions. You should think of these as lists of names and calls. Those will not be furtherly discussed here. When I use the term &lt;em&gt;expression&lt;/em&gt; I am referring to the concept of R code that still needs to be evaluated, not objects of class &lt;code class=&quot;highlighter-rouge&quot;&gt;expression&lt;/code&gt;.&lt;/p&gt;
 
 &lt;h2 id=&quot;name&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;name&lt;/code&gt;&lt;/h2&gt;
 
@@ -76,9 +37,9 @@
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;Normally, we give R the object name to retrieve the corresponding value. However, when we save the objects name as an expression, it is not evaluated but stored as &lt;code class=&quot;highlighter-rouge&quot;&gt;name&lt;/code&gt; object. (Confusingly, when the expression of length 1, it is of class &lt;code class=&quot;highlighter-rouge&quot;&gt;expression&lt;/code&gt; instead of class &lt;code class=&quot;highlighter-rouge&quot;&gt;name&lt;/code&gt;). So &lt;code class=&quot;highlighter-rouge&quot;&gt;name&lt;/code&gt; is a subclass of expression, it is created when the unevaluated R code will retrieve the value of an object once evaluated.&lt;/p&gt;
+&lt;p&gt;Normally, we give R the object name to retrieve the corresponding value. However, when we save the objects name as an expression, it is not evaluated but stored as &lt;code class=&quot;highlighter-rouge&quot;&gt;name&lt;/code&gt; object.&lt;/p&gt;
 
-&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;exp_x&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;x&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;exp_x&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;quote&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;eval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;exp_x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
@@ -88,7 +49,7 @@
 &lt;/div&gt;
 &lt;p&gt;This way we can build a request for later. The variable requested for doesn’t even have to exist at creation time. (Like granny having no candy herself, but telling the kid that he can have candy when he gets back at his parent’s place).&lt;/p&gt;
 
-&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;eval_me&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;y&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;eval_me&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;quote&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;eval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;eval_me&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
@@ -106,25 +67,7 @@
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;Now you might wonder, in the tidyverse packages I can conveniently pass bare object names, there is no need to provide strings. This is possible in base R too, with the function &lt;code class=&quot;highlighter-rouge&quot;&gt;quote()&lt;/code&gt;. It quotes its input, which is capturing the R code as provided.&lt;/p&gt;
-
-&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nf&quot;&gt;quote&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## x
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nf&quot;&gt;quote&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## [1] &quot;name&quot;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;If we want to quickly create a &lt;code class=&quot;highlighter-rouge&quot;&gt;name&lt;/code&gt; from a string, instead of running &lt;code class=&quot;highlighter-rouge&quot;&gt;parse()&lt;/code&gt; we can also use &lt;code class=&quot;highlighter-rouge&quot;&gt;as.name&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;If we want to create a &lt;code class=&quot;highlighter-rouge&quot;&gt;name&lt;/code&gt; from a string, for instance because you are creating on function output, you can use &lt;code class=&quot;highlighter-rouge&quot;&gt;as.name()&lt;/code&gt;.&lt;/p&gt;
 
 &lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;as.name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;x&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
@@ -140,15 +83,7 @@
 &lt;p&gt;When we delaying the evaluation of a function call, we arrive at the second subcategory of expressions: the &lt;code class=&quot;highlighter-rouge&quot;&gt;call&lt;/code&gt;. The function to be called, with the names of the objects used for the arguments, are stored until further notice.&lt;/p&gt;
 
 &lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;wait_for_it&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;quote&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;wait_for_it&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## [1] &quot;call&quot;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;eval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;wait_for_it&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
@@ -157,7 +92,7 @@
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;Note that &lt;code class=&quot;highlighter-rouge&quot;&gt;+&lt;/code&gt; is a function, like every action that happens in R. We have already seen that from a string we can get to an expression with &lt;code class=&quot;highlighter-rouge&quot;&gt;parse()&lt;/code&gt;. Not surprisingly, &lt;code class=&quot;highlighter-rouge&quot;&gt;deparse()&lt;/code&gt; returns the expression as a string. This allows us to do stuff like:&lt;/p&gt;
+&lt;p&gt;Note that &lt;code class=&quot;highlighter-rouge&quot;&gt;+&lt;/code&gt; is a function, like every action that happens in R. If we want to return an expression as a string, we can apply &lt;code class=&quot;highlighter-rouge&quot;&gt;deparse()&lt;/code&gt; on it. This allows us to do stuff like:&lt;/p&gt;
 
 &lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;print_func&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;expr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
   &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;paste&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;The value of&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;deparse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;expr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;is&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;eval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;expr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
