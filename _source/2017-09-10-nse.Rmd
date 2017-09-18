@@ -205,11 +205,40 @@ quo(2 + 2) %>% class()
 ```
 Note that quosures don't make a lower level distinction between calls and names. Every expression becomes a quosure.
 
-But when is this capturing of the environment actually useful? When the quosure is created in one environment and evaluated in another. This typically happens when they are created in a function and evaluated in the global environment or another function.
+Before we dig in an elaborate example, there is the concept of **overscope** to discuss. What would you expect the following would return?
 
-In base R NSE a function can evaluate a quoted argument, it can quote a bare statement, it can even return an expression. What it cannot do however, is giving the expression memory of the variables that were present at creation. 
+```{r eval=FALSE}
+x <- "The enclosed environment"
+x_quoted <- quo(x)
+eval_func <- function(q) {
+  x <- "The function environment"
+  rlang::eval_tidy(q)
+}
+eval_func(x_quoted)
+```
+The quosure *x_quoted* has access to two environments in which the variable *x* lives. The question is, which one prevails? The answer is:
 
-```{r error=TRUE}
+```{r echo=FALSE}
+x <- "The enclosed environment"
+x_quoted <- quo(x)
+eval_func <- function(q) {
+  x <- "The function environment"
+  rlang::eval_tidy(q)
+}
+```
+
+
+```{r}
+eval_func(x_quoted)
+```
+
+The enclosed environment does *overscope* the function environment.
+
+When is capturing of the environment by the expression actually useful? When the quosure is created in one environment and evaluated in another. This typically happens when it is created in a function and evaluated in the global environment or another function.
+
+In base R NSE a function can evaluate a quoted argument, it can quote a bare statement, it can even return an expression. What it cannot do however, is giving the expression memory of the variables that were present at creation.
+
+```{r error = TRUE}
 base_NSE_example <- function(some_arg) {
   some_var <- 10
   quote(some_var + some_arg)
@@ -227,7 +256,18 @@ tidy_eval_example <- function(some_arg) {
 tidy_eval_example(4) %>% rlang::eval_tidy()
 ```
 
-Note that we do need to apply `eval_tidy()` instead of `eval()` to make use of the memory of the quosure.
+Note that we do need to apply eval_tidy() instead of eval() to make use of the memory of the quosure.
+
+Now you might say, if we just use `substitute()` instead of `quote()` in the `base_NSE_example()`, it would return 14 too. You are right, if we just capture the environment and evaluate it later, there is not really a point in saving the whole bunch to evaluate later to retrieve the values. However, we don't have to use the value in the enclosed environment when applying `eval_tidy()` to a quosure. With the `data` argument we can provide a value for a name in the quosure, that overscopes the enclosed environment for the provided name(s). Example. Using `tidy_eval_example()` with *some_arg* = 4, will give *some_arg* = 4 and *some_var* = 10 in the enclosed environment. Now, we can overrule one or both values in `eval_tidy()`.
+
+```{r}
+tidy_eval_example(4) %>% 
+  rlang::eval_tidy(list(some_var = 42))
+tidy_eval_example(4) %>% 
+  rlang::eval_tidy(list(some_var = 42, some_arg = -1))
+```
+
+The value in the enclosed environment is thus carried with the quosure wherever it goes, but does not have to be used. We can also evaluate (a part) of the quosure in a different environment. 
 
 # How do base R NSE and tidy eval play together?
 
