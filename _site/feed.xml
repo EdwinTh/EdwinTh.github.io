@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.1.6">Jekyll</generator><link href="https://EdwinTh.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://EdwinTh.github.io/" rel="alternate" type="text/html" /><updated>2017-09-11T20:32:47+02:00</updated><id>https://EdwinTh.github.io/</id><title>That&#39;s so Random</title><subtitle>A playground for data analysis and R programming.</subtitle><entry><title>Non-standard evaluation, how tidy eval builds on base R</title><link href="https://EdwinTh.github.io/blog/nse/" rel="alternate" type="text/html" title="Non-standard evaluation, how tidy eval builds on base R" /><published>2017-09-10T14:30:00+02:00</published><updated>2017-09-10T14:30:00+02:00</updated><id>https://EdwinTh.github.io/blog/nse</id><content type="html" xml:base="https://EdwinTh.github.io/blog/nse/">&lt;p&gt;As with many aspects of the tidyverse, its non-standard evaluation (NSE) implementation is not something entirely new, but built on top of base R. What makes this one so challenging to get your mind around, is that the &lt;a href=&quot;http://maraaverick.rbind.io/2017/08/tidyeval-resource-roundup/&quot;&gt;Honorable Doctor Sir Lord General&lt;/a&gt; and friends brought concepts to the realm of the mortals that many of us had no, or only a vague, understanding of. Earlier, I gave an overview of &lt;a href=&quot;https://edwinth.github.io/blog/dplyr-recipes/&quot;&gt;the most common actions in tidy eval&lt;/a&gt;. Although appreciated by many, it left me unsatisfied, because it made clear to me I did not really understand NSE. Neither in base R, nor in tidy eval. Therefore, I bit the bullet and really studied it for a few evenings. Starting with base R NSE, and later learning what tidy eval actually adds to it. I decided to share the things I learned in this, rather lengthy, blog. I think it captures the essentials in NSE, although it surely is incomplete and might be even erronous at places. Still, I hope you find it worthwhile and it will help you understand NSE better and apply it with more confidence.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.1.6">Jekyll</generator><link href="https://EdwinTh.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://EdwinTh.github.io/" rel="alternate" type="text/html" /><updated>2017-09-18T18:34:33+02:00</updated><id>https://EdwinTh.github.io/</id><title>That&#39;s so Random</title><subtitle>A playground for data analysis and R programming.</subtitle><entry><title>Non-standard evaluation, how tidy eval builds on base R</title><link href="https://EdwinTh.github.io/blog/nse/" rel="alternate" type="text/html" title="Non-standard evaluation, how tidy eval builds on base R" /><published>2017-09-10T14:30:00+02:00</published><updated>2017-09-10T14:30:00+02:00</updated><id>https://EdwinTh.github.io/blog/nse</id><content type="html" xml:base="https://EdwinTh.github.io/blog/nse/">&lt;p&gt;As with many aspects of the tidyverse, its non-standard evaluation (NSE) implementation is not something entirely new, but built on top of base R. What makes this one so challenging to get your mind around, is that the &lt;a href=&quot;http://maraaverick.rbind.io/2017/08/tidyeval-resource-roundup/&quot;&gt;Honorable Doctor Sir Lord General&lt;/a&gt; and friends brought concepts to the realm of the mortals that many of us had no, or only a vague, understanding of. Earlier, I gave an overview of &lt;a href=&quot;https://edwinth.github.io/blog/dplyr-recipes/&quot;&gt;the most common actions in tidy eval&lt;/a&gt;. Although appreciated by many, it left me unsatisfied, because it made clear to me I did not really understand NSE. Neither in base R, nor in tidy eval. Therefore, I bit the bullet and really studied it for a few evenings. Starting with base R NSE, and later learning what tidy eval actually adds to it. I decided to share the things I learned in this, rather lengthy, blog. I think it captures the essentials in NSE, although it surely is incomplete and might be even erronous at places. Still, I hope you find it worthwhile and it will help you understand NSE better and apply it with more confidence.&lt;/p&gt;
 
 &lt;p&gt;My approach was listing a number of terms and study them one by one. Mainly consulting &lt;a href=&quot;http://adv-r.hadley.nz/&quot;&gt;Advanced R&lt;/a&gt; and the &lt;a href=&quot;ftp://cran.r-project.org/pub/R/doc/manuals/r-release/R-lang.html&quot;&gt;R Language Definition&lt;/a&gt;. For tidy eval I leaned heavily on the &lt;a href=&quot;https://cran.r-project.org/web/packages/dplyr/vignettes/programming.html&quot;&gt;Programming with dplyr vignette&lt;/a&gt; and the function documentations. This is also how this blog post is built. We are hopping from term to term, to we see how they relate. You will find references to the sources in the text, in case you want to read more about a topic.&lt;/p&gt;
 
-&lt;p&gt;&lt;em&gt;Note this is v2, in which the &lt;code class=&quot;highlighter-rouge&quot;&gt;expression&lt;/code&gt; section is rewritten. To see earlier versions see &lt;a href=&quot;https://github.com/EdwinTh/EdwinTh.github.io/releases&quot;&gt;here&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Note this is v3, in which the overscope gets mentioned and quosures are more elaborated on. To see earlier versions see &lt;a href=&quot;https://github.com/EdwinTh/EdwinTh.github.io/releases&quot;&gt;here&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
 &lt;h1 id=&quot;base-r-non-standard-evaluation&quot;&gt;Base R, non-standard evaluation&lt;/h1&gt;
 
@@ -80,7 +80,7 @@
 
 &lt;h2 id=&quot;call&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;call&lt;/code&gt;&lt;/h2&gt;
 
-&lt;p&gt;When we delaying the evaluation of a function call, we arrive at the second subcategory of expressions: the &lt;code class=&quot;highlighter-rouge&quot;&gt;call&lt;/code&gt;. The function to be called, with the names of the objects used for the arguments, are stored until further notice.&lt;/p&gt;
+&lt;p&gt;When we delay the evaluation of a function call, we arrive at the second subcategory of expressions: the &lt;code class=&quot;highlighter-rouge&quot;&gt;call&lt;/code&gt;. The function to be called, with the names of the objects used for the arguments, are stored until further notice.&lt;/p&gt;
 
 &lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;wait_for_it&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;quote&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
@@ -208,7 +208,7 @@
 
 &lt;p&gt;When you think about it a little longer, NSE is only possible when function arguments are not evaluated directly. If the function was the inpatient kid that wanted to put &lt;code class=&quot;highlighter-rouge&quot;&gt;filt_cond&lt;/code&gt; in its mouth right away, it would have failed to find an object with the name &lt;em&gt;mpg&lt;/em&gt; in the global environment. When the function is called, a provided arguments is stored in a &lt;strong&gt;promise&lt;/strong&gt;. The promise of the argument contains the value of the argument, but also an expression of the argument. The function does not bother about the value of the promise, until the function argument is actually used in the function. The &lt;code class=&quot;highlighter-rouge&quot;&gt;substitute()&lt;/code&gt; function does only enter the expression part of the promise. In the &lt;code class=&quot;highlighter-rouge&quot;&gt;my_filt()&lt;/code&gt; example, the promise associated with the &lt;code class=&quot;highlighter-rouge&quot;&gt;x&lt;/code&gt; argument will have the actual data frame belonging to the object &lt;code class=&quot;highlighter-rouge&quot;&gt;mtcars&lt;/code&gt; as its value, and the name &lt;em&gt;mtcars&lt;/em&gt; as its expression. In the second and third line of the function, the value of this argument is accessed. The promise associated with the &lt;code class=&quot;highlighter-rouge&quot;&gt;filt_cond&lt;/code&gt; argument, however. does not have a value. But it does have a call as its expression. As soon as we use this argument, the function would fail. But we don’t. With &lt;code class=&quot;highlighter-rouge&quot;&gt;substitute()&lt;/code&gt; we only access the expression of the promise &lt;a href=&quot;https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Promise-objects&quot;&gt;R lang&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h2 id=&quot;formula&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;formula&lt;/code&gt;&lt;/h2&gt;
+&lt;h2 id=&quot;formula-and-overscoping&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;formula&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;overscoping&lt;/code&gt;&lt;/h2&gt;
 
 &lt;p&gt;Before we move to tidy eval there is one more concept we have to elaborate on, the &lt;code class=&quot;highlighter-rouge&quot;&gt;formula&lt;/code&gt;. Probably you have used formulas a lot, but did you ever think about how odd they are? Take the following example&lt;/p&gt;
 
@@ -217,6 +217,42 @@
 &lt;/div&gt;
 
 &lt;p&gt;No R user would have trouble reading the above, but picture yourself coming from another programming language and stumbling upon it. It as an example of a domain specific language (DSL). DSLs exploit R’s NSE possibilities by giving alternative meaning to the language in specific contexts. Other examples are &lt;code class=&quot;highlighter-rouge&quot;&gt;ggplot2&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;dplyr&lt;/code&gt;. Just like functions, do formulas enclose the environment they are created in. Meaning that when the formula is evaluated later in a different environment, it can still access all the object that lived in its original environment.&lt;/p&gt;
+
+&lt;p&gt;Formulas, thus, can find variables in multiple environments. Like so:&lt;/p&gt;
+
+&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;not_in_df&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rnorm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;disp&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;~&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;not_in_df&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mtcars&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## 
+## Call:
+## lm(formula = disp ~ not_in_df, data = mtcars)
+## 
+## Coefficients:
+## (Intercept)    not_in_df  
+##      234.73       -14.06
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;But what if the name exists in both environments, which one prevails?&lt;/p&gt;
+
+&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;cyl&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;this would throw an error&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;disp&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;~&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cyl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mtcars&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## 
+## Call:
+## lm(formula = disp ~ cyl, data = mtcars)
+## 
+## Coefficients:
+## (Intercept)          cyl  
+##      -156.6         62.6
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Thus, the data environment is evaluated before the enclosed environment, we say the data environment does &lt;strong&gt;overscope&lt;/strong&gt;.&lt;/p&gt;
 
 &lt;p&gt;These are, to my understanding, the core elements of NSE in base R. If you don’t care about  tidy eval you can stop reading here and try to build your own NSE functions. Thanks for making it this far.&lt;/p&gt;
 
@@ -293,7 +329,7 @@
 
 &lt;h2 id=&quot;quosure&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;quosure&lt;/code&gt;&lt;/h2&gt;
 
-&lt;p&gt;Very nice, that quaisquoting. Now what’s up with quosures? From their name you might guess they are hybrids of &lt;code class=&quot;highlighter-rouge&quot;&gt;quotes&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;closures&lt;/code&gt;. We have seen that combination before when we looked at formulas. But formulas are not expressions, they are a DSL that is created through NSE. If we look at quosures, we will see that they behave both like expressions and as formulas.&lt;/p&gt;
+&lt;p&gt;Very nice, that quaisquoting. Now what’s up with quosures? From their name you might guess they are hybrids of &lt;code class=&quot;highlighter-rouge&quot;&gt;quotes&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;closures&lt;/code&gt;. We have seen that combination before when we looked at formulas. If we look at quosures, we will see that they are a subclass of the formula, besides being a class of their own.&lt;/p&gt;
 
 &lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;quo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;z&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
@@ -324,9 +360,9 @@
 &lt;/div&gt;
 &lt;p&gt;Note that quosures don’t make a lower level distinction between calls and names. Every expression becomes a quosure.&lt;/p&gt;
 
-&lt;p&gt;But when is this capturing of the environment actually useful? When the quosure is created in one environment and evaluated in another. This typically happens when they are created in a function and evaluated in the global environment or another function.&lt;/p&gt;
+&lt;p&gt;When is capturing of the environment by the expression actually useful? When the quosure is created in one environment and evaluated in another. This typically happens when it is created in a function and evaluated in the global environment or another function.&lt;/p&gt;
 
-&lt;p&gt;In base R NSE a function can evaluate a quoted argument, it can quote a bare statement, it can even return an expression. What it cannot do however, is giving the expression memory of the variables that were present at creation.&lt;/p&gt;
+&lt;p&gt;In base R NSE a function can evaluate a quoted argument, it can quote a bare statement, it can even return an expression. What it cannot do however, is giving the returned expression memory of the variables that were present at creation.&lt;/p&gt;
 
 &lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;base_NSE_example&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;some_arg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
   &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;some_var&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
@@ -354,7 +390,45 @@
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;Note that we do need to apply &lt;code class=&quot;highlighter-rouge&quot;&gt;eval_tidy()&lt;/code&gt; instead of &lt;code class=&quot;highlighter-rouge&quot;&gt;eval()&lt;/code&gt; to make use of the memory of the quosure.&lt;/p&gt;
+&lt;p&gt;Note that we do need to apply eval_tidy() instead of eval() to make use of the memory of the quosure.&lt;/p&gt;
+
+&lt;p&gt;Now you might say, if we just use &lt;code class=&quot;highlighter-rouge&quot;&gt;substitute()&lt;/code&gt; instead of &lt;code class=&quot;highlighter-rouge&quot;&gt;quote()&lt;/code&gt; in the &lt;code class=&quot;highlighter-rouge&quot;&gt;base_NSE_example()&lt;/code&gt;, it would return 14 too. You are right, if we just capture the environment and evaluate it later, there is not really a point in saving the whole bunch to evaluate later to retrieve the values. However, we don’t have to use the value in the enclosed environment when applying &lt;code class=&quot;highlighter-rouge&quot;&gt;eval_tidy()&lt;/code&gt; to a quosure. With the &lt;code class=&quot;highlighter-rouge&quot;&gt;data&lt;/code&gt; argument we can provide a value for a name in the quosure, that overscopes the enclosed environment for the provided name(s). Example. Using &lt;code class=&quot;highlighter-rouge&quot;&gt;tidy_eval_example()&lt;/code&gt; with &lt;em&gt;some_arg&lt;/em&gt; = 4, will give &lt;em&gt;some_arg&lt;/em&gt; = 4 and &lt;em&gt;some_var&lt;/em&gt; = 10 in the enclosed environment. Now, we can overrule one or both values in &lt;code class=&quot;highlighter-rouge&quot;&gt;eval_tidy()&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;tidy_eval_example&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; 
+  &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rlang&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;eval_tidy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;some_var&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;42&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## [1] 46
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;tidy_eval_example&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; 
+  &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rlang&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;eval_tidy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;some_var&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;42&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;some_arg&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;-1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## [1] 41
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The value in the enclosed environment is thus carried with the quosure wherever it goes, but does not have to be used. We can also evaluate (a part) of the quosure in a different environment.&lt;/p&gt;
+
+&lt;p&gt;So, we can provide a data argument to overscope the enclosed environment. But what about the enclosed environment versus the environment where the quosure is evaluated. Which one overscopes? Then answer is:&lt;/p&gt;
+
+&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;the enclosed env&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x_quoted&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;quo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;eval_x&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;the calling env&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rlang&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;eval_tidy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;eval_x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x_quoted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## [1] &quot;the enclosed env&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h1 id=&quot;how-do-base-r-nse-and-tidy-eval-play-together&quot;&gt;How do base R NSE and tidy eval play together?&lt;/h1&gt;
 

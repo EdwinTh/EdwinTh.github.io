@@ -149,7 +149,7 @@
 
 <p>My approach was listing a number of terms and study them one by one. Mainly consulting <a href="http://adv-r.hadley.nz/">Advanced R</a> and the <a href="ftp://cran.r-project.org/pub/R/doc/manuals/r-release/R-lang.html">R Language Definition</a>. For tidy eval I leaned heavily on the <a href="https://cran.r-project.org/web/packages/dplyr/vignettes/programming.html">Programming with dplyr vignette</a> and the function documentations. This is also how this blog post is built. We are hopping from term to term, to we see how they relate. You will find references to the sources in the text, in case you want to read more about a topic.</p>
 
-<p><em>Note this is v2, in which the <code class="highlighter-rouge">expression</code> section is rewritten. To see earlier versions see <a href="https://github.com/EdwinTh/EdwinTh.github.io/releases">here</a>.</em></p>
+<p><em>Note this is v3, in which the overscope gets mentioned and quosures are more elaborated on. To see earlier versions see <a href="https://github.com/EdwinTh/EdwinTh.github.io/releases">here</a>.</em></p>
 
 <h1 id="base-r-non-standard-evaluation">Base R, non-standard evaluation</h1>
 
@@ -227,7 +227,7 @@
 
 <h2 id="call"><code class="highlighter-rouge">call</code></h2>
 
-<p>When we delaying the evaluation of a function call, we arrive at the second subcategory of expressions: the <code class="highlighter-rouge">call</code>. The function to be called, with the names of the objects used for the arguments, are stored until further notice.</p>
+<p>When we delay the evaluation of a function call, we arrive at the second subcategory of expressions: the <code class="highlighter-rouge">call</code>. The function to be called, with the names of the objects used for the arguments, are stored until further notice.</p>
 
 <div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">wait_for_it</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">quote</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w">
 </span><span class="n">x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">3</span><span class="p">;</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">8</span><span class="w">
@@ -355,7 +355,7 @@
 
 <p>When you think about it a little longer, NSE is only possible when function arguments are not evaluated directly. If the function was the inpatient kid that wanted to put <code class="highlighter-rouge">filt_cond</code> in its mouth right away, it would have failed to find an object with the name <em>mpg</em> in the global environment. When the function is called, a provided arguments is stored in a <strong>promise</strong>. The promise of the argument contains the value of the argument, but also an expression of the argument. The function does not bother about the value of the promise, until the function argument is actually used in the function. The <code class="highlighter-rouge">substitute()</code> function does only enter the expression part of the promise. In the <code class="highlighter-rouge">my_filt()</code> example, the promise associated with the <code class="highlighter-rouge">x</code> argument will have the actual data frame belonging to the object <code class="highlighter-rouge">mtcars</code> as its value, and the name <em>mtcars</em> as its expression. In the second and third line of the function, the value of this argument is accessed. The promise associated with the <code class="highlighter-rouge">filt_cond</code> argument, however. does not have a value. But it does have a call as its expression. As soon as we use this argument, the function would fail. But we don’t. With <code class="highlighter-rouge">substitute()</code> we only access the expression of the promise <a href="https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Promise-objects">R lang</a>.</p>
 
-<h2 id="formula"><code class="highlighter-rouge">formula</code></h2>
+<h2 id="formula-and-overscoping"><code class="highlighter-rouge">formula</code> and <code class="highlighter-rouge">overscoping</code></h2>
 
 <p>Before we move to tidy eval there is one more concept we have to elaborate on, the <code class="highlighter-rouge">formula</code>. Probably you have used formulas a lot, but did you ever think about how odd they are? Take the following example</p>
 
@@ -364,6 +364,42 @@
 </div>
 
 <p>No R user would have trouble reading the above, but picture yourself coming from another programming language and stumbling upon it. It as an example of a domain specific language (DSL). DSLs exploit R’s NSE possibilities by giving alternative meaning to the language in specific contexts. Other examples are <code class="highlighter-rouge">ggplot2</code> and <code class="highlighter-rouge">dplyr</code>. Just like functions, do formulas enclose the environment they are created in. Meaning that when the formula is evaluated later in a different environment, it can still access all the object that lived in its original environment.</p>
+
+<p>Formulas, thus, can find variables in multiple environments. Like so:</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">not_in_df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">rnorm</span><span class="p">(</span><span class="m">32</span><span class="p">)</span><span class="w">
+</span><span class="n">lm</span><span class="p">(</span><span class="n">disp</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">not_in_df</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mtcars</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## 
+## Call:
+## lm(formula = disp ~ not_in_df, data = mtcars)
+## 
+## Coefficients:
+## (Intercept)    not_in_df  
+##      234.73       -14.06
+</code></pre>
+</div>
+
+<p>But what if the name exists in both environments, which one prevails?</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">cyl</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s2">"this would throw an error"</span><span class="w">
+</span><span class="n">lm</span><span class="p">(</span><span class="n">disp</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">cyl</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mtcars</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## 
+## Call:
+## lm(formula = disp ~ cyl, data = mtcars)
+## 
+## Coefficients:
+## (Intercept)          cyl  
+##      -156.6         62.6
+</code></pre>
+</div>
+
+<p>Thus, the data environment is evaluated before the enclosed environment, we say the data environment does <strong>overscope</strong>.</p>
 
 <p>These are, to my understanding, the core elements of NSE in base R. If you don’t care about  tidy eval you can stop reading here and try to build your own NSE functions. Thanks for making it this far.</p>
 
@@ -440,7 +476,7 @@
 
 <h2 id="quosure"><code class="highlighter-rouge">quosure</code></h2>
 
-<p>Very nice, that quaisquoting. Now what’s up with quosures? From their name you might guess they are hybrids of <code class="highlighter-rouge">quotes</code> and <code class="highlighter-rouge">closures</code>. We have seen that combination before when we looked at formulas. But formulas are not expressions, they are a DSL that is created through NSE. If we look at quosures, we will see that they behave both like expressions and as formulas.</p>
+<p>Very nice, that quaisquoting. Now what’s up with quosures? From their name you might guess they are hybrids of <code class="highlighter-rouge">quotes</code> and <code class="highlighter-rouge">closures</code>. We have seen that combination before when we looked at formulas. If we look at quosures, we will see that they are a subclass of the formula, besides being a class of their own.</p>
 
 <div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">quo</span><span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">class</span><span class="p">()</span><span class="w">
 </span></code></pre>
@@ -471,9 +507,9 @@
 </div>
 <p>Note that quosures don’t make a lower level distinction between calls and names. Every expression becomes a quosure.</p>
 
-<p>But when is this capturing of the environment actually useful? When the quosure is created in one environment and evaluated in another. This typically happens when they are created in a function and evaluated in the global environment or another function.</p>
+<p>When is capturing of the environment by the expression actually useful? When the quosure is created in one environment and evaluated in another. This typically happens when it is created in a function and evaluated in the global environment or another function.</p>
 
-<p>In base R NSE a function can evaluate a quoted argument, it can quote a bare statement, it can even return an expression. What it cannot do however, is giving the expression memory of the variables that were present at creation.</p>
+<p>In base R NSE a function can evaluate a quoted argument, it can quote a bare statement, it can even return an expression. What it cannot do however, is giving the returned expression memory of the variables that were present at creation.</p>
 
 <div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">base_NSE_example</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">some_arg</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="n">some_var</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">10</span><span class="w">
@@ -501,7 +537,45 @@
 </code></pre>
 </div>
 
-<p>Note that we do need to apply <code class="highlighter-rouge">eval_tidy()</code> instead of <code class="highlighter-rouge">eval()</code> to make use of the memory of the quosure.</p>
+<p>Note that we do need to apply eval_tidy() instead of eval() to make use of the memory of the quosure.</p>
+
+<p>Now you might say, if we just use <code class="highlighter-rouge">substitute()</code> instead of <code class="highlighter-rouge">quote()</code> in the <code class="highlighter-rouge">base_NSE_example()</code>, it would return 14 too. You are right, if we just capture the environment and evaluate it later, there is not really a point in saving the whole bunch to evaluate later to retrieve the values. However, we don’t have to use the value in the enclosed environment when applying <code class="highlighter-rouge">eval_tidy()</code> to a quosure. With the <code class="highlighter-rouge">data</code> argument we can provide a value for a name in the quosure, that overscopes the enclosed environment for the provided name(s). Example. Using <code class="highlighter-rouge">tidy_eval_example()</code> with <em>some_arg</em> = 4, will give <em>some_arg</em> = 4 and <em>some_var</em> = 10 in the enclosed environment. Now, we can overrule one or both values in <code class="highlighter-rouge">eval_tidy()</code>.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">tidy_eval_example</span><span class="p">(</span><span class="m">4</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">rlang</span><span class="o">::</span><span class="n">eval_tidy</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">some_var</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">42</span><span class="p">))</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] 46
+</code></pre>
+</div>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">tidy_eval_example</span><span class="p">(</span><span class="m">4</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">rlang</span><span class="o">::</span><span class="n">eval_tidy</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">some_var</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">42</span><span class="p">,</span><span class="w"> </span><span class="n">some_arg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">-1</span><span class="p">))</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] 41
+</code></pre>
+</div>
+
+<p>The value in the enclosed environment is thus carried with the quosure wherever it goes, but does not have to be used. We can also evaluate (a part) of the quosure in a different environment.</p>
+
+<p>So, we can provide a data argument to overscope the enclosed environment. But what about the enclosed environment versus the environment where the quosure is evaluated. Which one overscopes? Then answer is:</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s2">"the enclosed env"</span><span class="w">
+</span><span class="n">x_quoted</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">quo</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w">
+</span><span class="n">eval_x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">q</span><span class="p">){</span><span class="w">
+  </span><span class="n">x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s2">"the calling env"</span><span class="w">
+  </span><span class="n">rlang</span><span class="o">::</span><span class="n">eval_tidy</span><span class="p">(</span><span class="n">q</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="n">eval_x</span><span class="p">(</span><span class="n">x_quoted</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "the enclosed env"
+</code></pre>
+</div>
 
 <h1 id="how-do-base-r-nse-and-tidy-eval-play-together">How do base R NSE and tidy eval play together?</h1>
 
