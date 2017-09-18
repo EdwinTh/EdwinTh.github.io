@@ -60,7 +60,7 @@ And finally to make matters nice and unclear, a name is also called a `symbol` a
 
 ## `call`
 
-When we delaying the evaluation of a function call, we arrive at the second subcategory of expressions: the `call`. The function to be called, with the names of the objects used for the arguments, are stored until further notice.
+When we delay the evaluation of a function call, we arrive at the second subcategory of expressions: the `call`. The function to be called, with the names of the objects used for the arguments, are stored until further notice.
 
 ```{r}
 wait_for_it <- quote(x + y)
