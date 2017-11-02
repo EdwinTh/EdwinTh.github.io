@@ -3,7 +3,7 @@ layout: post
 categories: blog
 title: "A ggplot-based Marimekko/Mosaic plot"
 base-url: https://EdwinTh.github.io
-date: "2017-11-01 17:00:00"
+date: "2017-11-02 21:00:00"
 output: html_document
 tags: [R, ggplot2, MarimekkoMosaic]
 ---
