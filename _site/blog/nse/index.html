@@ -149,7 +149,7 @@
 
 <p>My approach was listing a number of terms and study them one by one. Mainly consulting <a href="http://adv-r.hadley.nz/">Advanced R</a> and the <a href="ftp://cran.r-project.org/pub/R/doc/manuals/r-release/R-lang.html">R Language Definition</a>. For tidy eval I leaned heavily on the <a href="https://cran.r-project.org/web/packages/dplyr/vignettes/programming.html">Programming with dplyr vignette</a> and the function documentations. This is also how this blog post is built. We are hopping from term to term, to we see how they relate. You will find references to the sources in the text, in case you want to read more about a topic.</p>
 
-<p><em>Note this is v3, in which the overscope gets mentioned and quosures are more elaborated on. To see earlier versions see <a href="https://github.com/EdwinTh/EdwinTh.github.io/releases">here</a>.</em></p>
+<p><em>Note this is v3, in which the overscope gets mentioned and quosures are more elaborated on. To read earlier versions see <a href="https://github.com/EdwinTh/EdwinTh.github.io/releases">here</a>.</em></p>
 
 <h1 id="base-r-non-standard-evaluation">Base R, non-standard evaluation</h1>
 
@@ -316,11 +316,11 @@
 
 <h2 id="substitute-and-promise"><code class="highlighter-rouge">substitute</code> and <code class="highlighter-rouge">promise</code></h2>
 
-<p>With the knowledge gained in the above we can start and try to write our own NSE functions. Lets make a function that adds a column to a data frame that is the square of a column that is already in it.</p>
+<p>With the knowledge gained in the above we can start and try to write our own NSE functions. Lets make a function that adds a column to a data frame that is the square of a column it already contains.</p>
 
 <div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">add_squared</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">col_name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="n">new_colname</span><span class="w">      </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">paste0</span><span class="p">(</span><span class="n">deparse</span><span class="p">(</span><span class="n">col_name</span><span class="p">),</span><span class="w"> </span><span class="s2">"_sq"</span><span class="p">)</span><span class="w">
-  </span><span class="n">x</span><span class="p">[,</span><span class="w"> </span><span class="n">new_colname</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="w"> </span><span class="p">,</span><span class="n">deparse</span><span class="p">(</span><span class="n">col_name</span><span class="p">)]</span><span class="o">^</span><span class="m">2</span><span class="w">
+  </span><span class="n">x</span><span class="p">[,</span><span class="w"> </span><span class="n">new_colname</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">x</span><span class="p">[,</span><span class="w"> </span><span class="n">deparse</span><span class="p">(</span><span class="n">col_name</span><span class="p">)]</span><span class="o">^</span><span class="m">2</span><span class="w">
   </span><span class="n">x</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span><span class="n">add_squared</span><span class="p">(</span><span class="n">mtcars</span><span class="p">,</span><span class="w"> </span><span class="nf">quote</span><span class="p">(</span><span class="n">cyl</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">head</span><span class="p">(</span><span class="m">1</span><span class="p">)</span><span class="w">
@@ -332,7 +332,7 @@
 </code></pre>
 </div>
 
-<p>You might say, “that is not too convenient, I still need to quote the col_name myself”. Well, you are very right, it would be more helpful if the function did the quoting for you. Unfortunately placing <code class="highlighter-rouge">quote(col_name)</code> inside the function body is of no use. <code class="highlighter-rouge">quote()</code> makes a literal quote of its input. So it would make the <code class="highlighter-rouge">name</code> <em>col_name</em> here each time it was called, no matter the value that was given to the argument. Rather than quoting the value that was provided to this argument.</p>
+<p>You might say, “that is not too convenient, I still need to quote the <code class="highlighter-rouge">col_name</code> myself”. Well, you are very right, it would be more helpful if the function did the quoting for you. Unfortunately placing <code class="highlighter-rouge">quote(col_name)</code> inside the function body is of no use. <code class="highlighter-rouge">quote()</code> makes a literal quote of its input. So it would make the <code class="highlighter-rouge">name</code> <em>col_name</em> here each time it was called, no matter the value that was given to the argument, rather than quoting the value that was provided to this argument.</p>
 
 <p>Here we need <code class="highlighter-rouge">substitute()</code>. This will lookup all the object names provided to it, and if it finds a value for that name, it will substitute the name for its value <a href="http://adv-r.hadley.nz/nse.html#substitute">Adv-R</a>. Lets do a filter function to demonstrate.</p>
 
@@ -353,7 +353,7 @@
 
 <p>Yeah, that works. But, wait a minute. How does <code class="highlighter-rouge">eval()</code> now know that <em>mpg</em> is a column in <code class="highlighter-rouge">x</code>? We provided <code class="highlighter-rouge">x</code> to the <code class="highlighter-rouge">eval</code> function, but how does this work? Well, the data frame <code class="highlighter-rouge">x</code> was provided to the <code class="highlighter-rouge">envir</code> argument of <code class="highlighter-rouge">eval()</code>. A data frame, thus, is a valid environment in which we can evaluate expressions. <em>mpg</em> lives in <code class="highlighter-rouge">x</code>, so the evaluation of <code class="highlighter-rouge">filt_cond_q</code> here gives the desired result.</p>
 
-<p>When you think about it a little longer, NSE is only possible when function arguments are not evaluated directly. If the function was the inpatient kid that wanted to put <code class="highlighter-rouge">filt_cond</code> in its mouth right away, it would have failed to find an object with the name <em>mpg</em> in the global environment. When the function is called, a provided arguments is stored in a <strong>promise</strong>. The promise of the argument contains the value of the argument, but also an expression of the argument. The function does not bother about the value of the promise, until the function argument is actually used in the function. The <code class="highlighter-rouge">substitute()</code> function does only enter the expression part of the promise. In the <code class="highlighter-rouge">my_filt()</code> example, the promise associated with the <code class="highlighter-rouge">x</code> argument will have the actual data frame belonging to the object <code class="highlighter-rouge">mtcars</code> as its value, and the name <em>mtcars</em> as its expression. In the second and third line of the function, the value of this argument is accessed. The promise associated with the <code class="highlighter-rouge">filt_cond</code> argument, however. does not have a value. But it does have a call as its expression. As soon as we use this argument, the function would fail. But we don’t. With <code class="highlighter-rouge">substitute()</code> we only access the expression of the promise <a href="https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Promise-objects">R lang</a>.</p>
+<p>When you think about it a little longer, NSE is only possible when function arguments are not evaluated directly. If the function was the inpatient kid that wanted to put <code class="highlighter-rouge">filt_cond</code> in its mouth right away, it would have failed to find an object with the name <em>mpg</em> in the global environment. When the function is called, a provided arguments is stored in a <strong>promise</strong>. The promise of the argument contains the value of the argument, but also an expression of the argument. The function does not bother about the value of the promise, until the function argument is actually used in the function. The <code class="highlighter-rouge">substitute()</code> function does only enter the expression part of the promise. In the <code class="highlighter-rouge">my_filt()</code> example, the promise associated with the <code class="highlighter-rouge">x</code> argument will have the actual data frame belonging to the object <code class="highlighter-rouge">mtcars</code> as its value, and the name <em>mtcars</em> as its expression. In the second and third line of the function, the value of this argument is accessed. The promise associated with the <code class="highlighter-rouge">filt_cond</code> argument, however, does not have a value. But it does have a call as its expression. As soon as we use this argument, the function would fail. But we don’t. With <code class="highlighter-rouge">substitute()</code> we only access the expression of the promise <a href="https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Promise-objects">R lang</a>.</p>
 
 <h2 id="formula-and-overscoping"><code class="highlighter-rouge">formula</code> and <code class="highlighter-rouge">overscoping</code></h2>
 
@@ -378,7 +378,7 @@
 ## 
 ## Coefficients:
 ## (Intercept)    not_in_df  
-##      234.73       -14.06
+##      233.22        31.98
 </code></pre>
 </div>
 
@@ -409,7 +409,7 @@
 
 <h2 id="quasiquotation"><code class="highlighter-rouge">quasiquotation</code></h2>
 
-<p>We now know that in normal quotation the expression is captured to be evaluated later, rather than swallowed right away. Quasiquotation enables the user to swallow parts of the expression right away, while quoting the rest. Let’s find out with an example. We can quote the following simple function.</p>
+<p>We now know that in normal quotation the expression is captured to be evaluated later, rather than swallowed right away. Quasiquotation enables the user to swallow parts of the expression right away, while quoting the rest. We can quote the following simple function.</p>
 
 <div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="nf">quote</span><span class="p">(</span><span class="n">z</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">4</span><span class="p">)</span><span class="w">
 </span></code></pre>
@@ -426,7 +426,7 @@
 </span></code></pre>
 </div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## z - 8
+<div class="highlighter-rouge"><pre class="highlight"><code>## z - (4 + 4)
 </code></pre>
 </div>
 
