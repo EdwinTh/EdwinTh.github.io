@@ -7,23 +7,22 @@ date: "2017-11-02 21:00:00"
 output: html_document
 tags: [R, padr, datetime, tidyverse]
 ---
-
-I excited to share that the latest version of `padr` just hit CRAN. This new version comprises bug fixes, performance improvements and new functions that make preparing datetime data even easier. Most of all it introduces the custom paradigm that enables you to do asymmetric analysis.
+I am happy to share that the latest version of `padr` just hit CRAN. This new version comprises bug fixes, performance improvements and new functions for formatting datetime variables. But above all, it introduces the custom paradigm that enables you to do asymmetric analysis.
 
 ## Improvements to existing functions
 
 `thicken` used to get slowish when the data frame got large. Several adjustments resulted in a considerable performance gain. It is now approximately 6 times faster than in version 0.3.0.
 
-Both `pad` and `thicken` used to break with noninformative errors when the datetime variable contains missing values. Both functions allow for missing values now. `thicken` will leave the record containing the missing value where it is and will enter a missing value in the column added to the data frame. `pad` will move all the records with missing values to the end of the data frame and will further ignore them for padding. Both functions throw a warning when the datetime variable has missing values.
+Both `pad` and `thicken` used to break with noninformative errors when the datetime variable contains missing values. Both functions allow for missing values now. `thicken` will leave the record containing the missing datetime value where it is and will enter a missing value in the column added to the data frame. `pad` will move all the records with missing values in the datetime variable to the end of the data frame and will further ignore them for padding. Both functions throw a warning when the datetime variable has missing values.
 
 ## New functions
 
-`span_date` and `span_time` are wrapper around `seq.Date` and `seq.POSIXt` and already described in [this blog post](https://edwinth.github.io/blog/span_date_time/). 
-
-Two new functions are introduced that aid with plotting data that are aggregated to an interval. `center_interval` shifts the datetime point from the beginning of the interval to the (approximate) center. Especially bar charts will reflect the data in a more accurate way after centering.
+`span_date` and `span_time` are wrappers around `seq.Date` and `seq.POSIXt` and were previously described in [this blog post](https://edwinth.github.io/blog/span_date_time/). 
+Two new functions are introduced to reformat datetime variable. These can be especially useful for showing the data in a plot or a graph. `center_interval` shifts the datetime point from the beginning of the interval to the (approximate) center. Especially bar, line and dot plots will reflect the data in a more accurate way after centering.
 
 ```{r, message=FALSE, warning=FALSE}
 library(tidyverse)
+library(padr)
 jan_first <- emergency %>% 
   filter(as.Date(time_stamp, tz = "EST") == as.Date("2016-01-01")) %>% 
   thicken("3 hour") %>% 
@@ -41,13 +40,13 @@ Secondly, there is the `format_interval` function, that will create a character 
 ```{r}
 jan_first %>% 
   mutate(hours = format_interval(time_stamp_3_hour,
-                                 start_format = "%H", 
+                                 start_format = "%b%d %H",
+                                 end_format   = "%H",
                                  sep = "-")) %>% 
   ggplot(aes(hours, n)) + geom_bar(stat = "identity")
 ```
 
-
-Finally, when using the interval "week", one might want to start the weeks on different day than Sunday. In `thicken` the start_val should than be specified with a day of the desired weekday. Finding this day by hand is a bit tedious, thats why `closest_weekday` is introduced.
+When using the interval "week", one might want to start the weeks on different day than Sunday. In `thicken` the start_val should than be specified with a day of the desired weekday. Finding this day by hand is a bit tedious, thats why `closest_weekday` is introduced.
 
 ```{r}
 thicken(coffee, "week", 
@@ -56,7 +55,7 @@ thicken(coffee, "week",
 
 ## The custom suite
 
-`thicken` and `pad` are highly automated, because they assume all datetime points to be equally spaced, that is the datetime variable has an interval. However, it might be useful to have asymmetrical periods between datetime points. Especially when there periods in which the number of observations is consistently lower, typically nightly hours or weekend days. The functions `thicken_cust` and `pad_cust` work like the original functions. However, the user has to provide his own spanning vector to whch the observations are mapped.
+`thicken` and `pad` are highly automated, because they assume all datetime points to be equally spaced. Internally they span vectors of the desired interval. However, it might be useful to have asymmetrical periods between datetime points. Especially when there are  periods in which the number of observations is consistently lower, such as nightly hours or weekend days. The functions `thicken_cust` and `pad_cust` work like the original functions. However, the user has to provide his own spanning vector to whch the observations are mapped.
 
 Lets do an analysis of vehicle accidents in the `emergency`. We want to distinguish between morning rush hour (7-10), daytime (10-16), evening rush hour (16-19) and nighttime (19-7). This is the full analysis.
 
@@ -80,8 +79,8 @@ emergency %>%
 
 The helper functions `span_around` and `subset_span` are used for building the spanning vector. The first takes the original datetime variable and spans a variable of the requested interval around it. This saves you the manual trouble of finding the min and the max of the variable and determine which points are respectively before and after them to build a variable of the interval. `subset_span`, subsequently, will only leave the datetime points in the input that meet the criteria given in a list. In the example these are the hours 7, 10, 16, and 19. In total there are eight different datetime parts you can subset on.
 
-The remainder of the analysis is greatly similar to a regular `padr` analysis. Instead of an interval to which to `thicken` and `pad` to, you use the asymmetrically spaced `accidents_span` variable to both `thicken_cust` and `pad_cust`. 
+The remainder of the analysis is greatly similar to a regular `padr` analysis. Instead of an interval to which to `thicken` and `pad` to, you use the asymmetrically spaced `accidents_span` variable in both `thicken_cust` and `pad_cust`. `thicken_cust` will then map each observation to a datetime point in the spanned vector. `pad_cust` will insert rows for each of the observations that are in the spanned vector, but not in the datetime variable.
 
 ## Thanks
 
-This release completes the initial plans I had for `padr`. I have now implemented all functionality I originally intended. For the next release I plan on refactoring and further increasing performance. Do you find anything still missing from `padr`? Did you find a bug or an inconsistency? Please notify by sending an email or file an issue on [the github page](https://github.com/EdwinTh/padr).
+This release completes the initial plans I had for `padr`. For the next release I plan on refactoring and further increasing performance. Do you find anything still missing from `padr`? Did you find a bug or an inconsistency? Please notify by sending an email or file an issue on [the github page](https://github.com/EdwinTh/padr).
