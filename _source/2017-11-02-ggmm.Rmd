@@ -180,7 +180,7 @@ ggmm(em_sel, twp, title,
      alpha_condition = title == "Traffic: DISABLED VEHICLE -")
 ```
 
-I hope you find this function useful. The source code is shared below. Also it is in the [package](https://github.com/EdwinTh/thatssorandom) accompanying this blog. Which you can install by running `devtools::install_github(EdwinTh/thatssorandom)`.
+I hope you find this function useful. The source code is shared below. Also it is in the [package](https://github.com/EdwinTh/thatssorandom) accompanying this blog. Which you can install by running `devtools::install_github("EdwinTh/thatssorandom")`.
 
 ```{r, message=FALSE}
 library(tidyverse)
