@@ -1,14 +1,14 @@
 ---
 layout: post
 categories: blog
-title: "How rigorous should your analysis workflow be?"
+title: "A two-stage workflow for data science projects"
 base-url: https://EdwinTh.github.io
 date: "2017-"
 output: html_document
 tags: [R, data science, software engineering, workflow]
 ---
 
-I am struggling with this question from time to time. After working my way through Hadley's [R packages](http://r-pkgs.had.co.nz/) and a couple of other resources about two years ago, I left the state of blessful ignorance about software standards. Trained as a statistician I used to start just hack away when confronted with a new project. As my R and programming skills went up I more and more came to understand why more complex projects in the past ended in irreproducability and stress. I came to a adopt a rigorous system of solely writing functions, documenting and unit testing them. As if every project I ran had to result in a CRAN package. This slowed me down considerably though. I needed increasing amounts of time to answer relatively simple questions. Maybe now I was overengineering, restricting myself in such a way I was losing productivity.
+How rigorous should your analysis workflow be? I am struggling with this question for some time now. After working my way through Hadley's [R packages](http://r-pkgs.had.co.nz/) and a couple of other resources about two years ago, I left the state of blessful ignorance about software standards. Trained as a statistician I used to just create a lot of R scripts and data exports containing intermediate results in projects. As my R and programming skills went up it became increasingly clear why more complex projects ended in irreproducability and stress. I came to a adopt a rigorous system of solely writing functions, documenting and unit testing them. As if every project I ran had to result in a CRAN package. This slowed me down considerably though. I needed increasing amounts of time to answer relatively simple questions. Maybe now I was overengineering, restricting myself in such a way I was losing productivity.
 
 ## Data Science product
 
