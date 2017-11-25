@@ -55,7 +55,7 @@ thicken(coffee, "week",
 
 ## The custom suite
 
-`thicken` and `pad` are highly automated, because they assume all datetime points to be equally spaced. Internally they span vectors of the desired interval. However, it might be useful to have asymmetrical periods between datetime points. Especially when there are  periods in which the number of observations is consistently lower, such as nightly hours or weekend days. The functions `thicken_cust` and `pad_cust` work like the original functions. However, the user has to provide his own spanning vector to whch the observations are mapped.
+`thicken` and `pad` are highly automated, because they assume all datetime points to be equally spaced. Internally they span vectors of the desired interval. However, it might be useful to have asymmetrical periods between datetime points. Especially when there are  periods in which the number of observations is consistently lower, such as nightly hours or weekend days. The functions `thicken_cust` and `pad_cust` work like the original functions. However, the user has to provide his own spanning vector to which the observations are mapped.
 
 Lets do an analysis of vehicle accidents in the `emergency`. We want to distinguish between morning rush hour (7-10), daytime (10-16), evening rush hour (16-19) and nighttime (19-7). This is the full analysis.
 
@@ -77,7 +77,7 @@ emergency %>%
   facet_wrap(~period)
 ```
 
-The helper functions `span_around` and `subset_span` are used for building the spanning vector. The first takes the original datetime variable and spans a variable of the requested interval around it. This saves you the manual trouble of finding the min and the max of the variable and determine which points are respectively before and after them to build a variable of the interval. `subset_span`, subsequently, will only leave the datetime points in the input that meet the criteria given in a list. In the example these are the hours 7, 10, 16, and 19. In total there are eight different datetime parts you can subset on.
+  The helper functions `span_around` and `subset_span` are used for building the spanning vector. The first takes the original datetime variable and spans a variable of the requested interval around it. This saves you the manual trouble of finding the min and the max of the variable and determine which points are respectively before and after them to build a variable of the interval. `subset_span`, subsequently, will only leave the datetime points in the input that meet the criteria given in a list. In the example these are the hours 7, 10, 16, and 19. In total there are eight different datetime parts you can subset on.
 
 The remainder of the analysis is greatly similar to a regular `padr` analysis. Instead of an interval to which to `thicken` and `pad` to, you use the asymmetrically spaced `accidents_span` variable in both `thicken_cust` and `pad_cust`. `thicken_cust` will then map each observation to a datetime point in the spanned vector. `pad_cust` will insert rows for each of the observations that are in the spanned vector, but not in the datetime variable.
 
