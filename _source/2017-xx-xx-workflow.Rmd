@@ -8,7 +8,7 @@ output: html_document
 tags: [R, data science, software engineering, workflow]
 ---
 
-If you are a data scientist who primarily uses R, chances are you have had no formal training in software development. I certainly did not pick up any skills in that direction during my statistics masters. For years my projects comprised some scripts that started with loading data, did some hacking on that data. In the best case these scripts came to some conclusion or final data set. Usually they abruptly ended. Complex projects could result in a great number of scripts and data exports. Needless to say that reducability was low and stress could get high when some delivery went wrong.
+If you are a data scientist who primarily uses R, chances are you had no formal training in software development. I certainly did not pick up much skills in that direction during my statistics masters. For years my workflow was basically loading dataset and hack away on them. In the best case these scripts came to some conclusion or final data set. Usually they abruptly ended. Complex projects could result in a great number of scripts and data exports. Needless to say that reducability was low and stress could get high when some delivery went wrong.
 
 ## Picking up some software skills
 
