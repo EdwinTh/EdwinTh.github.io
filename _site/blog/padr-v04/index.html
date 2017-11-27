@@ -208,7 +208,7 @@ Two new functions are introduced to reformat datetime variable. These can be esp
 
 <h2 id="the-custom-suite">The custom suite</h2>
 
-<p><code class="highlighter-rouge">thicken</code> and <code class="highlighter-rouge">pad</code> are highly automated, because they assume all datetime points to be equally spaced. Internally they span vectors of the desired interval. However, it might be useful to have asymmetrical periods between datetime points. Especially when there are  periods in which the number of observations is consistently lower, such as nightly hours or weekend days. The functions <code class="highlighter-rouge">thicken_cust</code> and <code class="highlighter-rouge">pad_cust</code> work like the original functions. However, the user has to provide his own spanning vector to whch the observations are mapped.</p>
+<p><code class="highlighter-rouge">thicken</code> and <code class="highlighter-rouge">pad</code> are highly automated, because they assume all datetime points to be equally spaced. Internally they span vectors of the desired interval. However, it might be useful to have asymmetrical periods between datetime points. Especially when there are  periods in which the number of observations is consistently lower, such as nightly hours or weekend days. The functions <code class="highlighter-rouge">thicken_cust</code> and <code class="highlighter-rouge">pad_cust</code> work like the original functions. However, the user has to provide his own spanning vector to which the observations are mapped.</p>
 
 <p>Lets do an analysis of vehicle accidents in the <code class="highlighter-rouge">emergency</code>. We want to distinguish between morning rush hour (7-10), daytime (10-16), evening rush hour (16-19) and nighttime (19-7). This is the full analysis.</p>
 
@@ -272,6 +272,8 @@ Two new functions are introduced to reformat datetime variable. These can be esp
       
         <a href="https://EdwinTh.github.io/blog/ggmm/" class="btn" title="A ggplot-based Marimekko/Mosaic plot">Previous</a>
       
+      
+        <a href="https://EdwinTh.github.io/blog/workflow/" class="btn" title="A two-stage workflow for data science projects">Next</a>
       
     </nav><!-- /.pagination -->
   </article>
