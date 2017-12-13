@@ -8,7 +8,7 @@ output: html_document
 tags: [R, ggplot2, color palette, Dutch masters]
 ---
 
-Among tulip fields, canals and sampling cheese and Eastern European prostitutes, 
+Among tulip fields, canals and sampling cheese, 
 the museums of the Netherlands are one of its biggest tourist attractions. And 
 for very good reasons! During the seventeenth century, known as the Dutch Golden 
 Age, there was an abundance of talented painters. If you ever have
