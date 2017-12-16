@@ -206,7 +206,7 @@ So the functions that use tidy eval, like those in `dplyr`, automatically quote 
 
 ## `quosure`
 
-Very nice, that quaisquoting. Now what's up with quosures? From their name you might guess they are hybrids of `quotes` and `closures`. We have seen that combination before when we looked at formulas. If we look at quosures, we will see that they are a subclass of the formula, besides being a class of their own.
+Very nice, that quasiquoting. Now what's up with quosures? From their name you might guess they are hybrids of `quotes` and `closures`. We have seen that combination before when we looked at formulas. If we look at quosures, we will see that they are a subclass of the formula, besides being a class of their own.
 
 ```{r}
 quo(z) %>% class()
