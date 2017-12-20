@@ -22,7 +22,7 @@ century Dutch masters. Both are renowned for their use of light and color,
 making encounters with their subjects feel as being in the room with them.
 Recently, during the OzUnconference, the beautiful [`ochRe` package](https://github.com/ropenscilabs/ochRe/) was 
 developed. This package contains color palettes of the wonderful Australian 
-landscape (which my wife got to witness during our honeymoon last 
+landscape (which my wife and I got to witness during our honeymoon last 
 year). Drawing colors from both works of art and photographs of Australia. 
 I shamelessly stole both the idea and package structure of `ochRe` to create [`dutchmasters`](
 https://github.com/EdwinTh/dutchmasters). This package contains six color 
