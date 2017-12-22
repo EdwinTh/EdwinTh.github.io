@@ -13,7 +13,7 @@ by the wonderful [ochRe package](https://github.com/ropenscilabs/ochRe). As
 mentioned I shamelessly copied the package. I replaced the list with character 
 vectors containing hex colors and did a find and replace to make it 
 `dutchmasters` instead of `ochRe`. This was pretty ugly.  I realized that when 
-we would refactor the  `ochRe` functions, thus creating functions that create the functions, there would no longer be a need to copy-paste and find-and-replace. So that is what I did. I refactored and expanded `ochRe`'s chore into `paletti`. (Name chosen because I liked the ring of it).
+we would refactor the  `ochRe` functions, thus creating functions that create the functions, there would no longer be a need to copy-paste and find-and-replace. So that is what I did. I refactored and expanded `ochRe`'s chore into `paletti`. (Name chosen because I liked the ring of it). You grab it from Github, with `devtools::install_github("edwinth/paletti")`.
 
 ## Single palettes
 

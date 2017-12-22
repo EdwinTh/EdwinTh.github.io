@@ -12,7 +12,7 @@ by the wonderful ochRe package. As
 mentioned I shamelessly copied the package. I replaced the list with character 
 vectors containing hex colors and did a find and replace to make it 
 dutchmasters instead of ochRe. This was pretty ugly.  I realized that when 
-we would refactor the  ochRe functions, thus creating functions that create the functions, there would no longer be a need to copy-paste and find-and-replace. So that is what I did. I refactored and expanded ochRe’s chore into paletti. (Name chosen because I liked the ring of it).
+we would refactor the  ochRe functions, thus creating functions that create the functions, there would no longer be a need to copy-paste and find-and-replace. So that is what I did. I refactored and expanded ochRe’s chore into paletti. (Name chosen because I liked the ring of it). You grab it from Github, with devtools::install_github("edwinth/paletti").
 
 ">
 <meta name="keywords" content="R, ggplot2, color palette, paletti">
@@ -25,7 +25,7 @@ by the wonderful ochRe package. As
 mentioned I shamelessly copied the package. I replaced the list with character 
 vectors containing hex colors and did a find and replace to make it 
 dutchmasters instead of ochRe. This was pretty ugly.  I realized that when 
-we would refactor the  ochRe functions, thus creating functions that create the functions, there would no longer be a need to copy-paste and find-and-replace. So that is what I did. I refactored and expanded ochRe’s chore into paletti. (Name chosen because I liked the ring of it).
+we would refactor the  ochRe functions, thus creating functions that create the functions, there would no longer be a need to copy-paste and find-and-replace. So that is what I did. I refactored and expanded ochRe’s chore into paletti. (Name chosen because I liked the ring of it). You grab it from Github, with devtools::install_github("edwinth/paletti").
 
 ">
 <meta name="twitter:site" content="@edwin_thoen">
@@ -43,7 +43,7 @@ by the wonderful ochRe package. As
 mentioned I shamelessly copied the package. I replaced the list with character 
 vectors containing hex colors and did a find and replace to make it 
 dutchmasters instead of ochRe. This was pretty ugly.  I realized that when 
-we would refactor the  ochRe functions, thus creating functions that create the functions, there would no longer be a need to copy-paste and find-and-replace. So that is what I did. I refactored and expanded ochRe’s chore into paletti. (Name chosen because I liked the ring of it).
+we would refactor the  ochRe functions, thus creating functions that create the functions, there would no longer be a need to copy-paste and find-and-replace. So that is what I did. I refactored and expanded ochRe’s chore into paletti. (Name chosen because I liked the ring of it). You grab it from Github, with devtools::install_github("edwinth/paletti").
 
 ">
 <meta property="og:url" content="https://EdwinTh.github.io/blog/paletti/">
@@ -165,7 +165,7 @@ by the wonderful <a href="https://github.com/ropenscilabs/ochRe">ochRe package</
 mentioned I shamelessly copied the package. I replaced the list with character 
 vectors containing hex colors and did a find and replace to make it 
 <code class="highlighter-rouge">dutchmasters</code> instead of <code class="highlighter-rouge">ochRe</code>. This was pretty ugly.  I realized that when 
-we would refactor the  <code class="highlighter-rouge">ochRe</code> functions, thus creating functions that create the functions, there would no longer be a need to copy-paste and find-and-replace. So that is what I did. I refactored and expanded <code class="highlighter-rouge">ochRe</code>’s chore into <code class="highlighter-rouge">paletti</code>. (Name chosen because I liked the ring of it).</p>
+we would refactor the  <code class="highlighter-rouge">ochRe</code> functions, thus creating functions that create the functions, there would no longer be a need to copy-paste and find-and-replace. So that is what I did. I refactored and expanded <code class="highlighter-rouge">ochRe</code>’s chore into <code class="highlighter-rouge">paletti</code>. (Name chosen because I liked the ring of it). You grab it from Github, with <code class="highlighter-rouge">devtools::install_github("edwinth/paletti")</code>.</p>
 
 <h2 id="single-palettes">Single palettes</h2>
 
@@ -175,14 +175,7 @@ a single palette, this might be useful when you want your coporate identity
 colors translated into R. Here I just pick some colors found on the <a href="http://blog.visme.co/website-color-schemes/">interweb</a></p>
 
 <div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">paletti</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>## Error in library(paletti): there is no package called 'paletti'
-</code></pre>
-</div>
-
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span><span class="w">
 </span><span class="n">mycols</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="w">
   </span><span class="n">red</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s2">"#E27D60"</span><span class="p">,</span><span class="w">
   </span><span class="n">blue</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s2">"#085DCB"</span><span class="p">,</span><span class="w">
@@ -194,28 +187,15 @@ colors translated into R. Here I just pick some colors found on the <a href="htt
 </span></code></pre>
 </div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## Error in viz_palette(mycols): could not find function "viz_palette"
-</code></pre>
-</div>
+<p><img src="/figure/source/2017-12-21-paletti/unnamed-chunk-1-1.png" alt="plot of chunk unnamed-chunk-1" /></p>
 
 <p>Now, ochRe provided us with two functions, one two create a <code class="highlighter-rouge">ggplot</code> scale for 
 colours and to create one for fills. These functions can be created in the 
 following fashion</p>
 
 <div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">mycols_fill</span><span class="w">  </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">get_scale_fill</span><span class="p">(</span><span class="n">get_pal</span><span class="p">(</span><span class="n">mycols</span><span class="p">))</span><span class="w">
+</span><span class="n">mycols_color</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">get_scale_color</span><span class="p">(</span><span class="n">get_pal</span><span class="p">(</span><span class="n">mycols</span><span class="p">))</span><span class="w">
 </span></code></pre>
-</div>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>## Error in get_scale_fill(get_pal(mycols)): could not find function "get_scale_fill"
-</code></pre>
-</div>
-
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">mycols_color</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">get_scale_color</span><span class="p">(</span><span class="n">get_pal</span><span class="p">(</span><span class="n">mycols</span><span class="p">))</span><span class="w">
-</span></code></pre>
-</div>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>## Error in get_scale_color(get_pal(mycols)): could not find function "get_scale_color"
-</code></pre>
 </div>
 
 <p>Both now can be used in <code class="highlighter-rouge">ggplot</code></p>
@@ -227,9 +207,7 @@ following fashion</p>
 </span></code></pre>
 </div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## Error in mycols_color(): could not find function "mycols_color"
-</code></pre>
-</div>
+<p><img src="/figure/source/2017-12-21-paletti/unnamed-chunk-3-1.png" alt="plot of chunk unnamed-chunk-3" /></p>
 
 <div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">fill_plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">mtcars</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">cyl</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cyl</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> 
   </span><span class="n">geom_bar</span><span class="p">()</span><span class="w">
@@ -237,9 +215,7 @@ following fashion</p>
 </span></code></pre>
 </div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## Error in mycols_fill(): could not find function "mycols_fill"
-</code></pre>
-</div>
+<p><img src="/figure/source/2017-12-21-paletti/unnamed-chunk-3-2.png" alt="plot of chunk unnamed-chunk-3" /></p>
 
 <p>Now, I said I expanded the <code class="highlighter-rouge">ochRe</code> code a bit. The function <code class="highlighter-rouge">get_hex</code> will 
 produce a function that will return a function in which you can directly return
@@ -247,19 +223,8 @@ the hex code by typing its unquoted name. Handy if you want an exact color from
 your palette. Prerequisit is that your palette is a named character vector.</p>
 
 <div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">mycols_hex</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">get_hex</span><span class="p">(</span><span class="n">mycols</span><span class="p">)</span><span class="w">
+</span><span class="n">fill_plot</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">scale_fill_manual</span><span class="p">(</span><span class="n">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mycols_hex</span><span class="p">(</span><span class="n">blue</span><span class="p">,</span><span class="w"> </span><span class="n">purple</span><span class="p">,</span><span class="w"> </span><span class="n">red</span><span class="p">))</span><span class="w">
 </span></code></pre>
-</div>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>## Error in get_hex(mycols): could not find function "get_hex"
-</code></pre>
-</div>
-
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">fill_plot</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">scale_fill_manual</span><span class="p">(</span><span class="n">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mycols_hex</span><span class="p">(</span><span class="n">blue</span><span class="p">,</span><span class="w"> </span><span class="n">purple</span><span class="p">,</span><span class="w"> </span><span class="n">red</span><span class="p">))</span><span class="w">
-</span></code></pre>
-</div>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>## Error in mycols_hex(blue, purple, red): could not find function "mycols_hex"
-</code></pre>
 </div>
 
 <p><img src="/figure/source/2017-12-21-paletti/unnamed-chunk-4-1.png" alt="plot of chunk unnamed-chunk-4" /></p>
@@ -272,56 +237,28 @@ specify the name of the palette youw want to use. If you don’t, it defaults to
 the first palette in the list.</p>
 
 <div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">ochRe_col</span><span class="w">         </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">get_scale_color</span><span class="p">(</span><span class="n">get_pal</span><span class="p">(</span><span class="n">ochre_palettes</span><span class="p">))</span><span class="w">
+</span><span class="n">dutchmasters_fill</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">get_scale_fill</span><span class="p">(</span><span class="n">get_pal</span><span class="p">(</span><span class="n">dutchmasters</span><span class="p">))</span><span class="w">
+
+</span><span class="n">col_plot</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ochRe_col</span><span class="p">(</span><span class="s2">"lorikeet"</span><span class="p">)</span><span class="w">
 </span></code></pre>
 </div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## Error in get_scale_color(get_pal(ochre_palettes)): could not find function "get_scale_color"
-</code></pre>
-</div>
-
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">dutchmasters_fill</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">get_scale_fill</span><span class="p">(</span><span class="n">get_pal</span><span class="p">(</span><span class="n">dutchmasters</span><span class="p">))</span><span class="w">
-</span></code></pre>
-</div>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>## Error in get_scale_fill(get_pal(dutchmasters)): could not find function "get_scale_fill"
-</code></pre>
-</div>
-
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">col_plot</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ochRe_col</span><span class="p">(</span><span class="s2">"lorikeet"</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>## Error in ochRe_col("lorikeet"): could not find function "ochRe_col"
-</code></pre>
-</div>
+<p><img src="/figure/source/2017-12-21-paletti/unnamed-chunk-5-1.png" alt="plot of chunk unnamed-chunk-5" /></p>
 
 <div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">fill_plot</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dutchmasters_fill</span><span class="p">(</span><span class="s2">"view_of_Delft"</span><span class="p">)</span><span class="w">
 </span></code></pre>
 </div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## Error in dutchmasters_fill("view_of_Delft"): could not find function "dutchmasters_fill"
-</code></pre>
-</div>
+<p><img src="/figure/source/2017-12-21-paletti/unnamed-chunk-5-2.png" alt="plot of chunk unnamed-chunk-5" /></p>
 
 <p>And the same holds for the <code class="highlighter-rouge">get_hex</code> function. You can feed a list with palettes
 as well. Note that the palettes that you are going to call must have named
 elements.</p>
 
 <div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">dutchmasters_hex</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">get_hex</span><span class="p">(</span><span class="n">dutchmasters</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>## Error in get_hex(dutchmasters): could not find function "get_hex"
-</code></pre>
-</div>
-
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">fill_plot</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">scale_fill_manual</span><span class="p">(</span><span class="n">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dutchmasters_hex</span><span class="p">(</span><span class="s2">"anatomy"</span><span class="p">,</span><span class="w">
+</span><span class="n">fill_plot</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">scale_fill_manual</span><span class="p">(</span><span class="n">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dutchmasters_hex</span><span class="p">(</span><span class="s2">"anatomy"</span><span class="p">,</span><span class="w">
                               </span><span class="n">black</span><span class="p">(</span><span class="n">cloak</span><span class="p">),</span><span class="w"> </span><span class="n">red</span><span class="p">(</span><span class="n">muscle</span><span class="p">),</span><span class="w"> </span><span class="n">brown</span><span class="p">(</span><span class="n">table</span><span class="p">)))</span><span class="w">
 </span></code></pre>
-</div>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>## Error in dutchmasters_hex("anatomy", black(cloak), red(muscle), brown(table)): could not find function "dutchmasters_hex"
-</code></pre>
 </div>
 
 <p><img src="/figure/source/2017-12-21-paletti/unnamed-chunk-6-1.png" alt="plot of chunk unnamed-chunk-6" /></p>
