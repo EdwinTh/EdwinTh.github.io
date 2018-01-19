@@ -1,4 +1,109 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.1.6">Jekyll</generator><link href="https://EdwinTh.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://EdwinTh.github.io/" rel="alternate" type="text/html" /><updated>2017-12-22T21:55:21+01:00</updated><id>https://EdwinTh.github.io/</id><title>That&#39;s so Random</title><subtitle>A playground for data analysis and R programming.</subtitle><entry><title>Make your own color palettes with paletti</title><link href="https://EdwinTh.github.io/blog/paletti/" rel="alternate" type="text/html" title="Make your own color palettes with paletti" /><published>2017-12-22T21:52:00+01:00</published><updated>2017-12-22T21:52:00+01:00</updated><id>https://EdwinTh.github.io/blog/paletti</id><content type="html" xml:base="https://EdwinTh.github.io/blog/paletti/">&lt;p&gt;Last week I blogged about the &lt;a href=&quot;https://edwinth.github.io/blog/dutch-masters/&quot;&gt;dutchmasters color palettes package&lt;/a&gt;, which was inspired 
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.1.6">Jekyll</generator><link href="https://EdwinTh.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://EdwinTh.github.io/" rel="alternate" type="text/html" /><updated>2018-01-19T18:58:14+01:00</updated><id>https://EdwinTh.github.io/</id><title>That&#39;s so Random</title><subtitle>A playground for data analysis and R programming.</subtitle><entry><title>Curb your imposterism, start meta-learning</title><link href="https://EdwinTh.github.io/meta-learning/" rel="alternate" type="text/html" title="Curb your imposterism, start meta-learning" /><published>2018-01-19T18:55:00+01:00</published><updated>2018-01-19T18:55:00+01:00</updated><id>https://EdwinTh.github.io/meta-learning</id><content type="html" xml:base="https://EdwinTh.github.io/meta-learning/">&lt;p&gt;Recently, there has been a lot of attention for the imposter syndrome. Even seasoned 
+programmers admit they suffer from feelings of anxiety and low self-esteem. Some
+share their personal stories, which can be comforting for those suffering in 
+silence. I am not going to share my own story. Rather, I focus on a method that 
+helped me grow confidence in recent years. It is a simple, yet very effective 
+way to deal with being overwhelmed by the many things a data scientist can 
+acquaint him or herself with.&lt;/p&gt;
+
+&lt;h2 id=&quot;two-faces-of-the-imposter-demon&quot;&gt;Two Faces of the Imposter Demon&lt;/h2&gt;
+
+&lt;p&gt;I think imposterism can be broken into two, related, entities. The first
+is feeling you are falling short on &lt;strong&gt;a personal level&lt;/strong&gt;. That is, you think you 
+are not intelligent enough, you think you don’t have perseverance, or any
+other way to describe you are not up to the job. &lt;a href=&quot;https://startupbros.com/21-ways-overcome-impostor-syndrome/&quot;&gt;Most advice for overcoming 
+imposterism&lt;/a&gt; focuses on this part. I do not. Rather, I focus on the second foe, 
+the feeling that &lt;strong&gt;you don’t know enough&lt;/strong&gt;. This can be 
+very much related to the feeling of failing on a personal level, you might feel
+you don’t know enough because you are too slow a learner. However, I think it is 
+helpful to approach it as objective as possible.
+The feeling of not knowing enough can be combated more actively. Not by learning as
+much you can, but by considering not knowing a choice, rather than an imperfection.&lt;/p&gt;
+
+&lt;h2 id=&quot;you-cant-have-it-all&quot;&gt;You can’t have it all&lt;/h2&gt;
+
+&lt;p&gt;The field of data science is incredibly broad. Comprising, among many others, getting 
+data out of computer systems, preparing data in databases, principles of 
+distributed computing, building and interpreting statistical models, data 
+visualization, building machine learning pipelines, text analysis, translating
+business problems into data problems and communicating results to stakeholders.
+To make matters worse, for each and every topic there are several, if not dozens, 
+databases, languages, packages and tools. This means, by definition, no one is
+going to have mastery of everything the field comprises. And thus there are 
+things you do not and never will know.&lt;/p&gt;
+
+&lt;h2 id=&quot;learning-new-stuff&quot;&gt;Learning new stuff&lt;/h2&gt;
+
+&lt;p&gt;To stay effective you have to keep up with developments within the field. New 
+packages will aid your data preparations, new tools might 
+process data in a faster way and new machine learning models might give superior
+results. Just to name a few. I think a great deal of impostering comes from feeling you can’t keep up. There is a constant list in the back of your head with cool new stuff you
+still have to try out. This is where meta-learning comes into play, actively deciding what
+you will and will not learn. For my peace
+of mind it is crucial to decide the things I am &lt;strong&gt;not&lt;/strong&gt; going to do. I keep
+a log (Google Sheets document) that has two simple tabs. The first a 
+collector of stuff I come across in blogs and on twitter. These are 
+things that do look interesting, but it needs a more thorough look. I also add things that I come across in the daily job, such as a certain part of SQL
+I don’t fully grasp yet. Once in a while I empty the collector, trying to pick up
+the small stuff right away and moving the larger things either to second tab or to will-not-do.
+The second tab holds the larger things I am actually going to learn.
+With time at hand at work or at home I work on learning the things on the second tab. More about this later.&lt;/p&gt;
+
+&lt;h2 id=&quot;define-yourself&quot;&gt;Define Yourself&lt;/h2&gt;
+
+&lt;p&gt;So you cannot have it all, you have to choose. What can be of good help when choosing is to 
+have a definition of your unique data science profile. Here is mine:&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;I have thorough knowledge of statistical models and know how to apply them. I am a good R programmer, both in interactive analysis and in 
+software development. I know enough about data bases to work effectively with 
+them, if necessary I can do the full data preparation in SQL. I know enough 
+math to understand new models and read text books, but I can’t derive and proof
+new stuff on my own. I have a good understanding of the principles of machine learning and can apply most of the algorithms in practice. My oral and written communication are quite good, which helps me in translating back and forth between data and business problems.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;That’s it, focused on what I do well and where I am effective. Some things that
+are not in there; building a full data pipeline on an Hadoop cluster, telling
+data stories with d3.js, creating custom algorithms for a business, optimizing a
+database, effective use of python, and many more. If someone comes to me with one
+of these task, it is just “Sorry, I am not your guy”.&lt;/p&gt;
+
+&lt;p&gt;I used to feel that I had to know everything. For instance, I started to learn python because I
+thought a good data scientist should know it as well as R. Eventually, I realized
+I will never be good at python, because I will always use R as my bread-and-
+butter. I know enough python to cooperate in a project where it is used, 
+but that’s it and that it will remain. Rather, I spend time and effort now in 
+improving what I already do well. This is not because I think because R is 
+superior to python. I just happen to know R and I am content with knowing R 
+very well at the cost of not having access to all the wonderful work done in 
+python. I will never learn d3.js, because I don’t know JavaScript and it will 
+take me ages to learn. Rather, I might focus on learning Stan which is much more 
+fitting to my profile. I think it is both effective and alleviating stress to
+go deep on the things you are good at and deliberately choose things you will not
+learn.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-meta-learning&quot;&gt;The meta-learning&lt;/h2&gt;
+
+&lt;p&gt;I told you about the collector, now a few more words about the meta-learning tab.
+It has three simple columns. &lt;strong&gt;what&lt;/strong&gt; it is I am going to learn
+and &lt;strong&gt;how&lt;/strong&gt; I am going to do that are the first two obvious categories. The most important, however, is &lt;strong&gt;why&lt;/strong&gt; I am going to learn it. For me there are only two valid reasons. 
+Either I am very interested in the topic and I envision enjoying doing it, or
+it will allow me to do my &lt;em&gt;current&lt;/em&gt; job more effectively. I stressed current 
+there because scrolling the requirements of job openings is about the perfect
+way to feed your imposter monster. Focus on what you are doing now and have 
+faith you will pick-up new skills if a future job demands it.&lt;/p&gt;
+
+&lt;p&gt;Meta-learning gives me focus, relaxation and efficiency. At its core it is 
+defining yourself as a data scientist and deliberately choose what you are 
+and, more importantly, what you are not going to learn. I experienced, that doing this 
+with rigor actively fights the imposterism. Now, what works for me might 
+not work for you. Maybe a different system fits you better. However, I think
+everybody benefits from defining the data scientist he/she is and actively
+choose what not to learn.&lt;/p&gt;</content><author><name>Edwin Thoen</name></author><category term="meta-learning" /><category term="imposter syndrome" /><category term="data science" /><summary>Recently, there has been a lot of attention for the imposter syndrome. Even seasoned 
+programmers admit they suffer from feelings of anxiety and low self-esteem. Some
+share their personal stories, which can be comforting for those suffering in 
+silence. I am not going to share my own story. Rather, I focus on a method that 
+helped me grow confidence in recent years. It is a simple, yet very effective 
+way to deal with being overwhelmed by the many things a data scientist can 
+acquaint him or herself with.</summary></entry><entry><title>Make your own color palettes with paletti</title><link href="https://EdwinTh.github.io/blog/paletti/" rel="alternate" type="text/html" title="Make your own color palettes with paletti" /><published>2017-12-22T21:52:00+01:00</published><updated>2017-12-22T21:52:00+01:00</updated><id>https://EdwinTh.github.io/blog/paletti</id><content type="html" xml:base="https://EdwinTh.github.io/blog/paletti/">&lt;p&gt;Last week I blogged about the &lt;a href=&quot;https://edwinth.github.io/blog/dutch-masters/&quot;&gt;dutchmasters color palettes package&lt;/a&gt;, which was inspired 
 by the wonderful &lt;a href=&quot;https://github.com/ropenscilabs/ochRe&quot;&gt;ochRe package&lt;/a&gt;. As 
 mentioned I shamelessly copied the package. I replaced the list with character 
 vectors containing hex colors and did a find and replace to make it 
@@ -1270,155 +1375,4 @@ Two new functions are introduced to reformat datetime variable. These can be esp
   &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;</content><category term="R" /><category term="unique key" /><category term="dplyr" /><summary>Virtually every dataset has them; id variables that link a record to a subject and/or time point. Often one column, or a combination of columns, forms the unique id of a record. For instance, the combination of patient_id and visit_id, or ip_adress and visit_time. The first step in most of my analyses is almost always checking the uniqueness of a variable, or a combination of variables. If it is not unique, may assumptions about the data may be wrong, or there are data quality issues. Since I do this so often, I decided to make a little wrapper around this procedure. The unique_id function will return TRUE if the evaluated variables indeed are the unique key to a record. If not, it will return all the records for which the id variable(s) are duplicated so we can pinpoint the problem right away. It uses dplyr v.0.7.1, so make sure that it is loaded.</summary></entry><entry><title>Check Data Quality with padr</title><link href="https://EdwinTh.github.io/blog/data-quality-padr/" rel="alternate" type="text/html" title="Check Data Quality with padr" /><published>2017-06-26T17:00:00+02:00</published><updated>2017-06-26T17:00:00+02:00</updated><id>https://EdwinTh.github.io/blog/data-quality-padr</id><content type="html" xml:base="https://EdwinTh.github.io/blog/data-quality-padr/">&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;padr&lt;/code&gt; package was designed to prepare datetime data for analysis. That is, to take raw, timestamped data, and quickly convert it into a tidy format that can be analyzed with all the tidyverse tools. Recently, a colleague and I discovered a second use for the package that I had not anticipated: checking data quality. Every analysis should contain checking if data are as expected. In the case of timestamped data, observations are sometimes missing due to technical malfunction of the system that produced them. Here are two examples that show how &lt;code class=&quot;highlighter-rouge&quot;&gt;pad&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;thicken&lt;/code&gt; can be leveraged to detect problems in timestamped data quickly.&lt;/p&gt;
-
-&lt;h2 id=&quot;regular-observations&quot;&gt;Regular observations&lt;/h2&gt;
-
-&lt;p&gt;Lets imagine our system produces a value every five minutes. We want to analyse the data of the last couple of months and start by some routine checks. We quickly find that the number of records is not what we expected.&lt;/p&gt;
-
-&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tidyverse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;padr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;regular_system&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;head&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## # A tibble: 6 × 2
-##             timestamp  value
-##                &amp;lt;dttm&amp;gt;  &amp;lt;dbl&amp;gt;
-## 1 2017-03-01 00:00:00 423.69
-## 2 2017-03-01 00:05:00 434.51
-## 3 2017-03-01 00:10:00 206.01
-## 4 2017-03-01 00:15:00 432.83
-## 5 2017-03-01 00:20:00 220.07
-## 6 2017-03-01 00:25:00 393.44
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;seq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;regular_system&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timestamp&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;min&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;regular_system&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timestamp&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; 
-    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;by&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;5 min&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## [1] 32456
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;nrow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;regular_system&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## [1] 32454
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Two observations are missing here, with &lt;code class=&quot;highlighter-rouge&quot;&gt;pad&lt;/code&gt; they are located in no time.&lt;/p&gt;
-
-&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;regular_system&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; 
-  &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mutate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check_var&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; 
-  &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pad&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; 
-  &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;is.na&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check_var&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## pad applied on the interval: 5 min
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## # A tibble: 2 × 3
-##             timestamp value check_var
-##                &amp;lt;dttm&amp;gt; &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt;
-## 1 2017-06-08 11:55:00    NA        NA
-## 2 2017-06-08 12:00:00    NA        NA
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;There we are, aparrantly the system took a lunch break on June the 8th.&lt;/p&gt;
-
-&lt;h2 id=&quot;irregular-observations&quot;&gt;Irregular observations&lt;/h2&gt;
-
-&lt;p&gt;Now a more common situation. The system only produces data when it has something to tell us. This makes the observations irregular. This server produces a message each time some event happened.&lt;/p&gt;
-
-&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;irregular_system&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;head&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## # A tibble: 6 × 2
-##            time_stamp  message
-##                &amp;lt;dttm&amp;gt;    &amp;lt;chr&amp;gt;
-## 1 2016-10-09 00:02:01  QL2341@
-## 2 2016-10-09 00:07:01 #A222IWL
-## 3 2016-10-09 00:11:01  QL2341@
-## 4 2016-10-09 00:17:00     WW#5
-## 5 2016-10-09 00:17:00  QL2341@
-## 6 2016-10-09 00:17:01     WW#5
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Also here our server might be temporarily down, however, this is not so easy to locate. It is helpful here to apply &lt;code class=&quot;highlighter-rouge&quot;&gt;thicken&lt;/code&gt;, then aggregate, pad, and fill, and finally plot the result. We might want to look at several different interval, lets make it as generic as possible.&lt;/p&gt;
-
-&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;thicken_plot&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;interval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;thicken&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;interval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;ts_thick&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; 
-    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ts_thick&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; 
-    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pad&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; 
-    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fill_by_value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; 
-    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ggplot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;aes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ts_thick&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;geom_line&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Lets look at 10 minute intervals.&lt;/p&gt;
-
-&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;thicken_plot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;irregular_system&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;10 min&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## pad applied on the interval: 10 min
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;&lt;img src=&quot;/figure/source/2017-06-26-data-quality-padr/unnamed-chunk-6-1.png&quot; alt=&quot;plot of chunk unnamed-chunk-6&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Thats not too helpful, maybe a little coarser.&lt;/p&gt;
-
-&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;thicken_plot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;irregular_system&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;30 min&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## pad applied on the interval: 30 min
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;&lt;img src=&quot;/figure/source/2017-06-26-data-quality-padr/unnamed-chunk-7-1.png&quot; alt=&quot;plot of chunk unnamed-chunk-7&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Now we see a dip at the middle of the day for October 10th, where for all the other days there is ample activty during these hours. There must be something wrong here that has to be sorted out. That will wrap up these two quick examples of how to use &lt;code class=&quot;highlighter-rouge&quot;&gt;padr&lt;/code&gt; for data quality checking.&lt;/p&gt;
-
-&lt;p&gt;I will present the package during a lightning talk at useR next week (Thursday 5:50 pm at 4.02 Wild Gallery). Hope to meet many of you during the conference!&lt;/p&gt;
-
-&lt;h2 id=&quot;edit-creation-of-the-two-data-sets&quot;&gt;Edit: creation of the two data sets&lt;/h2&gt;
-
-&lt;p&gt;The two data sets were created manually for demonstrations purposes. Since it was requested to provide the code that created these sets, see below.&lt;/p&gt;
-
-&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tidyverse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;padr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lubridate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;set.seed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;234&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;32456&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;regular_system&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data_frame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timestamp&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;seq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ymd_hms&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;20170301 000000&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; 
-                                             &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;length.out&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;by&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;5 min&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-                                             &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;round&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;runif&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;200&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;500&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; 
-                                                           &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;regular_system&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;regular_system&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;28656&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;28657&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-
-&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;attr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;emergency&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time_stamp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;tzone&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;UTC&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;irregular_system&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;emergency&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;thicken&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;week&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; 
-  &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time_stamp_week&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;==&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;as.Date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;2016-10-09&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; 
-  &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;select&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time_stamp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;messages&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;#A222IWL&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;WW34&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;WW#5&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;QL2341@&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;irregular_system&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;irregular_system&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; 
-  &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mutate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sample&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;messages&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;TRUE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; 
-  &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time_stamp&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ymd_hms&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;2016-10-10 16:55:02&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-         &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time_stamp&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ymd_hms&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;2016-10-10 18:08:32&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;</content><category term="R" /><category term="data quality" /><category term="padr" /><category term="timestamp" /><summary>The padr package was designed to prepare datetime data for analysis. That is, to take raw, timestamped data, and quickly convert it into a tidy format that can be analyzed with all the tidyverse tools. Recently, a colleague and I discovered a second use for the package that I had not anticipated: checking data quality. Every analysis should contain checking if data are as expected. In the case of timestamped data, observations are sometimes missing due to technical malfunction of the system that produced them. Here are two examples that show how pad and thicken can be leveraged to detect problems in timestamped data quickly.</summary></entry></feed>
+&lt;/div&gt;</content><category term="R" /><category term="unique key" /><category term="dplyr" /><summary>Virtually every dataset has them; id variables that link a record to a subject and/or time point. Often one column, or a combination of columns, forms the unique id of a record. For instance, the combination of patient_id and visit_id, or ip_adress and visit_time. The first step in most of my analyses is almost always checking the uniqueness of a variable, or a combination of variables. If it is not unique, may assumptions about the data may be wrong, or there are data quality issues. Since I do this so often, I decided to make a little wrapper around this procedure. The unique_id function will return TRUE if the evaluated variables indeed are the unique key to a record. If not, it will return all the records for which the id variable(s) are duplicated so we can pinpoint the problem right away. It uses dplyr v.0.7.1, so make sure that it is loaded.</summary></entry></feed>
