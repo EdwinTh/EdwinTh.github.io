@@ -1,0 +1,160 @@
+<p>Tidy evaluation is a bit challenging to get your head around. Even after reading <a href="https://cran.r-project.org/web/packages/dplyr/vignettes/programming.html">programming with dplyr</a> several times, I still struggle when creating functions from time to time. I made a small summary of the most common actions I perform, so I don’t have to dig in the vignettes and on stackoverflow over and over. Each is accompanied with a minimal example on how to implement it. I thought others might find this useful too, so here it is in a blog post. This list is meant to be a living thing so additions and improvements are most welcome. Please do a PR on <a href="https://github.com/EdwinTh/EdwinTh.github.io/tree/master/_source/2017-08-24-dplyr-recipes.Rmd">this file</a> or send an email.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+<p>#### bare to quosure: <code class="highlighter-rouge">quo</code></p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">bare_to_quo</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">var</span><span class="p">){</span><span class="w">
+  </span><span class="n">x</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">select</span><span class="p">(</span><span class="o">!!</span><span class="n">var</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">head</span><span class="p">(</span><span class="m">1</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="n">bare_to_quo</span><span class="p">(</span><span class="n">mtcars</span><span class="p">,</span><span class="w"> </span><span class="n">quo</span><span class="p">(</span><span class="n">cyl</span><span class="p">))</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>##           cyl
+## Mazda RX4   6
+</code></pre>
+</div>
+
+<h4 id="bare-to-quosure-in-function-enquo">bare to quosure in function: <code class="highlighter-rouge">enquo</code></h4>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">bare_to_quo_in_func</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">var</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">var_enq</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">enquo</span><span class="p">(</span><span class="n">var</span><span class="p">)</span><span class="w">
+  </span><span class="n">x</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">select</span><span class="p">(</span><span class="o">!!</span><span class="n">var_enq</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">head</span><span class="p">(</span><span class="m">1</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="n">bare_to_quo_in_func</span><span class="p">(</span><span class="n">mtcars</span><span class="p">,</span><span class="w"> </span><span class="n">mpg</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>##           mpg
+## Mazda RX4  21
+</code></pre>
+</div>
+
+<h4 id="quosure-to-a-name-quoname">quosure to a name: <code class="highlighter-rouge">quo_name</code></h4>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">bare_to_name</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">nm</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">nm_name</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">quo_name</span><span class="p">(</span><span class="n">nm</span><span class="p">)</span><span class="w">
+  </span><span class="n">x</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">mutate</span><span class="p">(</span><span class="o">!!</span><span class="n">nm_name</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="m">42</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">head</span><span class="p">(</span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+    </span><span class="n">select</span><span class="p">(</span><span class="o">!!</span><span class="n">nm</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="n">bare_to_name</span><span class="p">(</span><span class="n">mtcars</span><span class="p">,</span><span class="w"> </span><span class="n">quo</span><span class="p">(</span><span class="n">this_is_42</span><span class="p">))</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>##   this_is_42
+## 1         42
+</code></pre>
+</div>
+
+<h4 id="quosure-to-text-quotext">quosure to text: <code class="highlighter-rouge">quo_text</code></h4>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">quo_to_text</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">var</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">var_enq</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">enquo</span><span class="p">(</span><span class="n">var</span><span class="p">)</span><span class="w">
+  </span><span class="n">ggplot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">aes_string</span><span class="p">(</span><span class="n">rlang</span><span class="o">::</span><span class="n">quo_text</span><span class="p">(</span><span class="n">var_enq</span><span class="p">)))</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">geom_density</span><span class="p">()</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="n">plt</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">quo_to_text</span><span class="p">(</span><span class="n">mtcars</span><span class="p">,</span><span class="w"> </span><span class="n">cyl</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<p>Note that tidy evaluation is not yet implemented in <code class="highlighter-rouge">ggplot2</code>, but this will be in future versions. This is a workaround for the meantime, when combining <code class="highlighter-rouge">dplyr</code> and <code class="highlighter-rouge">ggplot2</code>.</p>
+
+<h4 id="character-to-name-sym-edited">character to name: <code class="highlighter-rouge">sym</code> (edited)</h4>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">char_to_quo</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">var</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">var_enq</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">rlang</span><span class="o">::</span><span class="n">sym</span><span class="p">(</span><span class="n">var</span><span class="p">)</span><span class="w">
+  </span><span class="n">x</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">select</span><span class="p">(</span><span class="o">!!</span><span class="n">var_enq</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">head</span><span class="p">(</span><span class="m">1</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="n">char_to_quo</span><span class="p">(</span><span class="n">mtcars</span><span class="p">,</span><span class="w"> </span><span class="s2">"vs"</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>##           vs
+## Mazda RX4  0
+</code></pre>
+</div>
+
+<h4 id="multiple-bares-to-quosure-quos">multiple bares to quosure: <code class="highlighter-rouge">quos</code></h4>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">bare_to_quo_mult</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">grouping</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">quos</span><span class="p">(</span><span class="n">...</span><span class="p">)</span><span class="w">
+  </span><span class="n">x</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">group_by</span><span class="p">(</span><span class="o">!!!</span><span class="n">grouping</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">summarise</span><span class="p">(</span><span class="n">nr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">())</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="n">bare_to_quo_mult</span><span class="p">(</span><span class="n">mtcars</span><span class="p">,</span><span class="w"> </span><span class="n">vs</span><span class="p">,</span><span class="w"> </span><span class="n">cyl</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## # A tibble: 5 x 3
+## # Groups:   vs [?]
+##      vs   cyl    nr
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;
+## 1     0     4     1
+## 2     0     6     3
+## 3     0     8    14
+## 4     1     4    10
+## 5     1     6     4
+</code></pre>
+</div>
+
+<h4 id="multiple-characters-to-names-syms-edited">multiple characters to names: <code class="highlighter-rouge">syms</code> (edited)</h4>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">bare_to_quo_mult_chars</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">grouping</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">rlang</span><span class="o">::</span><span class="n">syms</span><span class="p">(</span><span class="n">...</span><span class="p">)</span><span class="w">
+  </span><span class="n">x</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">group_by</span><span class="p">(</span><span class="o">!!!</span><span class="n">grouping</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">summarise</span><span class="p">(</span><span class="n">nr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">())</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="n">bare_to_quo_mult_chars</span><span class="p">(</span><span class="n">mtcars</span><span class="p">,</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="s2">"vs"</span><span class="p">,</span><span class="w"> </span><span class="s2">"cyl"</span><span class="p">))</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## # A tibble: 5 x 3
+## # Groups:   vs [?]
+##      vs   cyl    nr
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;
+## 1     0     4     1
+## 2     0     6     3
+## 3     0     8    14
+## 4     1     4    10
+## 5     1     6     4
+</code></pre>
+</div>
+
+<h4 id="quoting-full-expressions">quoting full expressions</h4>
+
+<p>Although quoting column names is most often used, it is by no means the only option. We can use the above to quote full expressions.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">filter_func</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">filter_exp</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">filter_exp_enq</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">enquo</span><span class="p">(</span><span class="n">filter_exp</span><span class="p">)</span><span class="w">
+  </span><span class="n">x</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">filter</span><span class="p">(</span><span class="o">!!</span><span class="n">filter_exp_enq</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="n">filter_func</span><span class="p">(</span><span class="n">mtcars</span><span class="p">,</span><span class="w"> </span><span class="n">hp</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">93</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>##    mpg cyl disp hp drat   wt  qsec vs am gear carb
+## 1 22.8   4  108 93 3.85 2.32 18.61  1  1    4    1
+</code></pre>
+</div>
+
+<h4 id="edit-notes">Edit notes</h4>
+
+<p>I mistakingly thought that <code class="highlighter-rouge">rlang::sym(s)</code> created quosures. However, as pointed out to me by a reader, this creates a <code class="highlighter-rouge">name</code>, not a <code class="highlighter-rouge">quosure</code>. A <code class="highlighter-rouge">name</code> however can also be unquoted. See this <a href="https://github.com/tidyverse/rlang/issues/116">github discussion</a>.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">just_a_name</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">rlang</span><span class="o">::</span><span class="n">sym</span><span class="p">(</span><span class="s2">"cyl"</span><span class="p">)</span><span class="w">
+</span><span class="nf">class</span><span class="p">(</span><span class="n">just_a_name</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "name"
+</code></pre>
+</div>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">mtcars</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">select</span><span class="p">(</span><span class="o">!!</span><span class="n">just_a_name</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">head</span><span class="p">(</span><span class="m">1</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>##           cyl
+## Mazda RX4   6
+</code></pre>
+</div>
+

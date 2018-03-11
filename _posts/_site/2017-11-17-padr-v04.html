@@ -1,0 +1,94 @@
+<p>I am happy to share that the latest version of <code class="highlighter-rouge">padr</code> just hit CRAN. This new version comprises bug fixes, performance improvements and new functions for formatting datetime variables. But above all, it introduces the custom paradigm that enables you to do asymmetric analysis.</p>
+
+<h2 id="improvements-to-existing-functions">Improvements to existing functions</h2>
+
+<p><code class="highlighter-rouge">thicken</code> used to get slowish when the data frame got large. Several adjustments resulted in a considerable performance gain. It is now approximately 6 times faster than in version 0.3.0.</p>
+
+<p>Both <code class="highlighter-rouge">pad</code> and <code class="highlighter-rouge">thicken</code> used to break with noninformative errors when the datetime variable contains missing values. Both functions allow for missing values now. <code class="highlighter-rouge">thicken</code> will leave the record containing the missing datetime value where it is and will enter a missing value in the column added to the data frame. <code class="highlighter-rouge">pad</code> will move all the records with missing values in the datetime variable to the end of the data frame and will further ignore them for padding. Both functions throw a warning when the datetime variable has missing values.</p>
+
+<h2 id="new-functions">New functions</h2>
+
+<p><code class="highlighter-rouge">span_date</code> and <code class="highlighter-rouge">span_time</code> are wrappers around <code class="highlighter-rouge">seq.Date</code> and <code class="highlighter-rouge">seq.POSIXt</code> and were previously described in <a href="https://edwinth.github.io/blog/span_date_time/">this blog post</a>. 
+Two new functions are introduced to reformat datetime variable. These can be especially useful for showing the data in a plot or a graph. <code class="highlighter-rouge">center_interval</code> shifts the datetime point from the beginning of the interval to the (approximate) center. Especially bar, line and dot plots will reflect the data in a more accurate way after centering.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">padr</span><span class="p">)</span><span class="w">
+</span><span class="n">jan_first</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">emergency</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">filter</span><span class="p">(</span><span class="n">as.Date</span><span class="p">(</span><span class="n">time_stamp</span><span class="p">,</span><span class="w"> </span><span class="n">tz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"EST"</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">as.Date</span><span class="p">(</span><span class="s2">"2016-01-01"</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">thicken</span><span class="p">(</span><span class="s2">"3 hour"</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">count</span><span class="p">(</span><span class="n">time_stamp_3_hour</span><span class="p">)</span><span class="w"> 
+</span><span class="n">ggplot</span><span class="p">(</span><span class="n">jan_first</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">time_stamp_3_hour</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">geom_bar</span><span class="p">(</span><span class="n">stat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"identity"</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<p><img src="/figure/source/2017-11-17-padr-v04/unnamed-chunk-1-1.png" alt="plot of chunk unnamed-chunk-1" /></p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">jan_first</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">mutate</span><span class="p">(</span><span class="n">ts_center</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">center_interval</span><span class="p">(</span><span class="n">time_stamp_3_hour</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">ggplot</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">ts_center</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">geom_bar</span><span class="p">(</span><span class="n">stat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"identity"</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<p><img src="/figure/source/2017-11-17-padr-v04/unnamed-chunk-2-1.png" alt="plot of chunk unnamed-chunk-2" /></p>
+
+<p>Secondly, there is the <code class="highlighter-rouge">format_interval</code> function, that will create a character from the interval using <code class="highlighter-rouge">strftime</code> on both the beginning and the end of the datetime points of each interval.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">jan_first</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">mutate</span><span class="p">(</span><span class="n">hours</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">format_interval</span><span class="p">(</span><span class="n">time_stamp_3_hour</span><span class="p">,</span><span class="w">
+                                 </span><span class="n">start_format</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"%b%d %H"</span><span class="p">,</span><span class="w">
+                                 </span><span class="n">end_format</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s2">"%H"</span><span class="p">,</span><span class="w">
+                                 </span><span class="n">sep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"-"</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">ggplot</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">hours</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">geom_bar</span><span class="p">(</span><span class="n">stat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"identity"</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<p><img src="/figure/source/2017-11-17-padr-v04/unnamed-chunk-3-1.png" alt="plot of chunk unnamed-chunk-3" /></p>
+
+<p>When using the interval “week”, one might want to start the weeks on different day than Sunday. In <code class="highlighter-rouge">thicken</code> the start_val should than be specified with a day of the desired weekday. Finding this day by hand is a bit tedious, thats why <code class="highlighter-rouge">closest_weekday</code> is introduced.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">thicken</span><span class="p">(</span><span class="n">coffee</span><span class="p">,</span><span class="w"> </span><span class="s2">"week"</span><span class="p">,</span><span class="w"> 
+        </span><span class="n">start_val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">closest_weekday</span><span class="p">(</span><span class="n">coffee</span><span class="o">$</span><span class="n">time_stamp</span><span class="p">,</span><span class="w"> </span><span class="m">6</span><span class="p">))</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>##            time_stamp amount time_stamp_week
+## 1 2016-07-07 09:11:21   3.14      2016-07-02
+## 2 2016-07-07 09:46:48   2.98      2016-07-02
+## 3 2016-07-09 13:25:17   4.11      2016-07-09
+## 4 2016-07-10 10:45:11   3.14      2016-07-09
+</code></pre>
+</div>
+
+<h2 id="the-custom-suite">The custom suite</h2>
+
+<p><code class="highlighter-rouge">thicken</code> and <code class="highlighter-rouge">pad</code> are highly automated, because they assume all datetime points to be equally spaced. Internally they span vectors of the desired interval. However, it might be useful to have asymmetrical periods between datetime points. Especially when there are  periods in which the number of observations is consistently lower, such as nightly hours or weekend days. The functions <code class="highlighter-rouge">thicken_cust</code> and <code class="highlighter-rouge">pad_cust</code> work like the original functions. However, the user has to provide his own spanning vector to which the observations are mapped.</p>
+
+<p>Lets do an analysis of vehicle accidents in the <code class="highlighter-rouge">emergency</code>. We want to distinguish between morning rush hour (7-10), daytime (10-16), evening rush hour (16-19) and nighttime (19-7). This is the full analysis.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">accidents_span</span><span class="w"> </span><span class="o">&lt;-</span><span class="w">
+  </span><span class="n">span_around</span><span class="p">(</span><span class="n">emergency</span><span class="o">$</span><span class="n">time_stamp</span><span class="p">,</span><span class="w"> </span><span class="s2">"hour"</span><span class="p">,</span><span class="w"> </span><span class="n">start_shift</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"2 hour"</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">subset_span</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">hour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">7</span><span class="p">,</span><span class="w"> </span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="m">16</span><span class="p">,</span><span class="w"> </span><span class="m">19</span><span class="p">)))</span><span class="w">
+
+</span><span class="n">emergency</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">filter</span><span class="p">(</span><span class="n">title</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"Traffic: VEHICLE ACCIDENT -"</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">thicken_cust</span><span class="p">(</span><span class="n">accidents_span</span><span class="p">,</span><span class="w"> </span><span class="s2">"hour"</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">count</span><span class="p">(</span><span class="n">hour</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">pad_cust</span><span class="p">(</span><span class="n">accidents_span</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">fill_by_value</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">mutate</span><span class="p">(</span><span class="n">day</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">as.Date</span><span class="p">(</span><span class="n">hour</span><span class="p">,</span><span class="w"> </span><span class="n">tz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"EST"</span><span class="p">),</span><span class="w">
+         </span><span class="n">period</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">format_interval</span><span class="p">(</span><span class="n">hour</span><span class="p">,</span><span class="w"> </span><span class="n">start_format</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"%H"</span><span class="p">,</span><span class="w"> </span><span class="n">sep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"-"</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">ggplot</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">day</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">period</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> 
+  </span><span class="n">geom_line</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w">
+  </span><span class="n">facet_wrap</span><span class="p">(</span><span class="o">~</span><span class="n">period</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<p><img src="/figure/source/2017-11-17-padr-v04/unnamed-chunk-5-1.png" alt="plot of chunk unnamed-chunk-5" /></p>
+
+<p>The helper functions <code class="highlighter-rouge">span_around</code> and <code class="highlighter-rouge">subset_span</code> are used for building the spanning vector. The first takes the original datetime variable and spans a variable of the requested interval around it. This saves you the manual trouble of finding the min and the max of the variable and determine which points are respectively before and after them to build a variable of the interval. <code class="highlighter-rouge">subset_span</code>, subsequently, will only leave the datetime points in the input that meet the criteria given in a list. In the example these are the hours 7, 10, 16, and 19. In total there are eight different datetime parts you can subset on.</p>
+
+<p>The remainder of the analysis is greatly similar to a regular <code class="highlighter-rouge">padr</code> analysis. Instead of an interval to which to <code class="highlighter-rouge">thicken</code> and <code class="highlighter-rouge">pad</code> to, you use the asymmetrically spaced <code class="highlighter-rouge">accidents_span</code> variable in both <code class="highlighter-rouge">thicken_cust</code> and <code class="highlighter-rouge">pad_cust</code>. <code class="highlighter-rouge">thicken_cust</code> will then map each observation to a datetime point in the spanned vector. <code class="highlighter-rouge">pad_cust</code> will insert rows for each of the observations that are in the spanned vector, but not in the datetime variable.</p>
+
+<h2 id="thanks">Thanks</h2>
+
+<p>This release completes the initial plans I had for <code class="highlighter-rouge">padr</code>. For the next release I plan on refactoring and further increasing performance. Do you find anything still missing from <code class="highlighter-rouge">padr</code>? Did you find a bug or an inconsistency? Please notify by sending an email or file an issue on <a href="https://github.com/EdwinTh/padr">the github page</a>.</p>

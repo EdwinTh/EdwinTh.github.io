@@ -1,0 +1,112 @@
+<p>I am working on v.0.4.0 of the <a href="https://cran.r-project.org/web/packages/padr/vignettes/padr.html">padr package</a> this summer. Two new features that will be added are wrappers around <code class="highlighter-rouge">seq.Date</code> and <code class="highlighter-rouge">seq.POSIXt</code>. Since it is going to take a while before the new release is on CRAN, I go ahead and do an early presentation of these functions. Date and datetime parsing in base R are powerful and comprehensive, but also tedious. They can slow you down in your programming or analysis. Luckily, good wrappers and alternatives exist, at least the <code class="highlighter-rouge">ymd{_h}{m}{s}</code> suite from <a href="https://cran.r-project.org/web/packages/lubridate/vignettes/lubridate.html">lubridate</a> and Dirk Eddelbuettel’s <a href="https://cran.r-project.org/web/packages/anytime/README.html">anytime</a>. These functions remove much of the overhead of date and datetime parsing, allowing for quick formatting of vectors in all kinds of formats. They also alleviate the pain of using <code class="highlighter-rouge">seq.Date()</code> and <code class="highlighter-rouge">seq.POSIXt</code> a little, because the <code class="highlighter-rouge">from</code> and the <code class="highlighter-rouge">to</code> arguments should be parsed dates or datetimes. Take the following example.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">seq</span><span class="p">(</span><span class="n">as.POSIXct</span><span class="p">(</span><span class="s2">"2017-07-25 00:00:00"</span><span class="p">),</span><span class="w"> </span><span class="n">as.POSIXct</span><span class="p">(</span><span class="s2">"2017-07-25 03:00:00"</span><span class="p">),</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"hour"</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "2017-07-25 00:00:00 CEST" "2017-07-25 01:00:00 CEST"
+## [3] "2017-07-25 02:00:00 CEST" "2017-07-25 03:00:00 CEST"
+</code></pre>
+</div>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">lubridate</span><span class="p">)</span><span class="w">
+</span><span class="n">seq</span><span class="p">(</span><span class="n">ymd_h</span><span class="p">(</span><span class="s2">"20170725 00"</span><span class="p">),</span><span class="w"> </span><span class="n">ymd_h</span><span class="p">(</span><span class="s2">"20170725 03"</span><span class="p">),</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"hour"</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "2017-07-25 00:00:00 UTC" "2017-07-25 01:00:00 UTC"
+## [3] "2017-07-25 02:00:00 UTC" "2017-07-25 03:00:00 UTC"
+</code></pre>
+</div>
+
+<p>I think, however, that there is still some overhead in the second specification. By overhead I mean specifying things that feel redundant, things that could be set to some kind of default. Since the whole idea behind <code class="highlighter-rouge">padr</code> is automating away redundant and tedious actions in preparing datetime data, providing alternative functions that ask for as little as possible are a natural addition. This resulted in <code class="highlighter-rouge">span_date</code> and <code class="highlighter-rouge">span_time</code>. They remove overhead by:</p>
+
+<ul>
+  <li>
+    <p>allowing for specification of <code class="highlighter-rouge">from</code> and <code class="highlighter-rouge">to</code> directly as integer or character in <em>lubridatish</em> format.</p>
+  </li>
+  <li>
+    <p>setting the unspecified datetime parts to a default of 1 for month and day, and 0 for hour, minute, and second.</p>
+  </li>
+  <li>
+    <p>assuming the desired interval (the <code class="highlighter-rouge">by</code> statement in <code class="highlighter-rouge">seq.Date</code> and <code class="highlighter-rouge">seq.POSIXt</code>) as the lowest of the datetime parts specified in either <code class="highlighter-rouge">from</code> or <code class="highlighter-rouge">two</code>.</p>
+  </li>
+</ul>
+
+<p>If this is a little abstract still, let me give some examples. The above becomes example becomes:</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">devtools</span><span class="o">::</span><span class="n">install_github</span><span class="p">(</span><span class="s2">"EdwinTh/padr"</span><span class="p">)</span><span class="w"> </span><span class="c1"># download the dev version
+</span><span class="n">library</span><span class="p">(</span><span class="n">padr</span><span class="p">)</span><span class="w">
+</span><span class="n">span_time</span><span class="p">(</span><span class="s2">"20170725 00"</span><span class="p">,</span><span class="w"> </span><span class="s2">"20170725 03"</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "2017-07-25 00:00:00 UTC" "2017-07-25 01:00:00 UTC"
+## [3] "2017-07-25 02:00:00 UTC" "2017-07-25 03:00:00 UTC"
+</code></pre>
+</div>
+<p>We can simplify this even further, specifying the 00 for the hour in <code class="highlighter-rouge">from</code> is not strictly necesarry. Since the hour is specified in <code class="highlighter-rouge">to</code> already the <code class="highlighter-rouge">interval</code> will remain hour if we omit it.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">span_time</span><span class="p">(</span><span class="s2">"20170725"</span><span class="p">,</span><span class="w"> </span><span class="s2">"20170725 03"</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "2017-07-25 00:00:00 UTC" "2017-07-25 01:00:00 UTC"
+## [3] "2017-07-25 02:00:00 UTC" "2017-07-25 03:00:00 UTC"
+</code></pre>
+</div>
+<p>We can even use an integer instead of a character for <code class="highlighter-rouge">from</code>. When there are no time parts involved, a character is not necesarry. Since we use it in <code class="highlighter-rouge">span_time</code> it will be parsed to <code class="highlighter-rouge">POSIXct</code>, not to <code class="highlighter-rouge">Date</code>.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">span_time</span><span class="p">(</span><span class="m">20170725</span><span class="p">,</span><span class="w"> </span><span class="s2">"20170725 03"</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "2017-07-25 00:00:00 UTC" "2017-07-25 01:00:00 UTC"
+## [3] "2017-07-25 02:00:00 UTC" "2017-07-25 03:00:00 UTC"
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">to</code> does not have to be specified, we can use <code class="highlighter-rouge">len_out</code> instead. The <code class="highlighter-rouge">interval</code> is derived only from <code class="highlighter-rouge">from</code> then. To get Jan 1st, from 2010 to 2014 we can do both</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">span_date</span><span class="p">(</span><span class="m">2010</span><span class="p">,</span><span class="w"> </span><span class="m">2014</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "2010-01-01" "2011-01-01" "2012-01-01" "2013-01-01" "2014-01-01"
+</code></pre>
+</div>
+<p>and</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">span_date</span><span class="p">(</span><span class="m">2010</span><span class="p">,</span><span class="w"> </span><span class="n">len_out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "2010-01-01" "2011-01-01" "2012-01-01" "2013-01-01" "2014-01-01"
+</code></pre>
+</div>
+
+<p>If you want the <code class="highlighter-rouge">interval</code> to be different from the default, you can specify it.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">span_date</span><span class="p">(</span><span class="m">2016</span><span class="p">,</span><span class="w"> </span><span class="m">2017</span><span class="p">,</span><span class="w"> </span><span class="n">interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"month"</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>##  [1] "2016-01-01" "2016-02-01" "2016-03-01" "2016-04-01" "2016-05-01"
+##  [6] "2016-06-01" "2016-07-01" "2016-08-01" "2016-09-01" "2016-10-01"
+## [11] "2016-11-01" "2016-12-01" "2017-01-01"
+</code></pre>
+</div>
+
+<p>Note however, that you can often also specify the <code class="highlighter-rouge">interval</code> by providing more information in <code class="highlighter-rouge">from</code> or <code class="highlighter-rouge">to</code>.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">span_date</span><span class="p">(</span><span class="m">201601</span><span class="p">,</span><span class="w"> </span><span class="m">2017</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>##  [1] "2016-01-01" "2016-02-01" "2016-03-01" "2016-04-01" "2016-05-01"
+##  [6] "2016-06-01" "2016-07-01" "2016-08-01" "2016-09-01" "2016-10-01"
+## [11] "2016-11-01" "2016-12-01" "2017-01-01"
+</code></pre>
+</div>
+
+<p>I hope you find these little wrappers around <code class="highlighter-rouge">seq.Date</code> and <code class="highlighter-rouge">seq.POSIXt</code> useful and that they will enable you to conquer dates and datetimes a little quicker. You can obtain the function by downloading the dev version of <code class="highlighter-rouge">padr</code> as I did above. If you can think of improvements of the functions before it hits CRAN please tell me. Issues filed, pull requests, emails, and tweets are much appreciated.</p>

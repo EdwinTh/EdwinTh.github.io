@@ -1,0 +1,153 @@
+<p>The <code class="highlighter-rouge">padr</code> package was designed to prepare datetime data for analysis. That is, to take raw, timestamped data, and quickly convert it into a tidy format that can be analyzed with all the tidyverse tools. Recently, a colleague and I discovered a second use for the package that I had not anticipated: checking data quality. Every analysis should contain checking if data are as expected. In the case of timestamped data, observations are sometimes missing due to technical malfunction of the system that produced them. Here are two examples that show how <code class="highlighter-rouge">pad</code> and <code class="highlighter-rouge">thicken</code> can be leveraged to detect problems in timestamped data quickly.</p>
+
+<h2 id="regular-observations">Regular observations</h2>
+
+<p>Lets imagine our system produces a value every five minutes. We want to analyse the data of the last couple of months and start by some routine checks. We quickly find that the number of records is not what we expected.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">padr</span><span class="p">)</span><span class="w">
+</span><span class="n">regular_system</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">head</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## # A tibble: 6 × 2
+##             timestamp  value
+##                &lt;dttm&gt;  &lt;dbl&gt;
+## 1 2017-03-01 00:00:00 423.69
+## 2 2017-03-01 00:05:00 434.51
+## 3 2017-03-01 00:10:00 206.01
+## 4 2017-03-01 00:15:00 432.83
+## 5 2017-03-01 00:20:00 220.07
+## 6 2017-03-01 00:25:00 393.44
+</code></pre>
+</div>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">seq</span><span class="p">(</span><span class="n">regular_system</span><span class="o">$</span><span class="n">timestamp</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">min</span><span class="p">,</span><span class="w"> </span><span class="n">regular_system</span><span class="o">$</span><span class="n">timestamp</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">max</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"5 min"</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">length</span><span class="p">()</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] 32456
+</code></pre>
+</div>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">nrow</span><span class="p">(</span><span class="n">regular_system</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] 32454
+</code></pre>
+</div>
+
+<p>Two observations are missing here, with <code class="highlighter-rouge">pad</code> they are located in no time.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">regular_system</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">mutate</span><span class="p">(</span><span class="n">check_var</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">pad</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">filter</span><span class="p">(</span><span class="nf">is.na</span><span class="p">(</span><span class="n">check_var</span><span class="p">))</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## pad applied on the interval: 5 min
+</code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## # A tibble: 2 × 3
+##             timestamp value check_var
+##                &lt;dttm&gt; &lt;dbl&gt;     &lt;dbl&gt;
+## 1 2017-06-08 11:55:00    NA        NA
+## 2 2017-06-08 12:00:00    NA        NA
+</code></pre>
+</div>
+
+<p>There we are, aparrantly the system took a lunch break on June the 8th.</p>
+
+<h2 id="irregular-observations">Irregular observations</h2>
+
+<p>Now a more common situation. The system only produces data when it has something to tell us. This makes the observations irregular. This server produces a message each time some event happened.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">irregular_system</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">head</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## # A tibble: 6 × 2
+##            time_stamp  message
+##                &lt;dttm&gt;    &lt;chr&gt;
+## 1 2016-10-09 00:02:01  QL2341@
+## 2 2016-10-09 00:07:01 #A222IWL
+## 3 2016-10-09 00:11:01  QL2341@
+## 4 2016-10-09 00:17:00     WW#5
+## 5 2016-10-09 00:17:00  QL2341@
+## 6 2016-10-09 00:17:01     WW#5
+</code></pre>
+</div>
+
+<p>Also here our server might be temporarily down, however, this is not so easy to locate. It is helpful here to apply <code class="highlighter-rouge">thicken</code>, then aggregate, pad, and fill, and finally plot the result. We might want to look at several different interval, lets make it as generic as possible.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">thicken_plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">interval</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">x</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">thicken</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span><span class="w"> </span><span class="s2">"ts_thick"</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+    </span><span class="n">count</span><span class="p">(</span><span class="n">ts_thick</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+    </span><span class="n">pad</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+    </span><span class="n">fill_by_value</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+    </span><span class="n">ggplot</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">ts_thick</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">geom_line</span><span class="p">()</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+</div>
+
+<p>Lets look at 10 minute intervals.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">thicken_plot</span><span class="p">(</span><span class="n">irregular_system</span><span class="p">,</span><span class="w"> </span><span class="s2">"10 min"</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## pad applied on the interval: 10 min
+</code></pre>
+</div>
+
+<p><img src="/figure/source/2017-06-26-data-quality-padr/unnamed-chunk-6-1.png" alt="plot of chunk unnamed-chunk-6" /></p>
+
+<p>Thats not too helpful, maybe a little coarser.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">thicken_plot</span><span class="p">(</span><span class="n">irregular_system</span><span class="p">,</span><span class="w"> </span><span class="s2">"30 min"</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## pad applied on the interval: 30 min
+</code></pre>
+</div>
+
+<p><img src="/figure/source/2017-06-26-data-quality-padr/unnamed-chunk-7-1.png" alt="plot of chunk unnamed-chunk-7" /></p>
+
+<p>Now we see a dip at the middle of the day for October 10th, where for all the other days there is ample activty during these hours. There must be something wrong here that has to be sorted out. That will wrap up these two quick examples of how to use <code class="highlighter-rouge">padr</code> for data quality checking.</p>
+
+<p>I will present the package during a lightning talk at useR next week (Thursday 5:50 pm at 4.02 Wild Gallery). Hope to meet many of you during the conference!</p>
+
+<h2 id="edit-creation-of-the-two-data-sets">Edit: creation of the two data sets</h2>
+
+<p>The two data sets were created manually for demonstrations purposes. Since it was requested to provide the code that created these sets, see below.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">padr</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">lubridate</span><span class="p">)</span><span class="w">
+</span><span class="n">set.seed</span><span class="p">(</span><span class="m">234</span><span class="p">)</span><span class="w">
+</span><span class="n">n</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">32456</span><span class="w">
+</span><span class="n">regular_system</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data_frame</span><span class="p">(</span><span class="n">timestamp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">seq</span><span class="p">(</span><span class="n">ymd_hms</span><span class="p">(</span><span class="s2">"20170301 000000"</span><span class="p">),</span><span class="w"> 
+                                             </span><span class="n">length.out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"5 min"</span><span class="p">),</span><span class="w">
+                                             </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="n">runif</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="m">500</span><span class="p">)</span><span class="w"> 
+                                                           </span><span class="p">,</span><span class="m">2</span><span class="p">))</span><span class="w">
+</span><span class="n">regular_system</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">regular_system</span><span class="p">[</span><span class="o">-</span><span class="nf">c</span><span class="p">(</span><span class="m">28656</span><span class="p">,</span><span class="w"> </span><span class="m">28657</span><span class="p">),</span><span class="w"> </span><span class="p">]</span><span class="w">
+
+</span><span class="nf">attr</span><span class="p">(</span><span class="n">emergency</span><span class="o">$</span><span class="n">time_stamp</span><span class="p">,</span><span class="w"> </span><span class="s1">'tzone'</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s2">"UTC"</span><span class="w">
+</span><span class="n">irregular_system</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">emergency</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">thicken</span><span class="p">(</span><span class="s2">"week"</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">filter</span><span class="p">(</span><span class="n">time_stamp_week</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">as.Date</span><span class="p">(</span><span class="s2">"2016-10-09"</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">select</span><span class="p">(</span><span class="n">time_stamp</span><span class="p">)</span><span class="w">
+
+</span><span class="n">messages</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s2">"#A222IWL"</span><span class="p">,</span><span class="w"> </span><span class="s2">"WW34"</span><span class="p">,</span><span class="w"> </span><span class="s2">"WW#5"</span><span class="p">,</span><span class="w"> </span><span class="s2">"QL2341@"</span><span class="p">)</span><span class="w">
+</span><span class="n">irregular_system</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">irregular_system</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">mutate</span><span class="p">(</span><span class="n">message</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sample</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">(),</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">filter</span><span class="p">(</span><span class="n">time_stamp</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">ymd_hms</span><span class="p">(</span><span class="s2">"2016-10-10 16:55:02"</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w">
+         </span><span class="n">time_stamp</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">ymd_hms</span><span class="p">(</span><span class="s2">"2016-10-10 18:08:32"</span><span class="p">))</span><span class="w">
+</span></code></pre>
+</div>
+

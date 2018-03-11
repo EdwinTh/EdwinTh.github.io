@@ -1,0 +1,60 @@
+<p>A few weeks ago <code class="highlighter-rouge">padr</code> was introduced on CRAN, allowing you to quickly get datetime data ready for analysis. If you have missed this, see <a href="https://edwinth.github.io/blog/padr-intro/">the introduction blog</a> or <code class="highlighter-rouge">vignette("padr")</code> for a general introduction. In v0.2.0 the <code class="highlighter-rouge">pad</code> function is extended with a <code class="highlighter-rouge">group</code> argument, which makes your life a lot easier when you want to do padding within groups.</p>
+
+<p>In the Examples of <code class="highlighter-rouge">padr</code> in v0.1.0 I showed that padding over multiple groups could be done by using <code class="highlighter-rouge">padr</code> in conjunction with <code class="highlighter-rouge">dplyr</code> and <code class="highlighter-rouge">tidyr</code>.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">padr</span><span class="p">)</span><span class="w">
+</span><span class="c1"># padding a data.frame on group level
+</span><span class="n">day_var</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">seq</span><span class="p">(</span><span class="n">as.Date</span><span class="p">(</span><span class="s1">'2016-01-01'</span><span class="p">),</span><span class="w"> </span><span class="n">length.out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">12</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'month'</span><span class="p">)</span><span class="w">
+</span><span class="n">x_df_grp</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.frame</span><span class="p">(</span><span class="n">grp</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="nb">LETTERS</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">3</span><span class="p">],</span><span class="w"> </span><span class="n">each</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">4</span><span class="p">),</span><span class="w">
+                       </span><span class="n">y</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">runif</span><span class="p">(</span><span class="m">12</span><span class="p">,</span><span class="w"> </span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="m">20</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="m">0</span><span class="p">),</span><span class="w">
+                       </span><span class="n">date</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sample</span><span class="p">(</span><span class="n">day_var</span><span class="p">,</span><span class="w"> </span><span class="m">12</span><span class="p">,</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+ </span><span class="n">arrange</span><span class="p">(</span><span class="n">grp</span><span class="p">,</span><span class="w"> </span><span class="n">date</span><span class="p">)</span><span class="w">
+
+</span><span class="n">x_df_grp</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">group_by</span><span class="p">(</span><span class="n">grp</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">do</span><span class="p">(</span><span class="n">pad</span><span class="p">(</span><span class="n">.</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">ungroup</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">tidyr</span><span class="o">::</span><span class="n">fill</span><span class="p">(</span><span class="n">grp</span><span class="p">)</span><span class="w"> 
+</span></code></pre>
+</div>
+
+<p>I quite quickly realized this is an unsatisfactory solution for two reasons:</p>
+
+<p>1) It is a hassle. It is the goal of <code class="highlighter-rouge">padr</code> to make datetime preparation as swift and pain free as possible. Having to manually fill your grouping variable(s) after padding is not exactly in concordance with that goal.
+2) It does not work when one or both of the <code class="highlighter-rouge">start_val</code> and <code class="highlighter-rouge">end_val</code> arguments are specified. The start and/or the end of the time series of a group are then no longer bounded by an original observation, and thus don’t have a value of the grouping variable(s). Forward filling with <code class="highlighter-rouge">tidyr::fill</code> will incorrectly fill the grouping variable(s) as a result.</p>
+
+<p>It was therefore necessary to expand <code class="highlighter-rouge">pad</code>, so the grouping variable(s) do not contain missing values anymore after padding. The <code class="highlighter-rouge">group</code> argument takes a character vector with the column name(s) of the variables to group by. Padding will be done on each of the groups formed by the unique combination of the grouping variables. This is of course just the distinct of the variable, if there is only one grouping variable. The result of the date padding will be exactly the same as before this addition (meaning the datetime variable does not change). However, the returned data frame will no longer have missing values for the grouping variables on the padded rows.</p>
+
+<p>The new version of the section in the Examples of <code class="highlighter-rouge">padr</code> is:</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">day_var</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">seq</span><span class="p">(</span><span class="n">as.Date</span><span class="p">(</span><span class="s1">'2016-01-01'</span><span class="p">),</span><span class="w"> </span><span class="n">length.out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">12</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'month'</span><span class="p">)</span><span class="w">
+</span><span class="n">x_df_grp</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.frame</span><span class="p">(</span><span class="n">grp1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="nb">LETTERS</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">3</span><span class="p">],</span><span class="w"> </span><span class="n">each</span><span class="w"> </span><span class="o">=</span><span class="m">4</span><span class="p">),</span><span class="w">
+                       </span><span class="n">grp2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">letters</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">2</span><span class="p">],</span><span class="w">
+                       </span><span class="n">y</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">runif</span><span class="p">(</span><span class="m">12</span><span class="p">,</span><span class="w"> </span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="m">20</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="m">0</span><span class="p">),</span><span class="w">
+                       </span><span class="n">date</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sample</span><span class="p">(</span><span class="n">day_var</span><span class="p">,</span><span class="w"> </span><span class="m">12</span><span class="p">,</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+ </span><span class="n">arrange</span><span class="p">(</span><span class="n">grp1</span><span class="p">,</span><span class="w"> </span><span class="n">grp2</span><span class="p">,</span><span class="w"> </span><span class="n">date</span><span class="p">)</span><span class="w">
+
+</span><span class="c1"># pad by one grouping var
+</span><span class="n">x_df_grp</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">pad</span><span class="p">(</span><span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'grp1'</span><span class="p">)</span><span class="w">
+
+</span><span class="c1"># pad by two groups vars
+</span><span class="n">x_df_grp</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">pad</span><span class="p">(</span><span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s1">'grp1'</span><span class="p">,</span><span class="w"> </span><span class="s1">'grp2'</span><span class="p">))</span><span class="w">
+</span></code></pre>
+</div>
+
+<h3 id="bug-fixes">Bug fixes</h3>
+
+<p>Besides the additional argument there were two bug fixes in this version:</p>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">pad</code> does no longer break when datetime variable contains one value only. Returns <code class="highlighter-rouge">x</code> and a warning if <code class="highlighter-rouge">start_val</code> and <code class="highlighter-rouge">end_val</code> are <code class="highlighter-rouge">NULL</code>, and will do proper padding when one or both are specified.</p>
+  </li>
+  <li>
+    <p>In the <code class="highlighter-rouge">fill_</code> function now a meaningful error is thrown, when forgetting to specify at least one column to apply the function on.</p>
+  </li>
+</ul>
+
+<h3 id="v021">v0.2.1</h3>
+
+<p>Right before posting this blog, Doug Friedman found out that in v0.2.0 the <code class="highlighter-rouge">by</code> argument no longer functioned. This bug was fixed in the patch release v0.2.1.</p>
+
+<p>I hope you (still) enjoy working with <code class="highlighter-rouge">padr</code>, <a href="https://github.com/edwinth/padr">let me know</a> when you find a bug or got ideas for improvement.</p>

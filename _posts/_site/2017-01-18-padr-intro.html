@@ -1,0 +1,73 @@
+<p>I am happy to introduce the <code class="highlighter-rouge">padr</code> package, which is now available on CRAN. If you frequently work with data containing a timestamp, especially automatically created data, you might find this package helpful. It solves two problems that you can be confronted with when preparing datetime data for analysis. First, data is often recorded on too low a level for your analysis. For instance the timestamp records the moment up to the second, where you want to do the analysis on an hourly level. Second, when no events toke place there are typically no data records. This is sensible from a storage perspective, but often unhelpful for analyzing the data. When calculating a moving average for example, you want missing observations to have the value 0. You don’t want them to be lacking from your set.</p>
+
+<h2 id="aggregate-data-with-thicken">Aggregate data with <code class="highlighter-rouge">thicken</code></h2>
+
+<p>When your data is on too low a level, you need to aggregate it to a higher level. <code class="highlighter-rouge">thicken</code> creates this higher level. Lets say we want to graph the expenses at a coffee place and we have a data set containing a timestamp and the amount spent.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">padr</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span><span class="w">
+</span><span class="n">coffee</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">thicken</span><span class="p">(</span><span class="n">interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"day"</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>##            time_stamp amount time_stamp_day
+## 1 2016-07-07 09:11:21   3.14     2016-07-07
+## 2 2016-07-07 09:46:48   2.98     2016-07-07
+## 3 2016-07-09 13:25:17   4.11     2016-07-09
+## 4 2016-07-10 10:45:11   3.14     2016-07-10
+</code></pre>
+</div>
+
+<p>So we fed <code class="highlighter-rouge">thicken</code> the data frame and it did a few things for us. First, it figured out what the datetime variable in the dataset was. Then it noticed the <em>interval</em> of the dataset, which is “second” in this case. Next, it mapped each timestamp to the corresponding “day”, which is the desired <em>interval</em> of the output. Finally, it added the mapping as a new column to our data frame. We can now easily aggregate to this new variable, for instance using  the <code class="highlighter-rouge">dplyr</code> functions <code class="highlighter-rouge">group_by</code> and <code class="highlighter-rouge">summarise</code>.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">coffee_day</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">coffee</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">thicken</span><span class="p">(</span><span class="n">interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"day"</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">group_by</span><span class="p">(</span><span class="n">time_stamp_day</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">summarise</span><span class="p">(</span><span class="n">total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">amount</span><span class="p">))</span><span class="w">
+</span><span class="n">coffee_day</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## # A tibble: 3 &lt;U+00D7&gt; 2
+##   time_stamp_day total
+##           &lt;date&gt; &lt;dbl&gt;
+## 1     2016-07-07  6.12
+## 2     2016-07-09  4.11
+## 3     2016-07-10  3.14
+</code></pre>
+</div>
+
+<h2 id="fill-gaps-with-pad">Fill gaps with <code class="highlighter-rouge">pad</code></h2>
+<p>When we would make a line graph of <code class="highlighter-rouge">coffee_day</code>, it would skip over 2016-07-08, when there was no visit. This is not what we wanted. Since the expenses at this day were 0, we would like a record here indicating there were no puchases. We now invoke the <code class="highlighter-rouge">pad</code> function to insert this record.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">coffee_full</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">coffee_day</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">pad</span><span class="w">
+</span><span class="n">coffee_full</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>## # A tibble: 4 &lt;U+00D7&gt; 2
+##   time_stamp_day total
+##           &lt;date&gt; &lt;dbl&gt;
+## 1     2016-07-07  6.12
+## 2     2016-07-08    NA
+## 3     2016-07-09  4.11
+## 4     2016-07-10  3.14
+</code></pre>
+</div>
+
+<p>Like <code class="highlighter-rouge">thicken</code>, the function figured out what the datetime variable was, and that it has the interval “day”. It then noticed that an observation is missing from this interval, and it created a record for it. The other variable, <em>total</em>, got a missing value inserted for this record.</p>
+
+<h2 id="use-fill-for-missing-values">Use <code class="highlighter-rouge">fill_</code> for missing values</h2>
+
+<p>So <code class="highlighter-rouge">pad</code> will always leave us with a data frame with missing values for the inserted records. How we want to fill this missings depends on the data at hand. Sometimes you would like to carry the last value forward, you can then use <code class="highlighter-rouge">tidyr::fill</code>. In this case we would like to fill the NA with 0, for which we use <code class="highlighter-rouge">fill_by_value</code>. Other functions available in <code class="highlighter-rouge">padr</code> are <code class="highlighter-rouge">fill_by_function</code> and <code class="highlighter-rouge">fill_by_prevalent</code>.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span><span class="w">
+</span><span class="n">coffee_full</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">fill_by_value</span><span class="p">(</span><span class="n">total</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">ggplot</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">time_stamp_day</span><span class="p">,</span><span class="w"> </span><span class="n">total</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">geom_line</span><span class="p">()</span><span class="w">
+</span></code></pre>
+</div>
+
+<p><img src="/images/patch_dir/coffee_plot.png" alt="Coffee plot" /></p>
+
+<p>So here we have our plot, and here we have our quick overview of <code class="highlighter-rouge">padr</code>. A more thorough introduction can be found in <code class="highlighter-rouge">vignette("padr")</code>. Here I also get into more detail on the meaning of “interval” within the package. Feedback is very welcome, either send me an email, open an issue on github, or do a pull request. The code is maintained <a href="https://github.com/edwinth/padr">here</a>. Finally, I’d like to thank Barret Schloerke for his contributions at making this package CRAN ready.</p>
+
