@@ -176,7 +176,9 @@ Another spoiler. For some reason in the luge abbreviations are used instead of t
 During this type of analyses you are almost always confronted with the choice between manual labor and automation (writing a general purpose function) several times. I use the following heuristics for this choice:
 
 1) How much more work takes automation compared to manual labor? If little, automate.
+
 2) Is the code likely to be run on data other than the current? If yes, probably automate.
+
 3) Is a general function portable to and useful in other projects? If yes, most definitively automate.
 
 In this case, should we incorporate the exceptions in the function, or do we just do them by hand? It is a lot more work to automate because of the many different exceptions. No, we are not expecting new data to flow through this. And finally, these problems seem very specific for this problem, a general purpose function is not likely to make our future life easier. Manual labor it is. By trial and error we find the problem lines, discard them, apply the function and add the countries for the problem lines manually.
