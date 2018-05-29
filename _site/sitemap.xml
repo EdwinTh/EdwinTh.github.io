@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>https://EdwinTh.github.io/blog/recipes_blog/</loc>
+<lastmod>2018-05-29T14:15:00+02:00</lastmod>
+</url>
+<url>
 <loc>https://EdwinTh.github.io/olympics-dataprep/</loc>
 <lastmod>2018-03-20T20:50:00+01:00</lastmod>
 </url>
@@ -96,9 +100,6 @@
 <loc>https://EdwinTh.github.io/</loc>
 </url>
 <url>
-<loc>https://EdwinTh.github.io/blog/</loc>
-</url>
-<url>
 <loc>https://EdwinTh.github.io/blogs-I-read/</loc>
 </url>
 <url>
@@ -109,6 +110,9 @@
 </url>
 <url>
 <loc>https://EdwinTh.github.io/articles/</loc>
+</url>
+<url>
+<loc>https://EdwinTh.github.io/blog/</loc>
 </url>
 <url>
 <loc>https://EdwinTh.github.io/google9abe4e0644de6ef7.html</loc>
