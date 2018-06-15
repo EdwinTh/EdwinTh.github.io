@@ -53,7 +53,7 @@ count_letters.myS3 <- function(x) {
 count_letters(out)
 ```
 
-What do you mean "could not find function"? It is a right there! Maybe we made a typo. Mmmm, no it doesn't seem so. Maybe, mmmm, lets look into this.... Half an hour, a bit of swearing and feelings of stupidity later. Pfff, lets not bother about S3, we were happy with just using functions in the first place.
+What do you mean "could not find function"? It is right there! Maybe we made a typo. Mmmm, no it doesn't seem so. Maybe, mmmm, lets look into this.... Half an hour, a bit of swearing and feelings of stupidity later. Pfff, lets not bother about S3, we were happy with just using functions in the first place.
 
 ## Generics
 
