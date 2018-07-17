@@ -131,7 +131,7 @@ bare_to_quo_mult_chars(mtcars, list("vs", "cyl"))
 ## 5     1     6     4
 ```
 
-#### quoting full expressions
+#### quoting full expression
 
 Although quoting column names is most often used, it is by no means the only option. We can use the above to quote full expressions.
 
@@ -149,9 +149,27 @@ filter_func(mtcars, hp == 93)
 ## 1 22.8   4  108 93 3.85 2.32 18.61  1  1    4    1
 ```
 
+#### quoting full expression in a character: parse_expr
+
+If the expressions arrives in a character rather than a bare, you can convert it into a call using `rlang::parse_expr`.
+
+
+```r
+filter_by_char <- function(x, char) {
+  func_call <- rlang::parse_expr(char)
+  x %>% filter(!!func_call)
+}
+filter_by_char(mtcars, "cyl == 6") %>% head(1)
+```
+
+```
+##   mpg cyl disp  hp drat   wt  qsec vs am gear carb
+## 1  21   6  160 110  3.9 2.62 16.46  0  1    4    4
+```
+
 #### Edit notes
 
-I mistakingly thought that `rlang::sym(s)` created quosures. However, as pointed out to me by a reader, this creates a `name`, not a `quosure`. A `name` however can also be unquoted. See this [github discussion](https://github.com/tidyverse/rlang/issues/116).
+1) I mistakingly thought that `rlang::sym(s)` created quosures. However, as pointed out to me by a reader, this creates a `name`, not a `quosure`. A `name` however can also be unquoted. See this [github discussion](https://github.com/tidyverse/rlang/issues/116).
 
 
 ```r
@@ -172,4 +190,5 @@ mtcars %>% select(!!just_a_name) %>% head(1)
 ## Mazda RX4   6
 ```
 
+2) Quoting expressions in a character was added roughly a year after the first apperance of this blog.
 

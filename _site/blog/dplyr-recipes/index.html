@@ -266,7 +266,7 @@
 </code></pre>
 </div>
 
-<h4 id="quoting-full-expressions">quoting full expressions</h4>
+<h4 id="quoting-full-expression">quoting full expression</h4>
 
 <p>Although quoting column names is most often used, it is by no means the only option. We can use the above to quote full expressions.</p>
 
@@ -283,9 +283,26 @@
 </code></pre>
 </div>
 
+<h4 id="quoting-full-expression-in-a-character-parseexpr">quoting full expression in a character: parse_expr</h4>
+
+<p>If the expressions arrives in a character rather than a bare, you can convert it into a call using <code class="highlighter-rouge">rlang::parse_expr</code>.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">filter_by_char</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">char</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">func_call</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">rlang</span><span class="o">::</span><span class="n">parse_expr</span><span class="p">(</span><span class="n">char</span><span class="p">)</span><span class="w">
+  </span><span class="n">x</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">filter</span><span class="p">(</span><span class="o">!!</span><span class="n">func_call</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="n">filter_by_char</span><span class="p">(</span><span class="n">mtcars</span><span class="p">,</span><span class="w"> </span><span class="s2">"cyl == 6"</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">head</span><span class="p">(</span><span class="m">1</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>##   mpg cyl disp  hp drat   wt  qsec vs am gear carb
+## 1  21   6  160 110  3.9 2.62 16.46  0  1    4    4
+</code></pre>
+</div>
+
 <h4 id="edit-notes">Edit notes</h4>
 
-<p>I mistakingly thought that <code class="highlighter-rouge">rlang::sym(s)</code> created quosures. However, as pointed out to me by a reader, this creates a <code class="highlighter-rouge">name</code>, not a <code class="highlighter-rouge">quosure</code>. A <code class="highlighter-rouge">name</code> however can also be unquoted. See this <a href="https://github.com/tidyverse/rlang/issues/116">github discussion</a>.</p>
+<p>1) I mistakingly thought that <code class="highlighter-rouge">rlang::sym(s)</code> created quosures. However, as pointed out to me by a reader, this creates a <code class="highlighter-rouge">name</code>, not a <code class="highlighter-rouge">quosure</code>. A <code class="highlighter-rouge">name</code> however can also be unquoted. See this <a href="https://github.com/tidyverse/rlang/issues/116">github discussion</a>.</p>
 
 <div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">just_a_name</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">rlang</span><span class="o">::</span><span class="n">sym</span><span class="p">(</span><span class="s2">"cyl"</span><span class="p">)</span><span class="w">
 </span><span class="nf">class</span><span class="p">(</span><span class="n">just_a_name</span><span class="p">)</span><span class="w">
@@ -304,6 +321,8 @@
 ## Mazda RX4   6
 </code></pre>
 </div>
+
+<p>2) Quoting expressions in a character was added roughly a year after the first apperance of this blog.</p>
 
 
         
