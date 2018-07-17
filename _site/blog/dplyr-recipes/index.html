@@ -199,13 +199,15 @@
 
 <div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">quo_to_text</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">var</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="n">var_enq</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">enquo</span><span class="p">(</span><span class="n">var</span><span class="p">)</span><span class="w">
-  </span><span class="n">ggplot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">aes_string</span><span class="p">(</span><span class="n">rlang</span><span class="o">::</span><span class="n">quo_text</span><span class="p">(</span><span class="n">var_enq</span><span class="p">)))</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">geom_density</span><span class="p">()</span><span class="w">
+  </span><span class="n">glue</span><span class="o">::</span><span class="n">glue</span><span class="p">(</span><span class="s2">"The following column was selected: {rlang::quo_text(var_enq)}"</span><span class="p">)</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span><span class="n">plt</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">quo_to_text</span><span class="p">(</span><span class="n">mtcars</span><span class="p">,</span><span class="w"> </span><span class="n">cyl</span><span class="p">)</span><span class="w">
+</span><span class="n">quo_to_text</span><span class="p">(</span><span class="n">mtcars</span><span class="p">,</span><span class="w"> </span><span class="n">cyl</span><span class="p">)</span><span class="w">
 </span></code></pre>
 </div>
 
-<p>Note that tidy evaluation is not yet implemented in <code class="highlighter-rouge">ggplot2</code>, but this will be in future versions. This is a workaround for the meantime, when combining <code class="highlighter-rouge">dplyr</code> and <code class="highlighter-rouge">ggplot2</code>.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>## The following column was selected: cyl
+</code></pre>
+</div>
 
 <h4 id="character-to-name-sym-edited">character to name: <code class="highlighter-rouge">sym</code> (edited)</h4>
 
@@ -285,8 +287,6 @@
 
 <h4 id="quoting-full-expression-in-a-character-parseexpr">quoting full expression in a character: parse_expr</h4>
 
-<p>If the expressions arrives in a character rather than a bare, you can convert it into a call using <code class="highlighter-rouge">rlang::parse_expr</code>.</p>
-
 <div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">filter_by_char</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">char</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="n">func_call</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">rlang</span><span class="o">::</span><span class="n">parse_expr</span><span class="p">(</span><span class="n">char</span><span class="p">)</span><span class="w">
   </span><span class="n">x</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">filter</span><span class="p">(</span><span class="o">!!</span><span class="n">func_call</span><span class="p">)</span><span class="w">
@@ -324,6 +324,7 @@
 
 <p>2) Quoting expressions in a character was added roughly a year after the first apperance of this blog.</p>
 
+<p>3) The <code class="highlighter-rouge">quo_text</code> example used to be with <code class="highlighter-rouge">ggplot2</code>. However, since v.3.0.0 it supports tidy evaluation. Therefore, the example was changed and now it uses <code class="highlighter-rouge">glue</code>.</p>
 
         
           <div id="disqus_thread"></div><!-- /#disqus_thread -->

@@ -64,12 +64,14 @@ bare_to_name(mtcars, quo(this_is_42))
 ```r
 quo_to_text <- function(x, var) {
   var_enq <- enquo(var)
-  ggplot(x, aes_string(rlang::quo_text(var_enq))) + geom_density()
+  glue::glue("The following column was selected: {rlang::quo_text(var_enq)}")
 }
-plt <- quo_to_text(mtcars, cyl)
+quo_to_text(mtcars, cyl)
 ```
 
-Note that tidy evaluation is not yet implemented in `ggplot2`, but this will be in future versions. This is a workaround for the meantime, when combining `dplyr` and `ggplot2`.
+```
+## The following column was selected: cyl
+```
 
 #### character to name: `sym` (edited)
 
@@ -151,8 +153,6 @@ filter_func(mtcars, hp == 93)
 
 #### quoting full expression in a character: parse_expr
 
-If the expressions arrives in a character rather than a bare, you can convert it into a call using `rlang::parse_expr`.
-
 
 ```r
 filter_by_char <- function(x, char) {
@@ -192,3 +192,4 @@ mtcars %>% select(!!just_a_name) %>% head(1)
 
 2) Quoting expressions in a character was added roughly a year after the first apperance of this blog.
 
+3) The `quo_text` example used to be with `ggplot2`. However, since v.3.0.0 it supports tidy evaluation. Therefore, the example was changed and now it uses `glue`.
