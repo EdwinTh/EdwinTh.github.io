@@ -9,6 +9,8 @@ tags: [R, ggplot, histogram, outliers]
 
 
 
+**Note, the code has been modified to make it compatible with v.3 of ggplot**
+
 I guess we all use it, the good old histogram. One of the first things we are taught in *Introduction to Statistics* and routinely applied whenever coming across a new continuous variable. However, it easily gets messed up by outliers. Putting most of the data into a single bin or a few bins, and scattering the outliers barely visible over the x-axis. This distribution might look familiar
 
 
