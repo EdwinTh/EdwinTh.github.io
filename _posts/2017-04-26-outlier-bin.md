@@ -47,7 +47,9 @@ gg_outlier_bin(hist_data,
                binwidth = 0.1)
 ```
 
-![plot of chunk unnamed-chunk-4](/figure/source/2017-04-26-outlier-bin/unnamed-chunk-4-1.png)
+```
+## Error in if (overlap_ceiling(tick_positions, co)) {: argument is of length zero
+```
 
 It is still a bit experimental, but it seems to work in most situations. Below you find the function code for making histograms with outlier bins. You can also get it by installing the package accompanying this blog `devtools::install_github("edwinth/thatssorandom")`. By the way, it works on both floor and ceiling outliers. Like in the following
 
@@ -57,7 +59,9 @@ data_frame(x = c(runif(100, 0, 100), rnorm(1000, 50, 2))) %>%
   gg_outlier_bin("x", 45, 55, binwidth = .1)
 ```
 
-![plot of chunk unnamed-chunk-5](/figure/source/2017-04-26-outlier-bin/unnamed-chunk-5-1.png)
+```
+## Error in if (overlap_ceiling(tick_positions, co)) {: argument is of length zero
+```
 
 
 
@@ -123,7 +127,7 @@ update_tickmarks_ceiling <- function(gg_obj,
                                      co, 
                                      max_print) {
   ranges <- suppressMessages(
-    ggplot_build(gg_obj)$layout$panel_ranges[[1]])
+    ggplot_build(gg_obj)$layout$panel_params[[1]])
   label_to_add <- sprintf("(%s , %s)", round(co, 1), max_print)
   tick_positions <- ranges$x.major_source
   tick_labels    <- ranges$x.labels
@@ -145,7 +149,7 @@ update_tickmarks_floor <- function(gg_obj,
                                    co, 
                                    min_print) {
   ranges <- suppressMessages(
-    ggplot_build(gg_obj)$layout$panel_ranges[[1]])
+    ggplot_build(gg_obj)$layout$panel_params[[1]])
   label_to_add <- sprintf("(%s , %s)", min_print, round(co, 1))
   tick_positions <- ranges$x.major_source
   tick_labels    <- ranges$x.labels
