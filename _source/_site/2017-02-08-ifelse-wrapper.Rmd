@@ -1,0 +1,78 @@
+The `ifelse` function is the way to do vectorised *if then else* in R. One of the first cool things I learned to do in R a few years back, I got from Norman Matloff's *The Art of R Programming*. When you have more than one *if then* statements, you just nest multiple `ifelse` functions before you reach the *else*.
+
+```{r}
+set.seed(0310)
+x <- runif(1000, 1, 20)
+y <- runif(1000, 1, 20)
+
+the_old_way <- 
+  ifelse(x < 5 & y < 5, 'A',
+       ifelse(x < 5 & y < 15, 'B',
+              ifelse(x < 5, 'C',
+                     ifelse(x < 15 & y < 5, 'D',
+                            ifelse(x < 15 & y < 15, 'E',
+                                   ifelse(y < 5, 'F',
+                                          ifelse(y < 15, 'G',
+                                                 'H')))))))
+```
+
+Although this is very functional and fast, it is not exactly pretty. Matters worsen as the variable names get longer and as the logical expressions get more complicated. During the last session of *Friday-afternoon-playground* at work, I decided to have a go at cleaning this up a bit and having a look at the `lazyeval` package along the way. To fully get my mind around the lazy evaluation philosophy, I will need to revisit the vignette a few times. But the wrapper turned out as I intended.
+
+The idea is simple. Get your *if then* statements in the function `i`, get your *else* value in the function `e`, and stitch those together in `ie`.
+
+```{r}
+i <- function(if_stat, then) {
+  if_stat <- lazyeval::expr_text(if_stat)
+  then    <- lazyeval::expr_text(then)
+  sprintf("ifelse(%s, %s, ", if_stat, then)
+}
+i(x < 5 & y < 5, z)
+```
+
+So `i` takes the logical expression and the value to return when `TRUE`. It spits out a string that is the incomplete part of an `ifelse` function. Next we define the `e` function that returns the final value if all logical statements in the if-statements are evaluated as `FALSE`.
+
+```{r}
+e <- function(else_ret) {
+  else_ret <- lazyeval::expr_text(else_ret)
+  else_ret
+}
+```
+
+And finally we stitch them together. You enter as many `i` functions as you like, but only one `e` function of course.
+
+```{r}
+ie <- function(...) {
+  args <- list(...)
+  
+  for (i in 1:(length(args) - 1) ) {
+      if (substr(args[[i]], 1, 6) != "ifelse") {
+        stop("All but the last argument, need to be i functions.", call. = FALSE)
+      }
+  }
+  if (substr(args[[length(args)]], 1, 6) == "ifelse"){
+    stop("Last argument needs to be an e function.", call. = FALSE)
+  }
+  args$final <- paste(rep(')', length(args) - 1), collapse = '')
+  eval_string <- do.call('paste', args)
+  eval(parse(text = eval_string))
+}
+```
+
+And there we are. Using the power of the nested `ifelse`, but without the messy code. A whole lot easier to write, read, and debug.
+
+```{r}
+the_new_way <- 
+  ie(
+    i(x < 5 & y < 5,   'A'),
+    i(x < 5 & y < 15,  'B'),
+    i(x < 5,           'C'),
+    i(x < 15 & y < 5,  'D'),
+    i(x < 15 & y < 15, 'E'),
+    i(y < 5,           'F'),
+    i(y < 15,          'G'),
+    e('H')
+  )
+all.equal(the_old_way, the_new_way)
+```
+
+These functions can be found in the [R package on my github](https://github.com/edwinth/thatssorandom), that accompanies this blog. You can easily install it by running `devtools::install_github("edwinth/thatssorandom")`. Enjoy!

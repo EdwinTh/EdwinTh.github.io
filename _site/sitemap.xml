@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>https://EdwinTh.github.io/blog/failed-projects/</loc>
+<lastmod>2018-11-22T09:20:00+01:00</lastmod>
+</url>
+<url>
 <loc>https://EdwinTh.github.io/blog/s3-generics/</loc>
 <lastmod>2018-06-15T15:54:00+02:00</lastmod>
 </url>
@@ -107,15 +111,15 @@
 <loc>https://EdwinTh.github.io/blog/</loc>
 </url>
 <url>
-<loc>https://EdwinTh.github.io/about/</loc>
+<loc>https://EdwinTh.github.io/tags/</loc>
 </url>
 <url>
-<loc>https://EdwinTh.github.io/tags/</loc>
+<loc>https://EdwinTh.github.io/articles/</loc>
 </url>
 <url>
 <loc>https://EdwinTh.github.io/blogs-I-read/</loc>
 </url>
 <url>
-<loc>https://EdwinTh.github.io/articles/</loc>
+<loc>https://EdwinTh.github.io/about/</loc>
 </url>
 </urlset>

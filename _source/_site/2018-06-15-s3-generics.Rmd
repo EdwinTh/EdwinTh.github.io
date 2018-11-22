@@ -1,0 +1,72 @@
+Throughout the last years I noticed the following happening with a number of people. One of those people was actually yours truely a few years back. Person is aware of S3 methods in R through regular use of `print`, `plot` and `summary` functions and decides to give it a go in own work. Creates a function that assigns a class to its output and then implements a bunch of methods to work on the class. Strangely, some of these methods appear to be working as expected, while others throw an error. After a confusing and painful debugging session, person throws hands in the air and continues working without S3 methods. Which was working fine in the first place. This is a real pity, because all the person is overlooking is a very small step in the S3 chain: the generic function.
+
+## A nonworking method
+
+So we have a function doing all kinds of complicated stuff. It outputs a list with several elements. We assign a S3 class to it before returning, so we can subsequently implement a number of methods[^1]. Lets just make something up here.
+
+```{r}
+my_func <- function(x) {
+  ret <- list(dataset = x, 
+              d = 42, 
+              y = rnorm(10), 
+              z = c('a', 'b', 'a', 'c'))
+  class(ret) <- "myS3"
+  ret
+}
+out <- my_func(mtcars)
+```
+
+Perfect, now lets implement a `print` method. Rather than outputting the whole list, we just want to know the most vital information when printing.
+
+```{r}
+print.myS3 <- function(x) {
+  cat("Original dataset has", nrow(x$dataset), "rows and",
+      ncol(x$dataset), "columns\n", 
+      "d is", x$d)
+}
+out
+```
+
+Ha, that is working!. Now we do a `mean` method, that gives us the mean of the `y` variable.
+
+```{r}
+mean.myS3 <- function(x) {
+  mean(x$y)
+}
+mean(out)
+```
+
+Works too! And finally we do a `count_letters` method. It takes `z` from the output and counts how often each letter occurs.
+
+```{r, error=TRUE}
+count_letters.myS3 <- function(x) {
+  table(out$z)
+}
+count_letters(out)
+```
+
+What do you mean "could not find function"? It is right there! Maybe we made a typo. Mmmm, no it doesn't seem so. Maybe, mmmm, lets look into this.... Half an hour, a bit of swearing and feelings of stupidity later. Pfff, lets not bother about S3, we were happy with just using functions in the first place.
+
+## Generics
+
+Now why are `print` and `mean` working just fine, but `count_letters` isn't? Lets look under the hood of `print` and `mean`.
+
+```{r}
+print
+mean
+```
+
+They look exactly the same! They call the `UseMethod` function on their own function name. Looking into the help file of `UseMethod`, it all of a sudden starts to make sense. 
+
+*"When a function calling UseMethod("fun") is applied to an object with class attribute c("first", "second"), the system searches for a function called fun.first and, if it finds it, applies it to the object. If no such function is found a function called fun.second is tried. If no class name produces a suitable function, the function fun.default is used, if it exists, or an error results."*
+
+So by calling `print` and `mean` on the `myS3` object we were not calling the method itself. Rather, we call the general functions `print` and `mean` (the generics) and they call the function `UseMethod`. This function then does the *method dispatch*: lookup the method belonging to the S3 object the function was called on. We were just *lucky* the `print` and `mean` generics were already in place and called our methods. However, the `count_letters` function indeed doesn't exist (as the error message tells us). Only the `count_letters` method exist, for objects of class `myS3`. We just learned that methods cannot get called directly, but are invoked by generics. All we need to do, thus, is build a generic for `count_letters` and we are all set.
+
+```{r}
+count_letters <- function(x) {
+  UseMethod("count_letters")
+}
+count_letters(out)
+```
+
+[^1]: It is actually ill-advised to assign a S3 class directly to an output. Rather use a constructor, see 16.3.1 of [Advanced R](https://adv-r.hadley.nz/s3.html) for the how and why.

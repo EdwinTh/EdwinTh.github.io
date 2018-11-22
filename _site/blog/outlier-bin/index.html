@@ -7,7 +7,7 @@
 <meta charset="utf-8">
 <head></head>
 <title>Binning Outliers in a Histogram &#8211; That's so Random</title>
-<meta name="description" content="I guess we all use it, the good old histogram. One of the first things we are taught in Introduction to Statistics and routinely applied whenever coming across a new continuous variable. However, it easily gets messed up by outliers. Putting most of the data into a single bin or a few bins, and scattering the outliers barely visible over the x-axis. This distribution might look familiar
+<meta name="description" content="Note, the code has been modified to make it compatible with v.3 of ggplot
 
 ">
 <meta name="keywords" content="R, ggplot, histogram, outliers">
@@ -15,7 +15,7 @@
 
 <!-- Twitter Cards -->
 <meta name="twitter:title" content="Binning Outliers in a Histogram">
-<meta name="twitter:description" content="I guess we all use it, the good old histogram. One of the first things we are taught in Introduction to Statistics and routinely applied whenever coming across a new continuous variable. However, it easily gets messed up by outliers. Putting most of the data into a single bin or a few bins, and scattering the outliers barely visible over the x-axis. This distribution might look familiar
+<meta name="twitter:description" content="Note, the code has been modified to make it compatible with v.3 of ggplot
 
 ">
 <meta name="twitter:site" content="@edwin_thoen">
@@ -28,7 +28,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Binning Outliers in a Histogram">
-<meta property="og:description" content="I guess we all use it, the good old histogram. One of the first things we are taught in Introduction to Statistics and routinely applied whenever coming across a new continuous variable. However, it easily gets messed up by outliers. Putting most of the data into a single bin or a few bins, and scattering the outliers barely visible over the x-axis. This distribution might look familiar
+<meta property="og:description" content="Note, the code has been modified to make it compatible with v.3 of ggplot
 
 ">
 <meta property="og:url" content="https://EdwinTh.github.io/blog/outlier-bin/">
@@ -145,7 +145,9 @@
         
       </footer>
       <div class="entry-content">
-        <p>I guess we all use it, the good old histogram. One of the first things we are taught in <em>Introduction to Statistics</em> and routinely applied whenever coming across a new continuous variable. However, it easily gets messed up by outliers. Putting most of the data into a single bin or a few bins, and scattering the outliers barely visible over the x-axis. This distribution might look familiar</p>
+        <p><strong>Note, the code has been modified to make it compatible with v.3 of ggplot</strong></p>
+
+<p>I guess we all use it, the good old histogram. One of the first things we are taught in <em>Introduction to Statistics</em> and routinely applied whenever coming across a new continuous variable. However, it easily gets messed up by outliers. Putting most of the data into a single bin or a few bins, and scattering the outliers barely visible over the x-axis. This distribution might look familiar</p>
 
 <div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span><span class="w">
 </span><span class="n">set.seed</span><span class="p">(</span><span class="m">42</span><span class="p">)</span><span class="w">
@@ -180,7 +182,9 @@
 </span></code></pre>
 </div>
 
-<p><img src="/figure/source/2017-04-26-outlier-bin/unnamed-chunk-4-1.png" alt="plot of chunk unnamed-chunk-4" /></p>
+<div class="highlighter-rouge"><pre class="highlight"><code>## Error in if (overlap_ceiling(tick_positions, co)) {: argument is of length zero
+</code></pre>
+</div>
 
 <p>It is still a bit experimental, but it seems to work in most situations. Below you find the function code for making histograms with outlier bins. You can also get it by installing the package accompanying this blog <code class="highlighter-rouge">devtools::install_github("edwinth/thatssorandom")</code>. By the way, it works on both floor and ceiling outliers. Like in the following</p>
 
@@ -189,7 +193,9 @@
 </span></code></pre>
 </div>
 
-<p><img src="/figure/source/2017-04-26-outlier-bin/unnamed-chunk-5-1.png" alt="plot of chunk unnamed-chunk-5" /></p>
+<div class="highlighter-rouge"><pre class="highlight"><code>## Error in if (overlap_ceiling(tick_positions, co)) {: argument is of length zero
+</code></pre>
+</div>
 
 <div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">gg_outlier_bin</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w">
                            </span><span class="n">var_name</span><span class="p">,</span><span class="w">
@@ -252,7 +258,7 @@
                                      </span><span class="n">co</span><span class="p">,</span><span class="w"> 
                                      </span><span class="n">max_print</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="n">ranges</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">suppressMessages</span><span class="p">(</span><span class="w">
-    </span><span class="n">ggplot_build</span><span class="p">(</span><span class="n">gg_obj</span><span class="p">)</span><span class="o">$</span><span class="n">layout</span><span class="o">$</span><span class="n">panel_ranges</span><span class="p">[[</span><span class="m">1</span><span class="p">]])</span><span class="w">
+    </span><span class="n">ggplot_build</span><span class="p">(</span><span class="n">gg_obj</span><span class="p">)</span><span class="o">$</span><span class="n">layout</span><span class="o">$</span><span class="n">panel_params</span><span class="p">[[</span><span class="m">1</span><span class="p">]])</span><span class="w">
   </span><span class="n">label_to_add</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sprintf</span><span class="p">(</span><span class="s2">"(%s , %s)"</span><span class="p">,</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="n">co</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="n">max_print</span><span class="p">)</span><span class="w">
   </span><span class="n">tick_positions</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ranges</span><span class="o">$</span><span class="n">x.major_source</span><span class="w">
   </span><span class="n">tick_labels</span><span class="w">    </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ranges</span><span class="o">$</span><span class="n">x.labels</span><span class="w">
@@ -274,7 +280,7 @@
                                    </span><span class="n">co</span><span class="p">,</span><span class="w"> 
                                    </span><span class="n">min_print</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="n">ranges</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">suppressMessages</span><span class="p">(</span><span class="w">
-    </span><span class="n">ggplot_build</span><span class="p">(</span><span class="n">gg_obj</span><span class="p">)</span><span class="o">$</span><span class="n">layout</span><span class="o">$</span><span class="n">panel_ranges</span><span class="p">[[</span><span class="m">1</span><span class="p">]])</span><span class="w">
+    </span><span class="n">ggplot_build</span><span class="p">(</span><span class="n">gg_obj</span><span class="p">)</span><span class="o">$</span><span class="n">layout</span><span class="o">$</span><span class="n">panel_params</span><span class="p">[[</span><span class="m">1</span><span class="p">]])</span><span class="w">
   </span><span class="n">label_to_add</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sprintf</span><span class="p">(</span><span class="s2">"(%s , %s)"</span><span class="p">,</span><span class="w"> </span><span class="n">min_print</span><span class="p">,</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="n">co</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">))</span><span class="w">
   </span><span class="n">tick_positions</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ranges</span><span class="o">$</span><span class="n">x.major_source</span><span class="w">
   </span><span class="n">tick_labels</span><span class="w">    </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ranges</span><span class="o">$</span><span class="n">x.labels</span><span class="w">
