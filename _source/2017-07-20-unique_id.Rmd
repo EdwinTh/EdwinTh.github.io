@@ -35,7 +35,7 @@ some_df %>% unique_id(a)
 some_df %>% unique_id(a, b)
 ```
 
-Here you find the source code of the function. You can also obtain it by installing the package accompanying this blog using `devtools::install.github(edwinth/thatssorandom)`.
+Here you find the source code of the function. You can also obtain it by installing the package accompanying this blog using `devtools::install.github("edwinth/thatssorandom"")`.
 
 ```{r}
 unique_id <- function(x, ...) {
