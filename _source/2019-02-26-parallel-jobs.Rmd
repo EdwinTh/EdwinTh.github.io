@@ -3,7 +3,7 @@ title: Using Rstudio Jobs for training many models in parallel
 layout: post
 categories: blog
 base-url: https://EdwinTh.github.io
-date: "2019-02-26 16:00:00"
+date: "2019-02-26 09:00:00"
 tags: [Rstudio jobs, parallel computing]
 ---
 

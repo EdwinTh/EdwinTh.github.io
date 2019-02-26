@@ -1,0 +1,287 @@
+<!doctype html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if (IE 7)&!(IEMobile)]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if (IE 8)&!(IEMobile)]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"><!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<head></head>
+<title>Using Rstudio Jobs for training many models in parallel &#8211; That's so Random</title>
+<meta name="description" content="Recently, Rstudio added the Jobs feature, which allows you to run R scripts in the background. Computations are done in a separate R session that is not interactive, but just runs the script. In the meantime your regular R session stays live so you can do other work while waiting for the Job to complete. Instead refreshing your Twitter for the 156th time, you can stay productive! (I am actually writing this blog in Rmarkdown while I am waiting for my results to come in.) The number of jobs you can spin-up is not limited to one. As each new job is started at a different core, you can start as many jobs as your system got cores (although leaving one idle is a good idea for other processes, like your interactive R session).
+
+">
+<meta name="keywords" content="Rstudio jobs, parallel computing">
+
+
+<!-- Twitter Cards -->
+<meta name="twitter:title" content="Using Rstudio Jobs for training many models in parallel">
+<meta name="twitter:description" content="Recently, Rstudio added the Jobs feature, which allows you to run R scripts in the background. Computations are done in a separate R session that is not interactive, but just runs the script. In the meantime your regular R session stays live so you can do other work while waiting for the Job to complete. Instead refreshing your Twitter for the 156th time, you can stay productive! (I am actually writing this blog in Rmarkdown while I am waiting for my results to come in.) The number of jobs you can spin-up is not limited to one. As each new job is started at a different core, you can start as many jobs as your system got cores (although leaving one idle is a good idea for other processes, like your interactive R session).
+
+">
+<meta name="twitter:site" content="@edwin_thoen">
+<meta name="twitter:creator" content="@edwin_thoen">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://EdwinTh.github.io/images/site-logo.png">
+
+<!-- Open Graph -->
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Using Rstudio Jobs for training many models in parallel">
+<meta property="og:description" content="Recently, Rstudio added the Jobs feature, which allows you to run R scripts in the background. Computations are done in a separate R session that is not interactive, but just runs the script. In the meantime your regular R session stays live so you can do other work while waiting for the Job to complete. Instead refreshing your Twitter for the 156th time, you can stay productive! (I am actually writing this blog in Rmarkdown while I am waiting for my results to come in.) The number of jobs you can spin-up is not limited to one. As each new job is started at a different core, you can start as many jobs as your system got cores (although leaving one idle is a good idea for other processes, like your interactive R session).
+
+">
+<meta property="og:url" content="https://EdwinTh.github.io/blog/parallel-jobs/">
+<meta property="og:site_name" content="That's so Random">
+
+
+
+
+
+<link rel="canonical" href="https://EdwinTh.github.io/blog/parallel-jobs/">
+<link href="https://EdwinTh.github.io/feed.xml" type="application/atom+xml" rel="alternate" title="That's so Random Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="https://EdwinTh.github.io/assets/css/main.css">
+<!-- Webfonts -->
+<script src="https://use.edgefonts.net/source-sans-pro:n2,i2,n3,i3,n4,i4,n6,i6,n7,i7,n9,i9;source-code-pro:n4,n7;volkhov.js"></script>
+
+<meta http-equiv="cleartype" content="on">
+
+<!-- HTML5 Shiv and Media Query Support -->
+<!--[if lt IE 9]>
+  <script src="https://EdwinTh.github.io/assets/js/vendor/html5shiv.min.js"></script>
+  <script src="https://EdwinTh.github.io/assets/js/vendor/respond.min.js"></script>
+<![endif]-->
+
+<!-- Modernizr -->
+<script src="https://EdwinTh.github.io/assets/js/vendor/modernizr-2.7.1.custom.min.js"></script>
+
+
+<!-- MathJax -->
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+<!-- Icons -->
+<!-- 16x16 -->
+<link rel="shortcut icon" href="https://EdwinTh.github.io/favicon.ico">
+<!-- 32x32 -->
+<link rel="shortcut icon" href="https://EdwinTh.github.io/favicon.png">
+<!-- 57x57 (precomposed) for iPhone 3GS, pre-2011 iPod Touch and older Android devices -->
+<link rel="apple-touch-icon-precomposed" href="https://EdwinTh.github.io/images/apple-touch-icon-precomposed.png">
+<!-- 72x72 (precomposed) for 1st generation iPad, iPad 2 and iPad mini -->
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="https://EdwinTh.github.io/images/apple-touch-icon-72x72-precomposed.png">
+<!-- 114x114 (precomposed) for iPhone 4, 4S, 5 and post-2011 iPod Touch -->
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="https://EdwinTh.github.io/images/apple-touch-icon-114x114-precomposed.png">
+<!-- 144x144 (precomposed) for iPad 3rd and 4th generation -->
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://EdwinTh.github.io/images/apple-touch-icon-144x144-precomposed.png">
+
+
+
+
+</head>
+
+<body id="post">
+
+<div class="navigation-wrapper">
+	<nav role="navigation" id="site-nav" class="animated drop">
+	    <ul>
+      
+		    
+		    <li><a href="https://EdwinTh.github.io/about/" >About</a></li>
+		  
+		    
+		    <li><a href="https://EdwinTh.github.io/blog/" >Blog</a></li>
+		  
+		    
+		    <li><a href="https://EdwinTh.github.io/blogs-I-read/" >Blogs I read</a></li>
+		  
+	    </ul>
+	</nav>
+</div><!-- /.navigation-wrapper -->
+
+<!--[if lt IE 9]><div class="upgrade"><strong><a href="http://whatbrowser.org/">Your browser is quite old!</strong> Why not upgrade to a different browser to better enjoy this site?</a></div><![endif]-->
+
+<header class="masthead">
+	<div class="wrap">
+      
+  		<a href="https://EdwinTh.github.io/" class="site-logo" rel="home" title="That's so Random"><img src="https://EdwinTh.github.io/images/site-logo.png" width="200" height="200" alt="That's so Random logo" class="animated fadeInDown"></a>
+      
+      <h1 class="site-title animated fadeIn"><a href="https://EdwinTh.github.io/">That's so Random</a></h1>
+		<h2 class="site-description animated fadeIn" itemprop="description">A playground for data analysis and R programming.</h2>
+	</div>
+</header><!-- /.masthead -->
+
+<div class="js-menu-screen menu-screen"></div>
+
+
+<div id="main" role="main">
+  <article class="hentry">
+    
+    <div class="entry-wrapper">
+      <header class="entry-header">
+        <ul class="entry-tags">
+          <li><a href="https://EdwinTh.github.io/tags/#Rstudio jobs" title="Pages tagged Rstudio jobs">Rstudio jobs</a></li><li><a href="https://EdwinTh.github.io/tags/#parallel computing" title="Pages tagged parallel computing">parallel computing</a></li>
+        </ul>
+        
+          <h1 class="entry-title">Using Rstudio Jobs for training many models in parallel</h1>
+        
+      </header>
+      <footer class="entry-meta">
+        
+        
+          <img src="https://EdwinTh.github.io/images/bio-photo.jpg" class="bio-photo" alt="Edwin Thoen bio photo"></a>
+        
+        <span class="author vcard">By <span class="fn">Edwin Thoen</span></span>
+        <span class="entry-date date published"><time datetime="2019-02-26T09:00:00+01:00"><i class="fa fa-calendar-o"></i> February 26, 2019</time></span>
+        
+        <span class="entry-comments"><i class="fa fa-comment-o"></i> <a href="#disqus_thread">Comment</a></span>
+        
+        
+      </footer>
+      <div class="entry-content">
+        <p>Recently, Rstudio added the Jobs feature, which allows you to run R scripts in the background. Computations are done in a separate R session that is not interactive, but just runs the script. In the meantime your regular R session stays live so you can do other work while waiting for the Job to complete. Instead refreshing your Twitter for the 156th time, you can stay productive! (I am actually writing this blog in Rmarkdown while I am waiting for my results to come in.) The number of jobs you can spin-up is not limited to one. As each new job is started at a different core, you can start as many jobs as your system got cores (although leaving one idle is a good idea for other processes, like your interactive R session).</p>
+
+<p>Recently, I needed to train many Bayesian models on subsets of a large dataset. The subsets varied greatly in size, with most of the models needing a few minutes to train, but the ones trained on the larger subsets took up to half an hour. With just a single Job the whole thing would have lasted over fifteen hours. Luckily, I have a server at my disposal with many cores and a lot of RAM. I chose to use Jobs for running the model training in parallel for two reasons. First, as mentioned, it allows me to do other R work while waiting for the results to come in. Second, I train the models with <code class="highlighter-rouge">rstan</code> which allows for using multiple cores for each model, each chain gets its own core. So, we have parallelization within the parallel Jobs. I could only get this to work efficiently with Jobs. Packages for parallelization did not seem to be able to handle this parallel within parallel. (Disclaimer, I am no expert on parallelization, a more knowledgeable person might figure it out. I stopped digging once I got what I wanted with Jobs).</p>
+
+<p>Here, I share the steps I took to get the whole thing running.</p>
+
+<h2 id="create-the-jobs-script">Create the Jobs script</h2>
+
+<p>First you should capture everything that is within every Job in an R script. You could choose to import your current global environment when starting the job, be careful with this when starting multiple Jobs. If you have large objects in your environment it will be loaded to every Job you start and you might run out of memory. Importing the global environment also poses a threat for the reproducibility of the outcome, because the Job can only run when the required objects are loaded in the global. Rather, I suggest you make a script that is completely self-contained. Everything that is needed within the Job, dependencies, loaded data, your own functions, should be in the script (or sourced by the script). To run the same Job multiple times on different data, include a parameter that differs over the Jobs within the script. More about that later.</p>
+
+<h2 id="divide-your-work">Divide your work</h2>
+
+<p>Within each Job, the computations will run sequentially. If you want the parallel Jobs to finish up in approximately the same time, you should divide the work they have to do in approximately equal chunks. The number of Jobs you can runs simultaneously is limited by the number of cores you have available and the RAM on your system. The first is easy to detect, just run</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">parallel</span><span class="o">::</span><span class="n">detectCores</span><span class="p">()</span><span class="w">
+</span></code></pre>
+</div>
+
+<p>If you have 8 cores on your machine, you can spin up to 7 Jobs parallel if you have enough memory available. Figuring out how much memory your Job consumes is a bit trial-and-error. If you run a task for the first time it might be a good to run a test Job and check on its memory use. If you are on a unix system you can see how much memory the Job consumes by using the <code class="highlighter-rouge">top</code> function on the command line. This will show all running processes and the percentage of the available RAM they use. If the test Job consumes about 15% of your available memory, you could spin up about 4 to 5 parallel Jobs, assuming that the amount of memory used is approximately equal for each part of the data. Always allow for some room for fluctuation. I don’t let the Jobs consume more than 75% of the available memory. If your Jobs are very volatile in their memory use you might even want to be more conservative, since it is one strike and your out. (I know absolutely nothing about Windows, if you are on Windows and not sure how to monitor the memory use you have to do some Googling I am afraid).</p>
+
+<p>After you have decided how many jobs you can run in parallel it is time to split up the work. I needed to train a great number of models on datasets varying in size. Splitting up the subsets in equal number of models to train is a suboptimal strategy, because if several larger sets end up in the same partition you have to wait long on one of the Jobs while the others are long finished. I used the number of rows of each subset as an indication for the time it would take for the model trained on it to complete. With the following little helper function you can create approximately equal chunks of the data. <code class="highlighter-rouge">x</code> is a vector with id’s for every group on which a model is trained, <code class="highlighter-rouge">w</code> is a vector with weights (the number of rows), <code class="highlighter-rouge">g</code> is the number of desired groups, this is equal to the number of Jobs you’ll start.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">assign_to_chunk</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="n">g</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">stopifnot</span><span class="p">(</span><span class="nf">length</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">w</span><span class="p">),</span><span class="w">
+            </span><span class="nf">is.numeric</span><span class="p">(</span><span class="n">w</span><span class="p">),</span><span class="w">
+            </span><span class="nf">length</span><span class="p">(</span><span class="n">g</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w">
+            </span><span class="n">g</span><span class="w"> </span><span class="o">%%</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">0</span><span class="p">)</span><span class="w">
+  </span><span class="n">splits</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="p">(</span><span class="nf">sum</span><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">g</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="p">(</span><span class="n">g</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">1</span><span class="p">))</span><span class="w">
+  </span><span class="n">total_sizes</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">cumsum</span><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="w">
+  </span><span class="n">end_points</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sapply</span><span class="p">(</span><span class="n">splits</span><span class="p">,</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="n">which.min</span><span class="p">(</span><span class="nf">abs</span><span class="p">(</span><span class="n">total_sizes</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">x</span><span class="p">)))</span><span class="w">
+  </span><span class="n">start_points</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">end_points</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w">
+  </span><span class="n">end_points</span><span class="w">   </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">end_points</span><span class="p">,</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="w">
+  </span><span class="n">chunk_assignment</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="n">g</span><span class="p">,</span><span class="w"> </span><span class="n">end_points</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start_points</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w">
+  </span><span class="n">data.frame</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">chunk_assignment</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+</div>
+
+<p>If you have a large dataset, like I did, it is a good idea to partition data physically into separate files. Otherwise each Job has to hold the complete data set in its memory, wasting RAM on data records it doesn’t need.</p>
+
+<h2 id="getting-the-whole-thing-to-run">Getting the whole thing to run</h2>
+
+<p>Now all that is left is setting your system on fire by using its full capacity. There are two ways you can get your Job to run on different data sets. The first is to give your Job script a parameter variable, of which you change the value before starting the next Job. Say, you have split your data into five parts, called <code class="highlighter-rouge">filename_part1.csv</code> up until <code class="highlighter-rouge">filename_part5.csv</code>. You could start you Job script then with</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">part</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">1</span><span class="w">
+</span><span class="n">read.csv</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="s2">"location_to_file/filename_part"</span><span class="p">,</span><span class="w"> </span><span class="n">part</span><span class="p">,</span><span class="w"> </span><span class="s2">".csv"</span><span class="p">))</span><span class="w">
+</span></code></pre>
+</div>
+
+<p>Next, you start the Job manually in the Jobs pane in Rstudio. For the next part you change <code class="highlighter-rouge">part</code> to the value 2 and you start another Job. Until you have five Jobs started. This is a little tedious and error prone. A more elegant solution was proposed by Rstudio’s Jonathan McPherson, in which the <code class="highlighter-rouge">rstudioapi::jobRunScript</code> function is used to kick-off the Job. In a second script you update the <code class="highlighter-rouge">part</code> variable after starting each Job and you start the Job by using the function instead of the pane.</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">part</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">1</span><span class="w"> 
+</span><span class="n">rstudioapi</span><span class="o">::</span><span class="n">jobRunScript</span><span class="p">(</span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"path_to_Jobs_script"</span><span class="p">,</span><span class="w"> </span><span class="n">importEnv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
+</span><span class="n">part</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">2</span><span class="w">
+</span><span class="n">rstudioapi</span><span class="o">::</span><span class="n">jobRunScript</span><span class="p">(</span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"path_to_Jobs_script"</span><span class="p">,</span><span class="w"> </span><span class="n">importEnv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
+
+</span><span class="c1"># ...
+</span><span class="w">
+</span><span class="n">part</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">5</span><span class="w">
+</span><span class="n">rstudioapi</span><span class="o">::</span><span class="n">jobRunScript</span><span class="p">(</span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"path_to_Jobs_script"</span><span class="p">,</span><span class="w"> </span><span class="n">importEnv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<p>You now only have to run this second script to have all the Jobs started at once. This even more convenient if you have several variables value that vary over the Jobs. A downside of this approach is that you have to import the global environment in every one of them. As mentioned, you must then make sure the Job is reproducible and the total memory of your system is not exceeded.</p>
+
+<p>A major thanks to the Rstudio team for providing this awesome functionality. It is a great productivity boost to me!</p>
+
+        
+          <div id="disqus_thread"></div><!-- /#disqus_thread -->
+          
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'thats-so-random'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = 'https://' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+        
+      </div><!-- /.entry-content -->
+    </div><!-- /.entry-wrapper -->
+    <nav class="pagination" role="navigation">
+      
+        <a href="https://EdwinTh.github.io/blog/failed-projects/" class="btn" title="Dealing with failed projects">Previous</a>
+      
+      
+    </nav><!-- /.pagination -->
+  </article>
+</div><!-- /#main -->
+
+<div class="footer-wrapper">
+  <footer role="contentinfo" class="entry-wrapper">
+    
+
+<span>&copy; 2019 Edwin Thoen. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> using the <a href="https://mademistakes.com/work/so-simple-jekyll-theme/" rel="nofollow">So Simple Theme</a>.</span>
+<div class="social-icons">
+	<a href="https://twitter.com/edwin_thoen" title="Edwin Thoen on Twitter" target="_blank"><i class="fa fa-twitter-square fa-2x"></i></a>
+	
+	
+	<a href="https://linkedin.com/in/edwin-thoen-3139a131?trk=hp-identity-name" title="Edwin Thoen on LinkedIn" target="_blank"><i class="fa fa-linkedin-square fa-2x"></i></a>
+	<a href="http://stackoverflow.com/users/2119315/edwin" title="Edwin Thoen on StackExchange" target="_blank"><i class="fa fa-stack-exchange fa-2x"></i></a>
+	
+	
+	<a href="https://github.com/EdwinTh" title="Edwin Thoen on Github" target="_blank"><i class="fa fa-github-square fa-2x"></i></a>
+	
+  
+	
+  <a href="https://EdwinTh.github.io/feed.xml" title="Atom/RSS feed"><i class="fa fa-rss-square fa-2x"></i></a>
+</div><!-- /.social-icons -->
+
+  </footer>
+</div><!-- /.footer-wrapper -->
+
+<script type="text/javascript">
+  var BASE_URL = 'https://EdwinTh.github.io';
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="https://EdwinTh.github.io/assets/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+<script src="https://EdwinTh.github.io/assets/js/scripts.min.js"></script>
+
+
+
+
+</body>
+</html>
