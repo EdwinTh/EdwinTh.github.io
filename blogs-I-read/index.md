@@ -1,9 +1,11 @@
 ---
 layout: page
-title: Blogs I like to read
+title: Blogs and Sources I like to read
 ---
 
 [r-bloggers.com](http://r-bloggers.com)
+
+[rweekly.org](https://rweekly.org/)
 
 [varianceexplained.org](http://varianceexplained.org/)
 
@@ -12,3 +14,5 @@ title: Blogs I like to read
 [andrewgelman.com](http://andrewgelman.com)
 
 [datatau.com](http://datatau.com)
+
+
