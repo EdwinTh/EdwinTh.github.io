@@ -31,9 +31,9 @@ save_as_rds <- function(file,
   
   if (node == "server_node_name") {
     path <- "path/to_the_data/on_the/server"
-  } else if (user == 'user1') {
+  } else if (user == "user1") {
     path <- "path/for/user1"
-  } else if (user2) {
+  } else if (user == "user2") {
     path <- "user2/has_data/stored/here"
   }
   

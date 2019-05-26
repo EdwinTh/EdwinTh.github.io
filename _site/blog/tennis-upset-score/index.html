@@ -1,0 +1,374 @@
+<!doctype html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if (IE 7)&!(IEMobile)]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if (IE 8)&!(IEMobile)]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"><!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<head></head>
+<title>Predictability of Tennis Grand Slams &#8211; That's so Random</title>
+<meta name="description" content="The European tennis season is in full swing, with Roland Garros starting today and Wimbledon taking place in a few weeks. For a sports buff like me, it is the essence of summer (together with the Tour de France). Time to dive into some tennis data. As a follower of both the men’s and the women’s tour it occurred to me that in the latter the tournaments are less predictable. My gut feel was that in the men’s matches the favourite wins the match more frequently than at women’s matches. Of course gut feels are what the world makes go round, unless you are a data scientist. So lets analyse all the matches that were played at the four Grand Slam tournamants for the past fourty years.
+
+">
+<meta name="keywords" content="wta, atp, predictability, tennis">
+
+
+<!-- Twitter Cards -->
+<meta name="twitter:title" content="Predictability of Tennis Grand Slams">
+<meta name="twitter:description" content="The European tennis season is in full swing, with Roland Garros starting today and Wimbledon taking place in a few weeks. For a sports buff like me, it is the essence of summer (together with the Tour de France). Time to dive into some tennis data. As a follower of both the men’s and the women’s tour it occurred to me that in the latter the tournaments are less predictable. My gut feel was that in the men’s matches the favourite wins the match more frequently than at women’s matches. Of course gut feels are what the world makes go round, unless you are a data scientist. So lets analyse all the matches that were played at the four Grand Slam tournamants for the past fourty years.
+
+">
+<meta name="twitter:site" content="@edwin_thoen">
+<meta name="twitter:creator" content="@edwin_thoen">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://EdwinTh.github.io/images/site-logo.png">
+
+<!-- Open Graph -->
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Predictability of Tennis Grand Slams">
+<meta property="og:description" content="The European tennis season is in full swing, with Roland Garros starting today and Wimbledon taking place in a few weeks. For a sports buff like me, it is the essence of summer (together with the Tour de France). Time to dive into some tennis data. As a follower of both the men’s and the women’s tour it occurred to me that in the latter the tournaments are less predictable. My gut feel was that in the men’s matches the favourite wins the match more frequently than at women’s matches. Of course gut feels are what the world makes go round, unless you are a data scientist. So lets analyse all the matches that were played at the four Grand Slam tournamants for the past fourty years.
+
+">
+<meta property="og:url" content="https://EdwinTh.github.io/blog/tennis-upset-score/">
+<meta property="og:site_name" content="That's so Random">
+
+
+
+
+
+<link rel="canonical" href="https://EdwinTh.github.io/blog/tennis-upset-score/">
+<link href="https://EdwinTh.github.io/feed.xml" type="application/atom+xml" rel="alternate" title="That's so Random Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="https://EdwinTh.github.io/assets/css/main.css">
+<!-- Webfonts -->
+<script src="https://use.edgefonts.net/source-sans-pro:n2,i2,n3,i3,n4,i4,n6,i6,n7,i7,n9,i9;source-code-pro:n4,n7;volkhov.js"></script>
+
+<meta http-equiv="cleartype" content="on">
+
+<!-- HTML5 Shiv and Media Query Support -->
+<!--[if lt IE 9]>
+  <script src="https://EdwinTh.github.io/assets/js/vendor/html5shiv.min.js"></script>
+  <script src="https://EdwinTh.github.io/assets/js/vendor/respond.min.js"></script>
+<![endif]-->
+
+<!-- Modernizr -->
+<script src="https://EdwinTh.github.io/assets/js/vendor/modernizr-2.7.1.custom.min.js"></script>
+
+
+<!-- MathJax -->
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+<!-- Icons -->
+<!-- 16x16 -->
+<link rel="shortcut icon" href="https://EdwinTh.github.io/favicon.ico">
+<!-- 32x32 -->
+<link rel="shortcut icon" href="https://EdwinTh.github.io/favicon.png">
+<!-- 57x57 (precomposed) for iPhone 3GS, pre-2011 iPod Touch and older Android devices -->
+<link rel="apple-touch-icon-precomposed" href="https://EdwinTh.github.io/images/apple-touch-icon-precomposed.png">
+<!-- 72x72 (precomposed) for 1st generation iPad, iPad 2 and iPad mini -->
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="https://EdwinTh.github.io/images/apple-touch-icon-72x72-precomposed.png">
+<!-- 114x114 (precomposed) for iPhone 4, 4S, 5 and post-2011 iPod Touch -->
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="https://EdwinTh.github.io/images/apple-touch-icon-114x114-precomposed.png">
+<!-- 144x144 (precomposed) for iPad 3rd and 4th generation -->
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://EdwinTh.github.io/images/apple-touch-icon-144x144-precomposed.png">
+
+
+
+
+</head>
+
+<body id="post">
+
+<div class="navigation-wrapper">
+	<nav role="navigation" id="site-nav" class="animated drop">
+	    <ul>
+      
+		    
+		    <li><a href="https://EdwinTh.github.io/about/" >About</a></li>
+		  
+		    
+		    <li><a href="https://EdwinTh.github.io/blog/" >Blog</a></li>
+		  
+		    
+		    <li><a href="https://EdwinTh.github.io/blogs-I-read/" >Blogs I read</a></li>
+		  
+	    </ul>
+	</nav>
+</div><!-- /.navigation-wrapper -->
+
+<!--[if lt IE 9]><div class="upgrade"><strong><a href="http://whatbrowser.org/">Your browser is quite old!</strong> Why not upgrade to a different browser to better enjoy this site?</a></div><![endif]-->
+
+<header class="masthead">
+	<div class="wrap">
+      
+  		<a href="https://EdwinTh.github.io/" class="site-logo" rel="home" title="That's so Random"><img src="https://EdwinTh.github.io/images/site-logo.png" width="200" height="200" alt="That's so Random logo" class="animated fadeInDown"></a>
+      
+      <h1 class="site-title animated fadeIn"><a href="https://EdwinTh.github.io/">That's so Random</a></h1>
+		<h2 class="site-description animated fadeIn" itemprop="description">A playground for data analysis and R programming.</h2>
+	</div>
+</header><!-- /.masthead -->
+
+<div class="js-menu-screen menu-screen"></div>
+
+
+<div id="main" role="main">
+  <article class="hentry">
+    
+    <div class="entry-wrapper">
+      <header class="entry-header">
+        <ul class="entry-tags">
+          <li><a href="https://EdwinTh.github.io/tags/#wta" title="Pages tagged wta">wta</a></li><li><a href="https://EdwinTh.github.io/tags/#atp" title="Pages tagged atp">atp</a></li><li><a href="https://EdwinTh.github.io/tags/#predictability" title="Pages tagged predictability">predictability</a></li><li><a href="https://EdwinTh.github.io/tags/#tennis" title="Pages tagged tennis">tennis</a></li>
+        </ul>
+        
+          <h1 class="entry-title">Predictability of Tennis Grand Slams</h1>
+        
+      </header>
+      <footer class="entry-meta">
+        
+        
+          <img src="https://EdwinTh.github.io/images/bio-photo.jpg" class="bio-photo" alt="Edwin Thoen bio photo"></a>
+        
+        <span class="author vcard">By <span class="fn">Edwin Thoen</span></span>
+        <span class="entry-date date published"><time datetime="2019-05-26T14:00:00+02:00"><i class="fa fa-calendar-o"></i> May 26, 2019</time></span>
+        
+        <span class="entry-comments"><i class="fa fa-comment-o"></i> <a href="#disqus_thread">Comment</a></span>
+        
+        
+      </footer>
+      <div class="entry-content">
+        <p>The European tennis season is in full swing, with Roland Garros starting today and Wimbledon taking place in a few weeks. For a sports buff like me, it is the essence of summer (together with the Tour de France). Time to dive into some tennis data. As a follower of both the men’s and the women’s tour it occurred to me that in the latter the tournaments are less predictable. My gut feel was that in the men’s matches the favourite wins the match more frequently than at women’s matches. Of course gut feels are what the world makes go round, unless you are a data scientist. So lets analyse all the matches that were played at the four Grand Slam tournamants for the past fourty years.</p>
+
+<h2 id="the-seeding-system">The Seeding System</h2>
+
+<p>But first we need to think of a way to measure if the favourite indeed won. Who the favourite is to win a match might be dependent on who you ask, how do we determine who is the favourite to win? Luckily, there is an element of objectivity in each tournamant that is played. The top players of that moment according to the general rankings are <em>seeded</em>. The world number one is seeded first, the number two as second, up until the world number 32. The seeds are placed in the schedule in such a way that the strongest players only meet in the final rounds of the tournamant (if they beat the weaker ones first of course), The numbers one and two cannot meet before the final. They cannot meet the numbers three and four before semi-finals, and will not play against the numbers five up until eight before the quarterfinals. The higher your seed, the more weaker players you’ll meet during the tournamants before you meet a stronger player. From your seed you are expected to win all the rounds until you meet a stronger player, we could say a seeded player is ought to loose in a certain round (except the number one seed who is ought to win the tournamant).</p>
+
+<h2 id="building-an-upset-score">Building an upset score</h2>
+
+<p>If seeded players loose in a round that is before the “ought-to-loose round” belonging their seed, we can say they underperformed. A way to measure this underperformance is to award an upset point for every round a player loses earlier than its “ought-to-loose round”. The number one seed is ought to win the tournament, if he or she loses the final it will results in one upset point, a loss in the semi-final yields two upset points, a loss in the quarter-final three etcetera. For the number two seed a loss in the semi-final yields one upset point, a loss in the quarter-final two, the round before three etcetera. In the table below all the possible upset points for the sixteen highest seeded players are displayed. The total predictability of a tournament is simply the sum of all the individual upset points. Because until 2001 there were only sixteen seeds, instead of 32, we keep using the first sixteen seeds after it as well. Then the tournamant upset scores can range from 0 (every seeded player lost in its “ought-to-loose round” and the first seeded won the whole thing) to 63 (every seeded player lost in the first round).</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Seed</th>
+      <th style="text-align: right">F</th>
+      <th style="text-align: right">SF</th>
+      <th style="text-align: right">QF</th>
+      <th style="text-align: right">R16</th>
+      <th style="text-align: right">R32</th>
+      <th style="text-align: right">R64</th>
+      <th style="text-align: right">R128</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">1</td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: right">3</td>
+      <td style="text-align: right">4</td>
+      <td style="text-align: right">5</td>
+      <td style="text-align: right">6</td>
+      <td style="text-align: right">7</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">2</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: right">3</td>
+      <td style="text-align: right">4</td>
+      <td style="text-align: right">5</td>
+      <td style="text-align: right">6</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">3-4</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: right">3</td>
+      <td style="text-align: right">4</td>
+      <td style="text-align: right">5</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">5-8</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: right">3</td>
+      <td style="text-align: right">4</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">9-16</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">0</td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: right">3</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="the-data">The data</h2>
+
+<p>Jeff Sackman maintains a database of all the tennis matches played on both the atp (men’s) and wta (women’s) tour. It is on github so I simply cloned the git repositories on which they are maintained. Using the following code.</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>git clone https://github.com/JeffSackmann/tennis_atp
+git clone https://github.com/JeffSackmann/tennis_wta
+</code></pre>
+</div>
+
+<p>Resulting in two folders with a csv file for every year. Many thanks to Jeff for making our lives so easy here.</p>
+
+<h2 id="the-results">The results</h2>
+
+<p>In the graph below the trends are shown for the four Grand Slam tournaments, since 1980, both men (atp) and women (wta). Rather than looking at individual events, I am interested in overall trends. That is why a smoothed curve is used, rather than a line or dot plot.</p>
+
+<p><img src="/figure/source/2019-05-26-tennis-upset-score/unnamed-chunk-4-1.png" alt="plot of chunk unnamed-chunk-4" /></p>
+
+<p>Indeed the men’s events are more predictable than the women’s, but too my great surprise this is only the case for the last ten years. In the thirty years before that the top women players consistently outperformed the top men players at the big tournaments. However, with players like Federer, Nadal and Djokovic starting to dominate on every surface, the probability of seeing an upset rapidly decreased at the men’s events the last years. Whereas, the women’s tour rapidly grew in unpredictability over the last decade. Many things to explore here. What happened in the late nineties on the men’s tour? Why do we see so many upsets at the women’s? Can we forecast the number of upsets we will see the upcoming tournaments? I leave those questions for someone else to answer, or maybe future-me. Here is the full code of this analysis (if you want to reproduce set the <code class="highlighter-rouge">data_path</code> to the folder where you stored the data first).</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span><span class="w">
+
+</span><span class="n">gs_data_one_year</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="w"> </span><span class="n">tour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s2">"atp"</span><span class="p">,</span><span class="w"> </span><span class="s2">"wta"</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">read_csv</span><span class="p">(</span><span class="n">str_glue</span><span class="p">(</span><span class="s2">"{data_path}tennis_{tour}/{tour}_matches_{year}.csv"</span><span class="p">),</span><span class="w">
+           </span><span class="n">col_types</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">cols</span><span class="p">(</span><span class="n">loser_seed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">col_integer</span><span class="p">()))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+    </span><span class="n">filter</span><span class="p">(</span><span class="n">tourney_level</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"G"</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+    </span><span class="n">mutate</span><span class="p">(</span><span class="n">year</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">year</span><span class="p">,</span><span class="w"> </span><span class="n">tour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tour</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+    </span><span class="n">select</span><span class="p">(</span><span class="n">loser_seed</span><span class="p">,</span><span class="w"> </span><span class="n">round</span><span class="p">,</span><span class="w"> </span><span class="n">tourney_name</span><span class="p">,</span><span class="w"> </span><span class="n">year</span><span class="p">,</span><span class="w"> </span><span class="n">tour</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+    </span><span class="n">mutate</span><span class="p">(</span><span class="n">tourney_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">case_when</span><span class="p">(</span><span class="w">
+      </span><span class="n">tourney_name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"French Open"</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s2">"Roland Garros"</span><span class="p">,</span><span class="w">
+      </span><span class="n">tourney_name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"Us Open"</span><span class="w">     </span><span class="o">~</span><span class="w"> </span><span class="s2">"US Open"</span><span class="p">,</span><span class="w">
+      </span><span class="kc">TRUE</span><span class="w">                          </span><span class="o">~</span><span class="w"> </span><span class="n">tourney_name</span><span class="w">
+    </span><span class="p">))</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span><span class="n">the_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">bind_rows</span><span class="p">(</span><span class="w">
+  </span><span class="n">map_dfr</span><span class="p">(</span><span class="m">1980</span><span class="o">:</span><span class="m">2018</span><span class="p">,</span><span class="w"> </span><span class="o">~</span><span class="n">gs_data_one_year</span><span class="p">(</span><span class="n">.x</span><span class="p">,</span><span class="w"> </span><span class="s2">"atp"</span><span class="p">)),</span><span class="w">
+  </span><span class="n">map_dfr</span><span class="p">(</span><span class="m">1980</span><span class="o">:</span><span class="m">2018</span><span class="p">,</span><span class="w"> </span><span class="o">~</span><span class="n">gs_data_one_year</span><span class="p">(</span><span class="n">.x</span><span class="p">,</span><span class="w"> </span><span class="s2">"wta"</span><span class="p">))</span><span class="w">
+</span><span class="p">)</span><span class="w">
+
+</span><span class="n">upset_scores_df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">round_char</span><span class="p">,</span><span class="w"> 
+                            </span><span class="n">upset_points</span><span class="p">,</span><span class="w">
+                            </span><span class="n">top_only</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">16</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">stopifnot</span><span class="p">(</span><span class="nf">length</span><span class="p">(</span><span class="n">upset_points</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">6</span><span class="p">)</span><span class="w">
+  </span><span class="n">tibble</span><span class="p">(</span><span class="w">
+    </span><span class="n">round</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">round_char</span><span class="p">,</span><span class="w">
+    </span><span class="n">loser_seed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">32</span><span class="o">:</span><span class="m">1</span><span class="p">,</span><span class="w">
+    </span><span class="n">upset_points</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="n">upset_points</span><span class="p">,</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">16</span><span class="p">,</span><span class="w"> </span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="m">4</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">))</span><span class="w">
+  </span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+    </span><span class="n">filter</span><span class="p">(</span><span class="n">loser_seed</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">top_only</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span><span class="n">all_rounds</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">unique</span><span class="p">(</span><span class="n">the_data</span><span class="o">$</span><span class="n">round</span><span class="p">)</span><span class="w">
+</span><span class="n">all_upset_points</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="m">2</span><span class="o">:</span><span class="m">7</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="m">6</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="o">:</span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">),</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="m">4</span><span class="p">),</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">),</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="m">3</span><span class="p">),</span><span class="w"> 
+                         </span><span class="nf">c</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">4</span><span class="p">),</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="m">2</span><span class="p">),</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">5</span><span class="p">),</span><span class="w"> </span><span class="m">1</span><span class="p">))</span><span class="w">
+
+</span><span class="n">upset_df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">map2_dfr</span><span class="p">(</span><span class="n">all_rounds</span><span class="p">,</span><span class="w"> </span><span class="n">all_upset_points</span><span class="p">,</span><span class="w"> </span><span class="n">upset_scores_df</span><span class="p">,</span><span class="w">
+                     </span><span class="n">top_only</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">16</span><span class="p">)</span><span class="w">
+
+</span><span class="n">upset_set</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">left_join</span><span class="p">(</span><span class="n">the_data</span><span class="p">,</span><span class="w"> </span><span class="n">upset_df</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">group_by</span><span class="p">(</span><span class="n">tourney_name</span><span class="p">,</span><span class="w"> </span><span class="n">year</span><span class="p">,</span><span class="w"> </span><span class="n">tour</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">summarise</span><span class="p">(</span><span class="n">upset_score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">upset_points</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">ungroup</span><span class="p">()</span><span class="w"> 
+
+</span><span class="n">upset_set</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+  </span><span class="n">ggplot</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="w"> </span><span class="n">upset_score</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tour</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+  </span><span class="n">geom_smooth</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w">
+  </span><span class="n">facet_wrap</span><span class="p">(</span><span class="o">~</span><span class="n">tourney_name</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+  </span><span class="n">labs</span><span class="p">(</span><span class="n">x</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="s2">"Year"</span><span class="p">,</span><span class="w"> 
+       </span><span class="n">y</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="s2">"Upset score"</span><span class="p">,</span><span class="w">
+       </span><span class="n">title</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s2">"Predictability at tennis Grand Slams"</span><span class="p">,</span><span class="w">
+       </span><span class="n">subtitle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"A comparison across time, tournamants and tours"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+  </span><span class="n">theme_bw</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w">
+  </span><span class="n">scale_color_manual</span><span class="p">(</span><span class="n">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s2">"forestgreen"</span><span class="p">,</span><span class="w"> </span><span class="s2">"firebrick"</span><span class="p">))</span><span class="w">
+</span></code></pre>
+</div>
+
+
+        
+          <div id="disqus_thread"></div><!-- /#disqus_thread -->
+          
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'thats-so-random'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = 'https://' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+        
+      </div><!-- /.entry-content -->
+    </div><!-- /.entry-wrapper -->
+    <nav class="pagination" role="navigation">
+      
+        <a href="https://EdwinTh.github.io/multiperson-project/" class="btn" title="Code and Data in a large Machine Learning project">Previous</a>
+      
+      
+    </nav><!-- /.pagination -->
+  </article>
+</div><!-- /#main -->
+
+<div class="footer-wrapper">
+  <footer role="contentinfo" class="entry-wrapper">
+    
+
+<span>&copy; 2019 Edwin Thoen. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> using the <a href="https://mademistakes.com/work/so-simple-jekyll-theme/" rel="nofollow">So Simple Theme</a>.</span>
+<div class="social-icons">
+	<a href="https://twitter.com/edwin_thoen" title="Edwin Thoen on Twitter" target="_blank"><i class="fa fa-twitter-square fa-2x"></i></a>
+	
+	
+	<a href="https://linkedin.com/in/edwin-thoen-3139a131?trk=hp-identity-name" title="Edwin Thoen on LinkedIn" target="_blank"><i class="fa fa-linkedin-square fa-2x"></i></a>
+	<a href="http://stackoverflow.com/users/2119315/edwin" title="Edwin Thoen on StackExchange" target="_blank"><i class="fa fa-stack-exchange fa-2x"></i></a>
+	
+	
+	<a href="https://github.com/EdwinTh" title="Edwin Thoen on Github" target="_blank"><i class="fa fa-github-square fa-2x"></i></a>
+	
+  
+	
+  <a href="https://EdwinTh.github.io/feed.xml" title="Atom/RSS feed"><i class="fa fa-rss-square fa-2x"></i></a>
+</div><!-- /.social-icons -->
+
+  </footer>
+</div><!-- /.footer-wrapper -->
+
+<script type="text/javascript">
+  var BASE_URL = 'https://EdwinTh.github.io';
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="https://EdwinTh.github.io/assets/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+<script src="https://EdwinTh.github.io/assets/js/scripts.min.js"></script>
+
+
+
+
+</body>
+</html>
