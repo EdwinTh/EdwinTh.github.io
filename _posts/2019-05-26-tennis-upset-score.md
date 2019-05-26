@@ -19,7 +19,7 @@ But first we need to think of a way to measure if the favourite indeed won. Who 
 
 ## Building an upset score
 
-If seeded players loose in a round that is before the "ought-to-loose round" belonging their seed, we can say they underperformed. A way to measure this underperformance is to award an upset point for every round a player loses earlier than its "ought-to-loose round". The number one seed is ought to win the tournament, if he or she loses the final it will results in one upset point, a loss in the semi-final yields two upset points, a loss in the quarter-final three etcetera. For the number two seed a loss in the semi-final yields one upset point, a loss in the quarter-final two, the round before three etcetera. In the table below all the possible upset points for the sixteen highest seeded players are displayed. The total predictability of a tournament is simply the sum of all the individual upset points. Because until 2001 there were only sixteen seeds, instead of 32, we keep using the first sixteen seeds after it as well. Then the tournamant upset scores can range from 0 (every seeded player lost in its "ought-to-loose round" and the first seeded won the whole thing) to 63 (every seeded player lost in the first round).
+If seeded players loose in a round that is before the "ought-to-loose round" belonging their seed, we can say they underperformed. A way to measure this underperformance is to award an upset point for every round a player loses earlier than its "ought-to-loose round". The number one seed is ought to win the tournament, if he or she loses the final it will results in one upset point, a loss in the semi-final yields two upset points, a loss in the quarter-final three etcetera. For the number two seed a loss in the semi-final yields one upset point, a loss in the quarter-final two, the round before three etcetera. In the table below all the possible upset points for the sixteen highest seeded players are displayed. 
 
 
 |Seed |  F| SF| QF| R16| R32| R64| R128|
@@ -29,6 +29,8 @@ If seeded players loose in a round that is before the "ought-to-loose round" bel
 |3-4  |  0|  0|  1|   2|   3|   4|    5|
 |5-8  |  0|  0|  0|   1|   2|   3|    4|
 |9-16 |  0|  0|  0|   0|   1|   2|    3|
+
+The total predictability of a tournament is simply the sum of all the individual upset points. Because until 2001 there were only sixteen seeds, instead of 32, we keep using the first sixteen seeds after it as well. Then the tournamant upset scores can range from 0 (every seeded player lost in its "ought-to-loose round" and the first seeded won the whole thing) to 63 (every seeded player lost in the first round).
 
 ## The data
 
