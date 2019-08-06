@@ -14,5 +14,3 @@ My current interests are using Bayesian models to do machine learning, how to ke
 I am the author and maintainer of the [`padr`](https://github.com/EdwinTh/padr) R package. A fair share of my blogs will be about this package.
 
 Besides a data junkie and R programmer I am a bit of a foodie, an enthusiastic (albeit not overly talented) tennis player, a coffee and wine lover, a sports buff and an avid traveler.
-
-[Here](/downloads/Edwin_Thoen_CV.pdf) you can see my CV, if you like to.
