@@ -17,8 +17,8 @@ I guess we all use it, the good old histogram. One of the first things we are ta
 ```r
 library(tidyverse)
 set.seed(42)
-hist_data <- data_frame(x = c(rexp(1000, .5),
-                              runif(50, 0, 500)))
+hist_data <- tibble(x = c(rexp(1000, .5),
+                          runif(50, 0, 500)))
 
 ggplot(hist_data, aes(x)) + 
   geom_histogram(binwidth = .1, col = "black", fill = "cornflowerblue")
@@ -49,9 +49,7 @@ gg_outlier_bin(hist_data,
                binwidth = 0.1)
 ```
 
-```
-## Error in if (overlap_ceiling(tick_positions, co)) {: argument is of length zero
-```
+![plot of chunk unnamed-chunk-4](/figure/source/2017-04-26-outlier-bin/unnamed-chunk-4-1.png)
 
 It is still a bit experimental, but it seems to work in most situations. Below you find the function code for making histograms with outlier bins. You can also get it by installing the package accompanying this blog `devtools::install_github("edwinth/thatssorandom")`. By the way, it works on both floor and ceiling outliers. Like in the following
 
@@ -62,8 +60,11 @@ data_frame(x = c(runif(100, 0, 100), rnorm(1000, 50, 2))) %>%
 ```
 
 ```
-## Error in if (overlap_ceiling(tick_positions, co)) {: argument is of length zero
+## Warning: `data_frame()` is deprecated, use `tibble()`.
+## This warning is displayed once per session.
 ```
+
+![plot of chunk unnamed-chunk-5](/figure/source/2017-04-26-outlier-bin/unnamed-chunk-5-1.png)
 
 
 

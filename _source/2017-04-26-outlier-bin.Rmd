@@ -116,8 +116,8 @@ I guess we all use it, the good old histogram. One of the first things we are ta
 ```{r, message = FALSE}
 library(tidyverse)
 set.seed(42)
-hist_data <- data_frame(x = c(rexp(1000, .5),
-                              runif(50, 0, 500)))
+hist_data <- tibble(x = c(rexp(1000, .5),
+                          runif(50, 0, 500)))
 
 ggplot(hist_data, aes(x)) + 
   geom_histogram(binwidth = .1, col = "black", fill = "cornflowerblue")
@@ -134,7 +134,7 @@ hist_data %>%
 
 Not bad. However, it now suggests incorrectly that many observations are exactly 10. I routinely make these plots for my own information, but they cannot be shared without explaining what happened to the outliers and what there original range was. Since a plot with a manual is not that great either, I recently did a hacking session into the `ggplot` object. The resulting `gg_outlier_bin` function not only indicates the range of the last bin, it also allows for a different fill color of the bin. Now we are clearly distinguishing the outlier aggregation
 
-```{r}
+```{r, warning = FALSE}
 gg_outlier_bin(hist_data, 
                "x", 
                cut_off_floor = NA,

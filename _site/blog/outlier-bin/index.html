@@ -151,8 +151,8 @@
 
 <div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span><span class="w">
 </span><span class="n">set.seed</span><span class="p">(</span><span class="m">42</span><span class="p">)</span><span class="w">
-</span><span class="n">hist_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data_frame</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">rexp</span><span class="p">(</span><span class="m">1000</span><span class="p">,</span><span class="w"> </span><span class="m">.5</span><span class="p">),</span><span class="w">
-                              </span><span class="n">runif</span><span class="p">(</span><span class="m">50</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">500</span><span class="p">)))</span><span class="w">
+</span><span class="n">hist_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">tibble</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">rexp</span><span class="p">(</span><span class="m">1000</span><span class="p">,</span><span class="w"> </span><span class="m">.5</span><span class="p">),</span><span class="w">
+                          </span><span class="n">runif</span><span class="p">(</span><span class="m">50</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">500</span><span class="p">)))</span><span class="w">
 
 </span><span class="n">ggplot</span><span class="p">(</span><span class="n">hist_data</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> 
   </span><span class="n">geom_histogram</span><span class="p">(</span><span class="n">binwidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">.1</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"black"</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"cornflowerblue"</span><span class="p">)</span><span class="w">
@@ -182,9 +182,7 @@
 </span></code></pre>
 </div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## Error in if (overlap_ceiling(tick_positions, co)) {: argument is of length zero
-</code></pre>
-</div>
+<p><img src="/figure/source/2017-04-26-outlier-bin/unnamed-chunk-4-1.png" alt="plot of chunk unnamed-chunk-4" /></p>
 
 <p>It is still a bit experimental, but it seems to work in most situations. Below you find the function code for making histograms with outlier bins. You can also get it by installing the package accompanying this blog <code class="highlighter-rouge">devtools::install_github("edwinth/thatssorandom")</code>. By the way, it works on both floor and ceiling outliers. Like in the following</p>
 
@@ -193,9 +191,12 @@
 </span></code></pre>
 </div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## Error in if (overlap_ceiling(tick_positions, co)) {: argument is of length zero
+<div class="highlighter-rouge"><pre class="highlight"><code>## Warning: `data_frame()` is deprecated, use `tibble()`.
+## This warning is displayed once per session.
 </code></pre>
 </div>
+
+<p><img src="/figure/source/2017-04-26-outlier-bin/unnamed-chunk-5-1.png" alt="plot of chunk unnamed-chunk-5" /></p>
 
 <div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">gg_outlier_bin</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w">
                            </span><span class="n">var_name</span><span class="p">,</span><span class="w">
@@ -343,7 +344,7 @@
   <footer role="contentinfo" class="entry-wrapper">
     
 
-<span>&copy; 2019 Edwin Thoen. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> using the <a href="https://mademistakes.com/work/so-simple-jekyll-theme/" rel="nofollow">So Simple Theme</a>.</span>
+<span>&copy; 2020 Edwin Thoen. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> using the <a href="https://mademistakes.com/work/so-simple-jekyll-theme/" rel="nofollow">So Simple Theme</a>.</span>
 <div class="social-icons">
 	<a href="https://twitter.com/edwin_thoen" title="Edwin Thoen on Twitter" target="_blank"><i class="fa fa-twitter-square fa-2x"></i></a>
 	
