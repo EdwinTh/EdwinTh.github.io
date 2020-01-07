@@ -1,87 +1,222 @@
-<p>Last week I did an analysis of <a href="https://edwinth.github.io/analyzing-olympics/">gold diggers at the Olympics</a>. Here I take you along how I scraped the data from wikepedia and subsequently used the tools of the tidyverse to get the data in a format in which they can be analyzed. You are invited to copy-paste the code and see how the data is gradually getting into a shape in which we can analyze it. I will often not show the data in the intermediate steps, because this will clog the blog. Copy the code to find out for yourself.</p>
+<!doctype html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if (IE 7)&!(IEMobile)]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if (IE 8)&!(IEMobile)]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"><!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<head></head>
+<title>Building the Olympics blog: tidy data preparation &#8211; That's so Random</title>
+<meta name="description" content="Last week I did an analysis of gold diggers at the Olympics. Here I take you along how I scraped the data from wikepedia and subsequently used the tools of the tidyverse to get the data in a format in which they can be analyzed. You are invited to copy-paste the code and see how the data is gradually getting into a shape in which we can analyze it. I will often not show the data in the intermediate steps, because this will clog the blog. Copy the code to find out for yourself.
+
+">
+<meta name="keywords" content="R, data preparation, rvest, tidyverse, web scraping">
+
+
+<!-- Twitter Cards -->
+<meta name="twitter:title" content="Building the Olympics blog: tidy data preparation">
+<meta name="twitter:description" content="Last week I did an analysis of gold diggers at the Olympics. Here I take you along how I scraped the data from wikepedia and subsequently used the tools of the tidyverse to get the data in a format in which they can be analyzed. You are invited to copy-paste the code and see how the data is gradually getting into a shape in which we can analyze it. I will often not show the data in the intermediate steps, because this will clog the blog. Copy the code to find out for yourself.
+
+">
+<meta name="twitter:site" content="@edwin_thoen">
+
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://EdwinTh.github.io/images/site-logo.png">
+
+<!-- Open Graph -->
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Building the Olympics blog: tidy data preparation">
+<meta property="og:description" content="Last week I did an analysis of gold diggers at the Olympics. Here I take you along how I scraped the data from wikepedia and subsequently used the tools of the tidyverse to get the data in a format in which they can be analyzed. You are invited to copy-paste the code and see how the data is gradually getting into a shape in which we can analyze it. I will often not show the data in the intermediate steps, because this will clog the blog. Copy the code to find out for yourself.
+
+">
+<meta property="og:url" content="https://EdwinTh.github.io/olympics-dataprep/">
+<meta property="og:site_name" content="That's so Random">
+
+
+
+
+
+<link rel="canonical" href="https://EdwinTh.github.io/olympics-dataprep/">
+<link href="https://EdwinTh.github.io/feed.xml" type="application/atom+xml" rel="alternate" title="That's so Random Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="https://EdwinTh.github.io/assets/css/main.css">
+<!-- Webfonts -->
+<script src="https://use.edgefonts.net/source-sans-pro:n2,i2,n3,i3,n4,i4,n6,i6,n7,i7,n9,i9;source-code-pro:n4,n7;volkhov.js"></script>
+
+<meta http-equiv="cleartype" content="on">
+
+<!-- HTML5 Shiv and Media Query Support -->
+<!--[if lt IE 9]>
+  <script src="https://EdwinTh.github.io/assets/js/vendor/html5shiv.min.js"></script>
+  <script src="https://EdwinTh.github.io/assets/js/vendor/respond.min.js"></script>
+<![endif]-->
+
+<!-- Modernizr -->
+<script src="https://EdwinTh.github.io/assets/js/vendor/modernizr-2.7.1.custom.min.js"></script>
+
+
+<!-- MathJax -->
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+<!-- Icons -->
+<!-- 16x16 -->
+<link rel="shortcut icon" href="https://EdwinTh.github.io/favicon.ico">
+<!-- 32x32 -->
+<link rel="shortcut icon" href="https://EdwinTh.github.io/favicon.png">
+<!-- 57x57 (precomposed) for iPhone 3GS, pre-2011 iPod Touch and older Android devices -->
+<link rel="apple-touch-icon-precomposed" href="https://EdwinTh.github.io/images/apple-touch-icon-precomposed.png">
+<!-- 72x72 (precomposed) for 1st generation iPad, iPad 2 and iPad mini -->
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="https://EdwinTh.github.io/images/apple-touch-icon-72x72-precomposed.png">
+<!-- 114x114 (precomposed) for iPhone 4, 4S, 5 and post-2011 iPod Touch -->
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="https://EdwinTh.github.io/images/apple-touch-icon-114x114-precomposed.png">
+<!-- 144x144 (precomposed) for iPad 3rd and 4th generation -->
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://EdwinTh.github.io/images/apple-touch-icon-144x144-precomposed.png">
+
+
+
+
+</head>
+
+<body id="post">
+
+<div class="navigation-wrapper">
+	<nav role="navigation" id="site-nav" class="animated drop">
+	    <ul>
+      
+		    
+		    <li><a href="https://EdwinTh.github.io/about/" >About</a></li>
+		  
+		    
+		    <li><a href="https://EdwinTh.github.io/blog/" >Blog</a></li>
+		  
+		    
+		    <li><a href="https://EdwinTh.github.io/blogs-I-read/" >Blogs I read</a></li>
+		  
+	    </ul>
+	</nav>
+</div><!-- /.navigation-wrapper -->
+
+<!--[if lt IE 9]><div class="upgrade"><strong><a href="http://whatbrowser.org/">Your browser is quite old!</strong> Why not upgrade to a different browser to better enjoy this site?</a></div><![endif]-->
+
+<header class="masthead">
+	<div class="wrap">
+      
+  		<a href="https://EdwinTh.github.io/" class="site-logo" rel="home" title="That's so Random"><img src="https://EdwinTh.github.io/images/site-logo.png" width="200" height="200" alt="That's so Random logo" class="animated fadeInDown"></a>
+      
+      <h1 class="site-title animated fadeIn"><a href="https://EdwinTh.github.io/">That's so Random</a></h1>
+		<h2 class="site-description animated fadeIn" itemprop="description">A playground for data analysis and R programming.</h2>
+	</div>
+</header><!-- /.masthead -->
+
+<div class="js-menu-screen menu-screen"></div>
+
+
+<div id="main" role="main">
+  <article class="hentry">
+    
+    <div class="entry-wrapper">
+      <header class="entry-header">
+        <ul class="entry-tags">
+          <li><a href="https://EdwinTh.github.io/tags/#R" title="Pages tagged R">R</a></li><li><a href="https://EdwinTh.github.io/tags/#data preparation" title="Pages tagged data preparation">data preparation</a></li><li><a href="https://EdwinTh.github.io/tags/#rvest" title="Pages tagged rvest">rvest</a></li><li><a href="https://EdwinTh.github.io/tags/#tidyverse" title="Pages tagged tidyverse">tidyverse</a></li><li><a href="https://EdwinTh.github.io/tags/#web scraping" title="Pages tagged web scraping">web scraping</a></li>
+        </ul>
+        
+          <h1 class="entry-title">Building the Olympics blog: tidy data preparation</h1>
+        
+      </header>
+      <footer class="entry-meta">
+        
+        
+        <span class="author vcard">By <span class="fn"></span></span>
+        <span class="entry-date date published"><time datetime="2018-03-20T20:50:00+01:00"><i class="fa fa-calendar-o"></i> March 20, 2018</time></span>
+        
+        <span class="entry-comments"><i class="fa fa-comment-o"></i> <a href="#disqus_thread">Comment</a></span>
+        
+        
+      </footer>
+      <div class="entry-content">
+        <p>Last week I did an analysis of <a href="https://edwinth.github.io/analyzing-olympics/">gold diggers at the Olympics</a>. Here I take you along how I scraped the data from wikepedia and subsequently used the tools of the tidyverse to get the data in a format in which they can be analyzed. You are invited to copy-paste the code and see how the data is gradually getting into a shape in which we can analyze it. I will often not show the data in the intermediate steps, because this will clog the blog. Copy the code to find out for yourself.</p>
 
 <h2 id="scraping-the-data">Scraping the data</h2>
 
-<p>Web scraping in R can be done using the <code class="highlighter-rouge">rvest</code> package. There are several introductions to this package, such as <a href="https://stat4701.github.io/edav/2015/04/02/rvest_tutorial/">this one</a>. You can use either the Inspector Gadget to find out the html tags of the data you want to scrape, or inspect elements in the web browser. I prefer the latter. These data are published on <a href="https://en.wikipedia.org/wiki/List_of_2018_Winter_Olympics_medal_winners">Wikipedia</a>, for each sport you will find the results in a separate table. It appears that the names of the sports all have <code class="highlighter-rouge">h2</code> tags, the data of the medal winners all have a <code class="highlighter-rouge">table</code> class. First we obtain the names of the sports</p>
+<p>Web scraping in R can be done using the <code class="language-plaintext highlighter-rouge">rvest</code> package. There are several introductions to this package, such as <a href="https://stat4701.github.io/edav/2015/04/02/rvest_tutorial/">this one</a>. You can use either the Inspector Gadget to find out the html tags of the data you want to scrape, or inspect elements in the web browser. I prefer the latter. These data are published on <a href="https://en.wikipedia.org/wiki/List_of_2018_Winter_Olympics_medal_winners">Wikipedia</a>, for each sport you will find the results in a separate table. It appears that the names of the sports all have <code class="language-plaintext highlighter-rouge">h2</code> tags, the data of the medal winners all have a <code class="language-plaintext highlighter-rouge">table</code> class. First we obtain the names of the sports</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">rvest</span><span class="p">)</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">rvest</span><span class="p">)</span><span class="w">
 </span><span class="n">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span><span class="w">
 </span><span class="n">library</span><span class="p">(</span><span class="n">stringr</span><span class="p">)</span><span class="w">
 </span><span class="n">Olympics_2018_wiki</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">read_html</span><span class="p">(</span><span class="s2">"https://en.wikipedia.org/wiki/List_of_2018_Winter_Olympics_medal_winners"</span><span class="p">)</span><span class="w">
 </span><span class="n">sports</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">html_nodes</span><span class="p">(</span><span class="n">Olympics_2018_wiki</span><span class="p">,</span><span class="w"> </span><span class="s2">"h2"</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">html_text</span><span class="p">()</span><span class="w">
 </span><span class="n">sports</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">head</span><span class="p">(</span><span class="m">3</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "Alpine skiing[edit]" "Biathlon[edit]"      "Bobsleigh[edit]"
-</code></pre>
-</div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] "Alpine skiing[edit]" "Biathlon[edit]"      "Bobsleigh[edit]"
+</code></pre></div></div>
 
-<p>Note that you have to use <code class="highlighter-rouge">html_text</code> to convert the xml nodes to regular R characters. I am not showing the full output here, but it appears that the first fifteen elements contain the sport’s names. Also, we still need to get rid of the “[edit]” part of the strings.</p>
+<p>Note that you have to use <code class="language-plaintext highlighter-rouge">html_text</code> to convert the xml nodes to regular R characters. I am not showing the full output here, but it appears that the first fifteen elements contain the sport’s names. Also, we still need to get rid of the “[edit]” part of the strings.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">sports</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> 
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">sports</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> 
   </span><span class="n">sports</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">`[`</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">15</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">str_split</span><span class="p">(</span><span class="s2">"\\["</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">map_chr</span><span class="p">(</span><span class="m">1</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<p>In the above I call the subsetting operator <code class="highlighter-rouge">[</code> as a prefix function, rather than its usual usage <code class="highlighter-rouge">object[index]</code>. (Remember everything in R is a function, even when it appears not be). This to make it pipeable. Every infix operator can be used in this way. If you find this unaesthetic, <code class="highlighter-rouge">magrittr</code> has alternative functions, such as <code class="highlighter-rouge">extract</code> to do subsetting. I personally find this a nice use of infixes. Next, we need to get rid of the “[edit]” after each name. We use stringr’s <code class="highlighter-rouge">str_split</code> to split on each “[”. This results in a list of character vectors, each vector of length 2. <code class="highlighter-rouge">purrr::map_chr</code> will select the first element of each vector and store the result in a single character vector.</p>
+<p>In the above I call the subsetting operator <code class="language-plaintext highlighter-rouge">[</code> as a prefix function, rather than its usual usage <code class="language-plaintext highlighter-rouge">object[index]</code>. (Remember everything in R is a function, even when it appears not be). This to make it pipeable. Every infix operator can be used in this way. If you find this unaesthetic, <code class="language-plaintext highlighter-rouge">magrittr</code> has alternative functions, such as <code class="language-plaintext highlighter-rouge">extract</code> to do subsetting. I personally find this a nice use of infixes. Next, we need to get rid of the “[edit]” after each name. We use stringr’s <code class="language-plaintext highlighter-rouge">str_split</code> to split on each “[”. This results in a list of character vectors, each vector of length 2. <code class="language-plaintext highlighter-rouge">purrr::map_chr</code> will select the first element of each vector and store the result in a single character vector.</p>
 
 <p>Now, the tables with the sports</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">medals</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">html_nodes</span><span class="p">(</span><span class="n">Olympics_2018_wiki</span><span class="p">,</span><span class="w"> </span><span class="s2">"table"</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">medals</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">html_nodes</span><span class="p">(</span><span class="n">Olympics_2018_wiki</span><span class="p">,</span><span class="w"> </span><span class="s2">"table"</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
   </span><span class="n">html_table</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">`[`</span><span class="p">(</span><span class="m">3</span><span class="o">:</span><span class="m">26</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p>I checked manually that the 3rd up until the 26th table contain the results. Now, if you visit the wiki page you will notice that some sports have a single results table (such as Curling), while others have several (for women’s, for men’s, and some even for mixed events). I counted on the website the number of tables for each sport.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">tables_by_sport</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">tables_by_sport</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
 
 <p>The next step is flatten these little data frames to one, and add the sport of each event as a column.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">medals_tbl</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> 
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">medals_tbl</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> 
   </span><span class="n">medals</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
   </span><span class="n">map</span><span class="p">(</span><span class="o">~</span><span class="n">select</span><span class="p">(</span><span class="n">.x</span><span class="p">,</span><span class="w"> </span><span class="n">Gold</span><span class="p">,</span><span class="w"> </span><span class="n">Silver</span><span class="p">,</span><span class="w"> </span><span class="n">Bronze</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
   </span><span class="n">map2_df</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="n">sports</span><span class="p">,</span><span class="w"> </span><span class="n">tables_by_sport</span><span class="p">),</span><span class="w">
           </span><span class="o">~</span><span class="n">mutate</span><span class="p">(</span><span class="n">.x</span><span class="p">,</span><span class="w"> </span><span class="n">sport</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">.y</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
   </span><span class="n">as_data_frame</span><span class="p">()</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<p>At the first step we apply dplyr’s select to obtain the three columns we are interested in, with <code class="highlighter-rouge">map</code> this is applied to each of the little data frames. Next we use <code class="highlighter-rouge">map2_df</code>, this will iterate over two vectors instead of one, to add the sports names to each of the data frames with <code class="highlighter-rouge">mutate</code>. Note that by using <code class="highlighter-rouge">map2_df</code>, we bind all the little data frames into one big data frame right away. The result is of class <code class="highlighter-rouge">data.frame</code>. Since I like to work with tibbles, I coerce it at the final line.</p>
+<p>At the first step we apply dplyr’s select to obtain the three columns we are interested in, with <code class="language-plaintext highlighter-rouge">map</code> this is applied to each of the little data frames. Next we use <code class="language-plaintext highlighter-rouge">map2_df</code>, this will iterate over two vectors instead of one, to add the sports names to each of the data frames with <code class="language-plaintext highlighter-rouge">mutate</code>. Note that by using <code class="language-plaintext highlighter-rouge">map2_df</code>, we bind all the little data frames into one big data frame right away. The result is of class <code class="language-plaintext highlighter-rouge">data.frame</code>. Since I like to work with tibbles, I coerce it at the final line.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">medals_tbl</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">select</span><span class="p">(</span><span class="n">Gold</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">slice</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">4</span><span class="p">,</span><span class="w"> </span><span class="m">16</span><span class="p">))</span><span class="w">
-</span></code></pre>
-</div>
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">medals_tbl</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">select</span><span class="p">(</span><span class="n">Gold</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">slice</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">4</span><span class="p">,</span><span class="w"> </span><span class="m">16</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## # A tibble: 2 x 1
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## # A tibble: 2 x 1
 ##                                                                          Gold
 ##                                                                         &lt;chr&gt;
 ## 1                                             "Andr\u00e9 Myhrer\u00a0Sweden"
 ## 2 "Sweden\u00a0(SWE)Peppe FemlingJesper NelinSebastian SamuelssonFredrik Lind
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Now we have a little challenge. We want to distill the country names from the strings. However, the names are sometimes at the start of the string and other times at the end. Splitting and selecting the <em>n</em>th element, like before, won’t work here. To solve this we match every string to every country that won a medal, like so.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">medals_tbl</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">select</span><span class="p">(</span><span class="n">Gold</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">slice</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">4</span><span class="p">,</span><span class="w"> </span><span class="m">16</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">unlist</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">medals_tbl</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">select</span><span class="p">(</span><span class="n">Gold</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">slice</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">4</span><span class="p">,</span><span class="w"> </span><span class="m">16</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">unlist</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">str_detect</span><span class="p">(</span><span class="s2">"Sweden"</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## [1] TRUE TRUE
-</code></pre>
-</div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] TRUE TRUE
+</code></pre></div></div>
 
 <p>First we need to get all the countries that won a medal from the wiki page with the total medal table. The scraping and cleaning is very similar to the ones we already did.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">medal_table_site</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">read_html</span><span class="p">(</span><span class="s2">"https://en.wikipedia.org/wiki/2018_Winter_Olympics_medal_table"</span><span class="p">)</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">medal_table_site</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">read_html</span><span class="p">(</span><span class="s2">"https://en.wikipedia.org/wiki/2018_Winter_Olympics_medal_table"</span><span class="p">)</span><span class="w">
 </span><span class="n">medal_table</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">medal_table_site</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
   </span><span class="n">html_nodes</span><span class="p">(</span><span class="s2">"table"</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
   </span><span class="n">`[`</span><span class="p">(</span><span class="m">2</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
@@ -90,65 +225,57 @@
 
 </span><span class="n">countries_with_medal</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">medal_table</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
   </span><span class="n">pull</span><span class="p">(</span><span class="n">NOC</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
-  </span><span class="n">`[`</span><span class="p">(</span><span class="m">-31</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="c1"># last element is not a country
-</span><span class="w">  </span><span class="n">str_sub</span><span class="p">(</span><span class="n">end</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">-7</span><span class="p">)</span><span class="w">
+  </span><span class="n">`[`</span><span class="p">(</span><span class="m">-31</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="c1"># last element is not a country</span><span class="w">
+  </span><span class="n">str_sub</span><span class="p">(</span><span class="n">end</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">-7</span><span class="p">)</span><span class="w">
 
-</span><span class="c1"># It got an asterix added to the name 
+</span><span class="c1"># It got an asterix added to the name </span><span class="w">
 </span><span class="n">countries_with_medal</span><span class="p">[</span><span class="m">7</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s2">"South Korea"</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<p>Now, <code class="highlighter-rouge">str_detect</code> is vectorized over the characters, but it can match to only one pattern at the time. We can wrap over all country names with <code class="highlighter-rouge">map_lgl</code>. Getting a logical vector that is <code class="highlighter-rouge">TRUE</code> for the country present, and <code class="highlighter-rouge">FALSE</code> for all the others. This vector can then subsequently be used to subset the country name.</p>
+<p>Now, <code class="language-plaintext highlighter-rouge">str_detect</code> is vectorized over the characters, but it can match to only one pattern at the time. We can wrap over all country names with <code class="language-plaintext highlighter-rouge">map_lgl</code>. Getting a logical vector that is <code class="language-plaintext highlighter-rouge">TRUE</code> for the country present, and <code class="language-plaintext highlighter-rouge">FALSE</code> for all the others. This vector can then subsequently be used to subset the country name.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">detect_country</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">string_with_country</span><span class="p">,</span><span class="w"> </span><span class="n">name_vec</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">detect_country</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">string_with_country</span><span class="p">,</span><span class="w"> </span><span class="n">name_vec</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="n">ind</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">map_lgl</span><span class="p">(</span><span class="n">name_vec</span><span class="p">,</span><span class="w">
                 </span><span class="o">~</span><span class="n">str_detect</span><span class="p">(</span><span class="n">string_with_country</span><span class="p">,</span><span class="w"> </span><span class="n">pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">.x</span><span class="p">))</span><span class="w">
   </span><span class="n">countries_with_medal</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span><span class="n">detect_country</span><span class="p">(</span><span class="s2">"Andr&lt;U+00E9&gt; Myhrer&lt;U+00A0&gt;Sweden"</span><span class="p">,</span><span class="w"> </span><span class="n">countries_with_medal</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "Sweden"
-</code></pre>
-</div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] "Sweden"
+</code></pre></div></div>
 
-<p>This works for a single character, like in the example, in order to get it to work on an entire vector we have to wrap it in <code class="highlighter-rouge">map_chr</code>.</p>
+<p>This works for a single character, like in the example, in order to get it to work on an entire vector we have to wrap it in <code class="language-plaintext highlighter-rouge">map_chr</code>.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">detect_country_vec</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">country_vec</span><span class="p">,</span><span class="w"> </span><span class="n">name_vec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">countries_with_medal</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">detect_country_vec</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">country_vec</span><span class="p">,</span><span class="w"> </span><span class="n">name_vec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">countries_with_medal</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="n">map_chr</span><span class="p">(</span><span class="n">country_vec</span><span class="p">,</span><span class="w"> </span><span class="n">detect_country</span><span class="p">,</span><span class="w"> </span><span class="n">name_vec</span><span class="p">)</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p>Now, that is a nice and clean function to extract the country names. However, there are some lines that spoil the party.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">medals_tbl</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">slice</span><span class="p">(</span><span class="m">23</span><span class="o">:</span><span class="m">24</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">medals_tbl</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">slice</span><span class="p">(</span><span class="m">23</span><span class="o">:</span><span class="m">24</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## # A tibble: 2 x 4
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## # A tibble: 2 x 4
 ##                                                     Gold      Silver
 ##                                                    &lt;chr&gt;       &lt;chr&gt;
 ## 1       "Canada\u00a0(CAN)Justin KrippsAlexander Kopacz" Not awarded
 ## 2 "Germany\u00a0(GER)Francesco FriedrichThorsten Margis" Not awarded
 ## # ... with 2 more variables: Bronze &lt;chr&gt;, sport &lt;chr&gt;
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>We have a shared Gold in the bobsleigh, spread over two lines. For the Gold itself it doesn’t cause a problem, but for the Silver the function breaks, and for the Bronze Latvia would be counted twice for one medal.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">medals_tbl</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">slice</span><span class="p">(</span><span class="m">62</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">medals_tbl</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">slice</span><span class="p">(</span><span class="m">62</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## # A tibble: 1 x 4
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## # A tibble: 1 x 4
 ##                                         Gold
 ##                                        &lt;chr&gt;
 ## 1 "Tobias Wendl\nand Tobias Arlt\u00a0(GER)"
 ## # ... with 3 more variables: Silver &lt;chr&gt;, Bronze &lt;chr&gt;, sport &lt;chr&gt;
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Another spoiler. For some reason in the luge abbreviations are used instead of the full names. Pfff, we have no match here. There are several more exceptions that make our function break.</p>
 
@@ -162,7 +289,7 @@
 
 <p>In this case, should we incorporate the exceptions in the function, or do we just do them by hand? It is a lot more work to automate because of the many different exceptions. No, we are not expecting new data to flow through this. And finally, these problems seem very specific for this problem, a general purpose function is not likely to make our future life easier. Manual labor it is. By trial and error we find the problem lines, discard them, apply the function and add the countries for the problem lines manually.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">problem_lines</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">23</span><span class="o">:</span><span class="m">26</span><span class="p">,</span><span class="w"> </span><span class="m">34</span><span class="p">,</span><span class="w"> </span><span class="m">41</span><span class="p">,</span><span class="w"> </span><span class="m">45</span><span class="p">,</span><span class="w"> </span><span class="m">46</span><span class="p">,</span><span class="w"> </span><span class="m">62</span><span class="p">)</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">problem_lines</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">23</span><span class="o">:</span><span class="m">26</span><span class="p">,</span><span class="w"> </span><span class="m">34</span><span class="p">,</span><span class="w"> </span><span class="m">41</span><span class="p">,</span><span class="w"> </span><span class="m">45</span><span class="p">,</span><span class="w"> </span><span class="m">46</span><span class="p">,</span><span class="w"> </span><span class="m">62</span><span class="p">)</span><span class="w">
 </span><span class="n">happy_flow</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">medals_tbl</span><span class="p">[</span><span class="o">-</span><span class="n">problem_lines</span><span class="p">,</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
   </span><span class="n">mutate_at</span><span class="p">(</span><span class="n">.vars</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vars</span><span class="p">(</span><span class="n">Gold</span><span class="p">,</span><span class="w"> </span><span class="n">Silver</span><span class="p">,</span><span class="w"> </span><span class="n">Bronze</span><span class="p">),</span><span class="w"> </span><span class="n">.funs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">detect_country_vec</span><span class="p">)</span><span class="w">
 </span><span class="n">hand_work</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">medals_tbl</span><span class="p">[</span><span class="n">problem_lines</span><span class="p">,</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
@@ -174,34 +301,30 @@
 </span><span class="n">medal_set</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">bind_rows</span><span class="p">(</span><span class="n">happy_flow</span><span class="p">,</span><span class="w"> </span><span class="n">hand_work</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
   </span><span class="n">gather</span><span class="p">(</span><span class="n">medal</span><span class="p">,</span><span class="w"> </span><span class="n">country</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="n">sport</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
   </span><span class="n">filter</span><span class="p">(</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">country</span><span class="p">))</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<p>Note the use of the nice <code class="highlighter-rouge">mutate_at</code> function. In one single line we replace the original strings by the values extracted by our function for all three columns. In the final lines <code class="highlighter-rouge">gather</code> (tidyr package) is applied to transform the data from wide to long. Each row is now a medal won.</p>
+<p>Note the use of the nice <code class="language-plaintext highlighter-rouge">mutate_at</code> function. In one single line we replace the original strings by the values extracted by our function for all three columns. In the final lines <code class="language-plaintext highlighter-rouge">gather</code> (tidyr package) is applied to transform the data from wide to long. Each row is now a medal won.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">medal_set</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">head</span><span class="p">(</span><span class="m">2</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">medal_set</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">head</span><span class="p">(</span><span class="m">2</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## # A tibble: 2 x 3
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## # A tibble: 2 x 3
 ##           sport medal country
 ##           &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;
 ## 1 Alpine skiing  Gold  Norway
 ## 2 Alpine skiing  Gold Austria
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Finally, since we are interested in the number of medals per sport per country. We can already aggregated.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">medal_set_sum</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">medal_set</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">medal_set_sum</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">medal_set</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">count</span><span class="p">(</span><span class="n">sport</span><span class="p">,</span><span class="w"> </span><span class="n">medal</span><span class="p">,</span><span class="w"> </span><span class="n">country</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">rename</span><span class="p">(</span><span class="n">medal_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w">
 
 </span><span class="n">medal_set_sum</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">head</span><span class="p">()</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## # A tibble: 6 x 4
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## # A tibble: 6 x 4
 ##           sport  medal       country medal_count
 ##           &lt;chr&gt;  &lt;chr&gt;         &lt;chr&gt;       &lt;int&gt;
 ## 1 Alpine skiing Bronze       Austria           2
@@ -210,11 +333,86 @@
 ## 4 Alpine skiing Bronze Liechtenstein           1
 ## 5 Alpine skiing Bronze        Norway           2
 ## 6 Alpine skiing Bronze   Switzerland           2
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>I showed you how the great tidyverse toolbox can be used to get raw data from the web, and transform it into a clean set that is ready for analysis.</p>
 
 <h2 id="some-remarks-on-web-scraping">Some remarks on web scraping</h2>
 
 <p>A disadvantage of using web data as a source, is that the layout of the data might change. My pipeline broke several times, because changes were made to the wiki. Because of this, it is not assured this code will run in future times. For this example I kept the pipeline live, because I wanted to do this blog post including the scraping. However, it would have saved me a good deal of trouble if I stored the set in a csv the first time I had a proper version of the data.</p>
+
+        
+          <div id="disqus_thread"></div><!-- /#disqus_thread -->
+          
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'thats-so-random'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = 'https://' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+        
+      </div><!-- /.entry-content -->
+    </div><!-- /.entry-wrapper -->
+    <nav class="pagination" role="navigation">
+      
+        <a href="https://EdwinTh.github.io/analyzing-olympics/" class="btn" title="Gold diggers at the Olympics">Previous</a>
+      
+      
+        <a href="https://EdwinTh.github.io/blog/recipes_blog/" class="btn" title="A recipe for recipes">Next</a>
+      
+    </nav><!-- /.pagination -->
+  </article>
+</div><!-- /#main -->
+
+<div class="footer-wrapper">
+  <footer role="contentinfo" class="entry-wrapper">
+    
+
+<span>&copy; 2020 Edwin Thoen. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> using the <a href="https://mademistakes.com/work/so-simple-jekyll-theme/" rel="nofollow">So Simple Theme</a>.</span>
+<div class="social-icons">
+	<a href="https://twitter.com/edwin_thoen" title="Edwin Thoen on Twitter" target="_blank"><i class="fa fa-twitter-square fa-2x"></i></a>
+	
+	
+	<a href="https://linkedin.com/in/edwin-thoen-3139a131?trk=hp-identity-name" title="Edwin Thoen on LinkedIn" target="_blank"><i class="fa fa-linkedin-square fa-2x"></i></a>
+	<a href="http://stackoverflow.com/users/2119315/edwin" title="Edwin Thoen on StackExchange" target="_blank"><i class="fa fa-stack-exchange fa-2x"></i></a>
+	
+	
+	<a href="https://github.com/EdwinTh" title="Edwin Thoen on Github" target="_blank"><i class="fa fa-github-square fa-2x"></i></a>
+	
+  
+	
+  <a href="https://EdwinTh.github.io/feed.xml" title="Atom/RSS feed"><i class="fa fa-rss-square fa-2x"></i></a>
+</div><!-- /.social-icons -->
+
+  </footer>
+</div><!-- /.footer-wrapper -->
+
+<script type="text/javascript">
+  var BASE_URL = 'https://EdwinTh.github.io';
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="https://EdwinTh.github.io/assets/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+<script src="https://EdwinTh.github.io/assets/js/scripts.min.js"></script>
+
+
+
+
+</body>
+</html>

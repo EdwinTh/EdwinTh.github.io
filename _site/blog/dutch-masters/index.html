@@ -167,16 +167,16 @@ Age, there was an abundance of talented painters. If you ever have
 the chance to visit the Rijksmuseum you will be in awe by the landscapes,
 households and portraits, painted with incredible detail and beautiful colors.</p>
 
-<h2 id="the-dutchmasters-color-palette">The <code class="highlighter-rouge">dutchmasters</code> color palette</h2>
+<h2 id="the-dutchmasters-color-palette">The <code class="language-plaintext highlighter-rouge">dutchmasters</code> color palette</h2>
 
 <p>Rembrandt van Rijn and Johannes Vermeer are the most famous of the seventeenth
 century Dutch masters. Both are renowned for their use of light and color,
 making encounters with their subjects feel as being in the room with them.
-Recently, during the OzUnconference, the beautiful <a href="https://github.com/ropenscilabs/ochRe/"><code class="highlighter-rouge">ochRe</code> package</a> was 
+Recently, during the OzUnconference, the beautiful <a href="https://github.com/ropenscilabs/ochRe/"><code class="language-plaintext highlighter-rouge">ochRe</code> package</a> was 
 developed. This package contains color palettes of the wonderful Australian 
 landscape (which my wife and I got to witness during our honeymoon last 
 year). Drawing colors from both works of art and photographs of Australia. 
-I shamelessly stole both the idea and package structure of <code class="highlighter-rouge">ochRe</code> to create <a href="https://github.com/EdwinTh/dutchmasters"><code class="highlighter-rouge">dutchmasters</code></a>. This package contains six color 
+I shamelessly stole both the idea and package structure of <code class="language-plaintext highlighter-rouge">ochRe</code> to create <a href="https://github.com/EdwinTh/dutchmasters"><code class="language-plaintext highlighter-rouge">dutchmasters</code></a>. This package contains six color 
 palettes derived from my six favourites by Van Rijn and Vermeer.</p>
 
 <p>Vermeer’s paintings are renowned for their vivid and light colors. The package
@@ -189,52 +189,49 @@ colors and subjects that stare you right into the soul. From him you find
 palettes derived from the <a href="https://en.wikipedia.org/wiki/The_Anatomy_Lesson_of_Dr._Nicolaes_Tulp"><em>The Anatomy Lesson of Dr. Nicolaes Tulp</em></a> 
 and  <a href="https://en.wikipedia.org/wiki/Syndics_of_the_Drapers%27_Guild"><em>The “Staalmeesters”</em></a>.</p>
 
-<p>Like <code class="highlighter-rouge">ochRe</code>, the package comprises a list with the color palettes. I have added
+<p>Like <code class="language-plaintext highlighter-rouge">ochRe</code>, the package comprises a list with the color palettes. I have added
 names to each of the color codes, reflecting the color it represents and moreover
 where on the painting the color was taken from. As mentioned, I shamelessly 
-converted the functions from <code class="highlighter-rouge">ochRe</code> into <code class="highlighter-rouge">dutchmasters</code> functions. Why invent 
+converted the functions from <code class="language-plaintext highlighter-rouge">ochRe</code> into <code class="language-plaintext highlighter-rouge">dutchmasters</code> functions. Why invent 
 something that smarter people already figured out?</p>
 
 <h2 id="using-the-package">Using the package</h2>
 
-<p>Grab the package from github with <code class="highlighter-rouge">devtools::install_github("EdwinTh/dutchmasters")</code>.
-Make sure to install <code class="highlighter-rouge">ochRe</code> right away for the handy <code class="highlighter-rouge">viz_palette</code> function,
-with <code class="highlighter-rouge">devtools::install_github("ropenscilabs/ochRe/")</code>.</p>
+<p>Grab the package from github with <code class="language-plaintext highlighter-rouge">devtools::install_github("EdwinTh/dutchmasters")</code>.
+Make sure to install <code class="language-plaintext highlighter-rouge">ochRe</code> right away for the handy <code class="language-plaintext highlighter-rouge">viz_palette</code> function,
+with <code class="language-plaintext highlighter-rouge">devtools::install_github("ropenscilabs/ochRe/")</code>.</p>
 
 <p>This is what the palette “milkmaid” looks like.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">dutchmasters</span><span class="p">)</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">dutchmasters</span><span class="p">)</span><span class="w">
 </span><span class="n">ochRe</span><span class="o">::</span><span class="n">viz_palette</span><span class="p">(</span><span class="n">dutchmasters</span><span class="p">[[</span><span class="s2">"milkmaid"</span><span class="p">]])</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p><img src="/figure/source/2017-12-13-dutch-masters/unnamed-chunk-1-1.png" alt="plot of chunk unnamed-chunk-1" /></p>
 
 <p>Now to put those beautiful Vermeer shades into action on a ggplot.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span><span class="w">
 </span><span class="n">ggplot</span><span class="p">(</span><span class="n">diamonds</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">color</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">clarity</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
   </span><span class="n">geom_bar</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w">
   </span><span class="n">scale_fill_dutchmasters</span><span class="p">(</span><span class="n">palette</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"milkmaid"</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p><img src="/figure/source/2017-12-13-dutch-masters/unnamed-chunk-2-1.png" alt="plot of chunk unnamed-chunk-2" /></p>
 
 <p>Or maybe the dark “staalmeesters” colors?</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">ggplot</span><span class="p">(</span><span class="n">diamonds</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">color</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">clarity</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ggplot</span><span class="p">(</span><span class="n">diamonds</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">color</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">clarity</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
   </span><span class="n">geom_bar</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w">
   </span><span class="n">scale_fill_dutchmasters</span><span class="p">(</span><span class="n">palette</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"staalmeesters"</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p><img src="/figure/source/2017-12-13-dutch-masters/unnamed-chunk-3-1.png" alt="plot of chunk unnamed-chunk-3" /></p>
 
 <p>I leave the other four palettes for you to explore. In the future I will 
 certainly add more paintings, as the well of the Dutch masters seems bottomless.</p>
 
-<p>A big thanks to the <code class="highlighter-rouge">ochRe</code> team, for inspiration and groundwork. I hope that 
+<p>A big thanks to the <code class="language-plaintext highlighter-rouge">ochRe</code> team, for inspiration and groundwork. I hope that 
 this package motivates you to further explore the wonderful art of the Dutch
 Golden Age.</p>
 

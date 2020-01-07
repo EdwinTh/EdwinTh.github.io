@@ -145,13 +145,13 @@
         
       </footer>
       <div class="entry-content">
-        <p>Throughout the last years I noticed the following happening with a number of people. One of those people was actually yours truely a few years back. Person is aware of S3 methods in R through regular use of <code class="highlighter-rouge">print</code>, <code class="highlighter-rouge">plot</code> and <code class="highlighter-rouge">summary</code> functions and decides to give it a go in own work. Creates a function that assigns a class to its output and then implements a bunch of methods to work on the class. Strangely, some of these methods appear to be working as expected, while others throw an error. After a confusing and painful debugging session, person throws hands in the air and continues working without S3 methods. Which was working fine in the first place. This is a real pity, because all the person is overlooking is a very small step in the S3 chain: the generic function.</p>
+        <p>Throughout the last years I noticed the following happening with a number of people. One of those people was actually yours truely a few years back. Person is aware of S3 methods in R through regular use of <code class="language-plaintext highlighter-rouge">print</code>, <code class="language-plaintext highlighter-rouge">plot</code> and <code class="language-plaintext highlighter-rouge">summary</code> functions and decides to give it a go in own work. Creates a function that assigns a class to its output and then implements a bunch of methods to work on the class. Strangely, some of these methods appear to be working as expected, while others throw an error. After a confusing and painful debugging session, person throws hands in the air and continues working without S3 methods. Which was working fine in the first place. This is a real pity, because all the person is overlooking is a very small step in the S3 chain: the generic function.</p>
 
 <h2 id="a-nonworking-method">A nonworking method</h2>
 
 <p>So we have a function doing all kinds of complicated stuff. It outputs a list with several elements. We assign a S3 class to it before returning, so we can subsequently implement a number of methods<sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup>. Lets just make something up here.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">my_func</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">my_func</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="n">ret</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">dataset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> 
               </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">42</span><span class="p">,</span><span class="w"> 
               </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rnorm</span><span class="p">(</span><span class="m">10</span><span class="p">),</span><span class="w"> 
@@ -160,102 +160,89 @@
   </span><span class="n">ret</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span><span class="n">out</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">my_func</span><span class="p">(</span><span class="n">mtcars</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<p>Perfect, now lets implement a <code class="highlighter-rouge">print</code> method. Rather than outputting the whole list, we just want to know the most vital information when printing.</p>
+<p>Perfect, now lets implement a <code class="language-plaintext highlighter-rouge">print</code> method. Rather than outputting the whole list, we just want to know the most vital information when printing.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">print.myS3</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">print.myS3</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="n">cat</span><span class="p">(</span><span class="s2">"Original dataset has"</span><span class="p">,</span><span class="w"> </span><span class="n">nrow</span><span class="p">(</span><span class="n">x</span><span class="o">$</span><span class="n">dataset</span><span class="p">),</span><span class="w"> </span><span class="s2">"rows and"</span><span class="p">,</span><span class="w">
       </span><span class="n">ncol</span><span class="p">(</span><span class="n">x</span><span class="o">$</span><span class="n">dataset</span><span class="p">),</span><span class="w"> </span><span class="s2">"columns\n"</span><span class="p">,</span><span class="w"> 
       </span><span class="s2">"d is"</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="o">$</span><span class="n">d</span><span class="p">)</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span><span class="n">out</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## Original dataset has 32 rows and 11 columns
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## Original dataset has 32 rows and 11 columns
 ##  d is 42
-</code></pre>
-</div>
+</code></pre></div></div>
 
-<p>Ha, that is working!. Now we do a <code class="highlighter-rouge">mean</code> method, that gives us the mean of the <code class="highlighter-rouge">y</code> variable.</p>
+<p>Ha, that is working!. Now we do a <code class="language-plaintext highlighter-rouge">mean</code> method, that gives us the mean of the <code class="language-plaintext highlighter-rouge">y</code> variable.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">mean.myS3</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">mean.myS3</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="o">$</span><span class="n">y</span><span class="p">)</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span><span class="n">mean</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## [1] 0.2631094
-</code></pre>
-</div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 0.2631094
+</code></pre></div></div>
 
-<p>Works too! And finally we do a <code class="highlighter-rouge">count_letters</code> method. It takes <code class="highlighter-rouge">z</code> from the output and counts how often each letter occurs.</p>
+<p>Works too! And finally we do a <code class="language-plaintext highlighter-rouge">count_letters</code> method. It takes <code class="language-plaintext highlighter-rouge">z</code> from the output and counts how often each letter occurs.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">count_letters.myS3</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">count_letters.myS3</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="n">table</span><span class="p">(</span><span class="n">out</span><span class="o">$</span><span class="n">z</span><span class="p">)</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span><span class="n">count_letters</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## Error in count_letters(out): could not find function "count_letters"
-</code></pre>
-</div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## Error in count_letters(out): could not find function "count_letters"
+</code></pre></div></div>
 
 <p>What do you mean “could not find function”? It is right there! Maybe we made a typo. Mmmm, no it doesn’t seem so. Maybe, mmmm, lets look into this…. Half an hour, a bit of swearing and feelings of stupidity later. Pfff, lets not bother about S3, we were happy with just using functions in the first place.</p>
 
 <h2 id="generics">Generics</h2>
 
-<p>Now why are <code class="highlighter-rouge">print</code> and <code class="highlighter-rouge">mean</code> working just fine, but <code class="highlighter-rouge">count_letters</code> isn’t? Lets look under the hood of <code class="highlighter-rouge">print</code> and <code class="highlighter-rouge">mean</code>.</p>
+<p>Now why are <code class="language-plaintext highlighter-rouge">print</code> and <code class="language-plaintext highlighter-rouge">mean</code> working just fine, but <code class="language-plaintext highlighter-rouge">count_letters</code> isn’t? Lets look under the hood of <code class="language-plaintext highlighter-rouge">print</code> and <code class="language-plaintext highlighter-rouge">mean</code>.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">print</span><span class="w">
-</span></code></pre>
-</div>
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">print</span><span class="w">
+</span></code></pre></div></div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## function (x, ...) 
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## function (x, ...) 
 ## UseMethod("print")
 ## &lt;bytecode: 0x7ff0f7069200&gt;
 ## &lt;environment: namespace:base&gt;
-</code></pre>
-</div>
+</code></pre></div></div>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">mean</span><span class="w">
-</span></code></pre>
-</div>
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">mean</span><span class="w">
+</span></code></pre></div></div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## function (x, ...) 
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## function (x, ...) 
 ## UseMethod("mean")
 ## &lt;bytecode: 0x7ff0f5ce3428&gt;
 ## &lt;environment: namespace:base&gt;
-</code></pre>
-</div>
+</code></pre></div></div>
 
-<p>They look exactly the same! They call the <code class="highlighter-rouge">UseMethod</code> function on their own function name. Looking into the help file of <code class="highlighter-rouge">UseMethod</code>, it all of a sudden starts to make sense.</p>
+<p>They look exactly the same! They call the <code class="language-plaintext highlighter-rouge">UseMethod</code> function on their own function name. Looking into the help file of <code class="language-plaintext highlighter-rouge">UseMethod</code>, it all of a sudden starts to make sense.</p>
 
 <p><em>“When a function calling UseMethod(“fun”) is applied to an object with class attribute c(“first”, “second”), the system searches for a function called fun.first and, if it finds it, applies it to the object. If no such function is found a function called fun.second is tried. If no class name produces a suitable function, the function fun.default is used, if it exists, or an error results.”</em></p>
 
-<p>So by calling <code class="highlighter-rouge">print</code> and <code class="highlighter-rouge">mean</code> on the <code class="highlighter-rouge">myS3</code> object we were not calling the method itself. Rather, we call the general functions <code class="highlighter-rouge">print</code> and <code class="highlighter-rouge">mean</code> (the generics) and they call the function <code class="highlighter-rouge">UseMethod</code>. This function then does the <em>method dispatch</em>: lookup the method belonging to the S3 object the function was called on. We were just <em>lucky</em> the <code class="highlighter-rouge">print</code> and <code class="highlighter-rouge">mean</code> generics were already in place and called our methods. However, the <code class="highlighter-rouge">count_letters</code> function indeed doesn’t exist (as the error message tells us). Only the <code class="highlighter-rouge">count_letters</code> method exist, for objects of class <code class="highlighter-rouge">myS3</code>. We just learned that methods cannot get called directly, but are invoked by generics. All we need to do, thus, is build a generic for <code class="highlighter-rouge">count_letters</code> and we are all set.</p>
+<p>So by calling <code class="language-plaintext highlighter-rouge">print</code> and <code class="language-plaintext highlighter-rouge">mean</code> on the <code class="language-plaintext highlighter-rouge">myS3</code> object we were not calling the method itself. Rather, we call the general functions <code class="language-plaintext highlighter-rouge">print</code> and <code class="language-plaintext highlighter-rouge">mean</code> (the generics) and they call the function <code class="language-plaintext highlighter-rouge">UseMethod</code>. This function then does the <em>method dispatch</em>: lookup the method belonging to the S3 object the function was called on. We were just <em>lucky</em> the <code class="language-plaintext highlighter-rouge">print</code> and <code class="language-plaintext highlighter-rouge">mean</code> generics were already in place and called our methods. However, the <code class="language-plaintext highlighter-rouge">count_letters</code> function indeed doesn’t exist (as the error message tells us). Only the <code class="language-plaintext highlighter-rouge">count_letters</code> method exist, for objects of class <code class="language-plaintext highlighter-rouge">myS3</code>. We just learned that methods cannot get called directly, but are invoked by generics. All we need to do, thus, is build a generic for <code class="language-plaintext highlighter-rouge">count_letters</code> and we are all set.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">count_letters</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">count_letters</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="nf">UseMethod</span><span class="p">(</span><span class="s2">"count_letters"</span><span class="p">)</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span><span class="n">count_letters</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## 
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## 
 ## a b c 
 ## 2 1 1
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <div class="footnotes">
   <ol>
     <li id="fn:1">
-      <p>It is actually ill-advised to assign a S3 class directly to an output. Rather use a constructor, see 16.3.1 of <a href="https://adv-r.hadley.nz/s3.html">Advanced R</a> for the how and why. <a href="#fnref:1" class="reversefootnote">&#8617;</a></p>
+      <p>It is actually ill-advised to assign a S3 class directly to an output. Rather use a constructor, see 16.3.1 of <a href="https://adv-r.hadley.nz/s3.html">Advanced R</a> for the how and why. <a href="#fnref:1" class="reversefootnote">&#8617;</a></p>
     </li>
   </ol>
 </div>

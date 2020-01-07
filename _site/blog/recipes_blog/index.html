@@ -12,7 +12,7 @@
 
   
     
-      Together with Max I added the checks framework to the package. Where steps are transformations of variables, checks are assertions of them. If a check passes nothing happens. If it fails, it will break the bake method of the recipe and throws an informative error. &#8617;
+      Together with Max I added the checks framework to the package. Where steps are transformations of variables, checks are assertions of them. If a check passes nothing happens. If it fails, it will break the bake method of the recipe and throws an informative error. &#8617;
     
   
 
@@ -27,7 +27,7 @@
 
   
     
-      Together with Max I added the checks framework to the package. Where steps are transformations of variables, checks are assertions of them. If a check passes nothing happens. If it fails, it will break the bake method of the recipe and throws an informative error. &#8617;
+      Together with Max I added the checks framework to the package. Where steps are transformations of variables, checks are assertions of them. If a check passes nothing happens. If it fails, it will break the bake method of the recipe and throws an informative error. &#8617;
     
   
 
@@ -47,7 +47,7 @@
 
   
     
-      Together with Max I added the checks framework to the package. Where steps are transformations of variables, checks are assertions of them. If a check passes nothing happens. If it fails, it will break the bake method of the recipe and throws an informative error. &#8617;
+      Together with Max I added the checks framework to the package. Where steps are transformations of variables, checks are assertions of them. If a check passes nothing happens. If it fails, it will break the bake method of the recipe and throws an informative error. &#8617;
     
   
 
@@ -166,33 +166,30 @@
         
       </footer>
       <div class="entry-content">
-        <p>If you build statistical or machine learning models, the <code class="highlighter-rouge">recipes</code> package can be useful for data preparation. A <code class="highlighter-rouge">recipe</code> object is a container that holds all the steps that should be performed to go from the raw data set to the set that is fed into model a algorithm. Once your recipe is ready it can be executed on a data set at once, to perform all the steps. Not only on the train set on which the recipe was created, but also on new data, such as test sets and data that should be scored by the model. This assures that new data gets the exact same preparation as the train set, and thus can be validly scored by the learned model. The author of <code class="highlighter-rouge">recipes</code>, Max Kuhn, has provided abundant material to familiarize yourself with the richness of the package, see <a href="https://cran.r-project.org/web/packages/recipes/vignettes/Simple_Example.html">here</a>, <a href="https://www.rstudio.com/resources/webinars/creating-and-preprocessing-a-design-matrix-with-recipes/">here</a>, and <a href="https://cran.r-project.org/web/packages/recipes/index.html">here</a>. I will not dwell on how to use the package. Rather, I’d like to share what in my opinion is a good way to create new <code class="highlighter-rouge">steps</code> and <code class="highlighter-rouge">checks</code> to the package<sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup>. Use of the package is probably intuitive. Developing new <code class="highlighter-rouge">steps</code> and <code class="highlighter-rouge">checks</code>, however, does require a little more understanding of the package inner workings. With this procedure, or recipe if you like, I hope you will find adding (and maybe even contributing) your own <code class="highlighter-rouge">steps</code> and <code class="highlighter-rouge">checks</code> becomes easier and more organized.</p>
+        <p>If you build statistical or machine learning models, the <code class="language-plaintext highlighter-rouge">recipes</code> package can be useful for data preparation. A <code class="language-plaintext highlighter-rouge">recipe</code> object is a container that holds all the steps that should be performed to go from the raw data set to the set that is fed into model a algorithm. Once your recipe is ready it can be executed on a data set at once, to perform all the steps. Not only on the train set on which the recipe was created, but also on new data, such as test sets and data that should be scored by the model. This assures that new data gets the exact same preparation as the train set, and thus can be validly scored by the learned model. The author of <code class="language-plaintext highlighter-rouge">recipes</code>, Max Kuhn, has provided abundant material to familiarize yourself with the richness of the package, see <a href="https://cran.r-project.org/web/packages/recipes/vignettes/Simple_Example.html">here</a>, <a href="https://www.rstudio.com/resources/webinars/creating-and-preprocessing-a-design-matrix-with-recipes/">here</a>, and <a href="https://cran.r-project.org/web/packages/recipes/index.html">here</a>. I will not dwell on how to use the package. Rather, I’d like to share what in my opinion is a good way to create new <code class="language-plaintext highlighter-rouge">steps</code> and <code class="language-plaintext highlighter-rouge">checks</code> to the package<sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup>. Use of the package is probably intuitive. Developing new <code class="language-plaintext highlighter-rouge">steps</code> and <code class="language-plaintext highlighter-rouge">checks</code>, however, does require a little more understanding of the package inner workings. With this procedure, or recipe if you like, I hope you will find adding (and maybe even contributing) your own <code class="language-plaintext highlighter-rouge">steps</code> and <code class="language-plaintext highlighter-rouge">checks</code> becomes easier and more organized.</p>
 
-<h2 id="s3-classes-in-recipes">S3 classes in <code class="highlighter-rouge">recipes</code></h2>
+<h2 id="s3-classes-in-recipes">S3 classes in <code class="language-plaintext highlighter-rouge">recipes</code></h2>
 
 <p>Lets build a very simple recipe:</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span><span class="w">
 </span><span class="n">library</span><span class="p">(</span><span class="n">recipes</span><span class="p">)</span><span class="w">
 </span><span class="n">rec</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">recipe</span><span class="p">(</span><span class="n">mtcars</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
   </span><span class="n">step_center</span><span class="p">(</span><span class="n">everything</span><span class="p">())</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
   </span><span class="n">step_scale</span><span class="p">(</span><span class="n">everything</span><span class="p">())</span><span class="w">  </span><span class="o">%&gt;%</span><span class="w">
   </span><span class="n">check_missing</span><span class="p">(</span><span class="n">everything</span><span class="p">())</span><span class="w">
 </span><span class="n">rec</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">class</span><span class="p">()</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "recipe"
-</code></pre>
-</div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] "recipe"
+</code></pre></div></div>
 
-<p>As mentioned a recipe is a container for the steps and checks. It is a list of class <code class="highlighter-rouge">recipe</code> on which the <code class="highlighter-rouge">prep</code>, <code class="highlighter-rouge">bake</code>, <code class="highlighter-rouge">print</code> and <code class="highlighter-rouge">tidy</code> methods do the work as described in their respective documentation files. The <code class="highlighter-rouge">steps</code> and <code class="highlighter-rouge">checks</code> added to the recipe are stored inside this list. As you can see below, each of them are of their own subclass, as well as of the generic <code class="highlighter-rouge">step</code> or <code class="highlighter-rouge">check</code> classes.</p>
+<p>As mentioned a recipe is a container for the steps and checks. It is a list of class <code class="language-plaintext highlighter-rouge">recipe</code> on which the <code class="language-plaintext highlighter-rouge">prep</code>, <code class="language-plaintext highlighter-rouge">bake</code>, <code class="language-plaintext highlighter-rouge">print</code> and <code class="language-plaintext highlighter-rouge">tidy</code> methods do the work as described in their respective documentation files. The <code class="language-plaintext highlighter-rouge">steps</code> and <code class="language-plaintext highlighter-rouge">checks</code> added to the recipe are stored inside this list. As you can see below, each of them are of their own subclass, as well as of the generic <code class="language-plaintext highlighter-rouge">step</code> or <code class="language-plaintext highlighter-rouge">check</code> classes.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">rec</span><span class="o">$</span><span class="n">steps</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">map</span><span class="p">(</span><span class="n">class</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">rec</span><span class="o">$</span><span class="n">steps</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">map</span><span class="p">(</span><span class="n">class</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## [[1]]
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [[1]]
 ## [1] "step_center" "step"       
 ## 
 ## [[2]]
@@ -200,14 +197,13 @@
 ## 
 ## [[3]]
 ## [1] "check_missing" "check"
-</code></pre>
-</div>
+</code></pre></div></div>
 
-<p>Each subclass has the same four methods defined as the <code class="highlighter-rouge">recipe</code> class. As one of the methods is called on the recipe, it will call the same method on all the steps and checks that are added to the recipe. (Exception is <code class="highlighter-rouge">prep.recipe</code>, which does not only call<code class="highlighter-rouge">prep</code> on all the steps and checks, but also <code class="highlighter-rouge">bake</code>). This means that when implementing a new <code class="highlighter-rouge">step</code> or <code class="highlighter-rouge">check</code>, you should provide these four methods. Additionally, we’ll need the function that is called by the user to add it to the recipe object and a constructor (if you are not sure what this is, see <a href="https://adv-r.hadley.nz/s3.html">15.3.1 of Advanced R by Hadley Wickham</a>).</p>
+<p>Each subclass has the same four methods defined as the <code class="language-plaintext highlighter-rouge">recipe</code> class. As one of the methods is called on the recipe, it will call the same method on all the steps and checks that are added to the recipe. (Exception is <code class="language-plaintext highlighter-rouge">prep.recipe</code>, which does not only call<code class="language-plaintext highlighter-rouge">prep</code> on all the steps and checks, but also <code class="language-plaintext highlighter-rouge">bake</code>). This means that when implementing a new <code class="language-plaintext highlighter-rouge">step</code> or <code class="language-plaintext highlighter-rouge">check</code>, you should provide these four methods. Additionally, we’ll need the function that is called by the user to add it to the recipe object and a constructor (if you are not sure what this is, see <a href="https://adv-r.hadley.nz/s3.html">15.3.1 of Advanced R by Hadley Wickham</a>).</p>
 
 <h2 id="the-recipes-for-recipes">The recipes for recipes</h2>
 
-<p>When writing a new <code class="highlighter-rouge">step</code> or <code class="highlighter-rouge">check</code> you will probably be inclined to copy-paste an existing step and start tweaking it from the top. Thus, first writing the function, then the constructor, and then the methods one by one. I think this is suboptimal and can get messy quickly. My preferred way is to start by not bothering about <code class="highlighter-rouge">recipes</code> at all, but write a general function that does the preparation work on a single vector. Once you are happy with this function you sit and think about which arguments to this function should be provided with upfront. These should be added as arguments to the function that is called by the user. Next you think about which function arguments are statistics that should be learned on the train set in the <code class="highlighter-rouge">prep</code> part of the <code class="highlighter-rouge">recipe</code>. You’ll then go on and do the constructor that is called by both the main function and the <code class="highlighter-rouge">prep</code> method. Only then you’ll write the function that is called by the user. You’ll custom <code class="highlighter-rouge">step</code> or <code class="highlighter-rouge">check</code> is completed by writing the four methods, since the functionality is already created, these are mostly bookkeeping.</p>
+<p>When writing a new <code class="language-plaintext highlighter-rouge">step</code> or <code class="language-plaintext highlighter-rouge">check</code> you will probably be inclined to copy-paste an existing step and start tweaking it from the top. Thus, first writing the function, then the constructor, and then the methods one by one. I think this is suboptimal and can get messy quickly. My preferred way is to start by not bothering about <code class="language-plaintext highlighter-rouge">recipes</code> at all, but write a general function that does the preparation work on a single vector. Once you are happy with this function you sit and think about which arguments to this function should be provided with upfront. These should be added as arguments to the function that is called by the user. Next you think about which function arguments are statistics that should be learned on the train set in the <code class="language-plaintext highlighter-rouge">prep</code> part of the <code class="language-plaintext highlighter-rouge">recipe</code>. You’ll then go on and do the constructor that is called by both the main function and the <code class="language-plaintext highlighter-rouge">prep</code> method. Only then you’ll write the function that is called by the user. You’ll custom <code class="language-plaintext highlighter-rouge">step</code> or <code class="language-plaintext highlighter-rouge">check</code> is completed by writing the four methods, since the functionality is already created, these are mostly bookkeeping.</p>
 
 <p>For both checks and steps I made a skeleton available, in which all the “overhead” that should be in a new step or check is present. This is more convenient than copy-paste and existing example and try to figure out what is step specific and should be erased. You’ll find the skeletons <a href="https://github.com/EdwinTh/recipe_for_recipes">on github</a>. Note that for creating your own steps and checks you should clone the <a href="https://github.com/topepo/recipes">package source code</a>, since the helper functions that are used are not exported by the package.</p>
 
@@ -219,27 +215,26 @@
 
 <p>First up is a signed-log (inspired by <a href="https://www.amazon.com/Practical-Data-Science-Nina-Zumel/dp/1617291560">Practical Data Science with R</a>), which is taking the log over the absolute value of a variable, multiplied by its original sign. Thus, enabling us to take logs over negative values. If a variable is between -1 and 1, we’ll set it to 0, otherwise things get messy.</p>
 
-<h4 id="preparing-the-function">1) preparing the function</h4>
+<h4 id="1-preparing-the-function">1) preparing the function</h4>
 
-<p>This is what the function on a vector could look like, if we did not bother about <code class="highlighter-rouge">recipes</code>:</p>
+<p>This is what the function on a vector could look like, if we did not bother about <code class="language-plaintext highlighter-rouge">recipes</code>:</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">signed_log</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">base</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">exp</span><span class="p">(</span><span class="m">1</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">signed_log</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">base</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">exp</span><span class="p">(</span><span class="m">1</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="n">ifelse</span><span class="p">(</span><span class="nf">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> 
          </span><span class="m">0</span><span class="p">,</span><span class="w"> 
          </span><span class="nf">sign</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nf">log</span><span class="p">(</span><span class="nf">abs</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="w"> </span><span class="n">base</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">base</span><span class="p">))</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<h4 id="think-about-the-arguments">2) think about the arguments</h4>
+<h4 id="2-think-about-the-arguments">2) think about the arguments</h4>
 
-<p>The only argument of the function is <code class="highlighter-rouge">base</code>, that should be provided upfront when adding the step to a recipe object. There are no statistics to be learned in the <code class="highlighter-rouge">prep</code> step.</p>
+<p>The only argument of the function is <code class="language-plaintext highlighter-rouge">base</code>, that should be provided upfront when adding the step to a recipe object. There are no statistics to be learned in the <code class="language-plaintext highlighter-rouge">prep</code> step.</p>
 
-<h4 id="the-constructor">3) the constructor</h4>
+<h4 id="3-the-constructor">3) the constructor</h4>
 
-<p>Now we are going to write the first of the recipes functions. This is the constructor that produces new instances of the object of class <code class="highlighter-rouge">step_signed_log</code>. The first four arguments are present in each step or check, they are therefore part of the skeletons. The <code class="highlighter-rouge">terms</code> argument will hold the information on which columns the step should be performed. For <code class="highlighter-rouge">role</code>, <code class="highlighter-rouge">train</code> and <code class="highlighter-rouge">skip</code>, please see the documentation in one of the skeletons. <code class="highlighter-rouge">base</code> is <code class="highlighter-rouge">step_signed_log</code> specific, as used in 1). In <code class="highlighter-rouge">prep.step_signed_log</code> the tidyselect arguments will be converted to a character vector holding the actual column names. <code class="highlighter-rouge">columns</code> will store these names in the <code class="highlighter-rouge">step_signed_log</code> object. This container argument will not be necessary if the columns names are also present in another way. For instance, <code class="highlighter-rouge">step_center</code> has the argument <code class="highlighter-rouge">means</code>, that will be populated by the means of the variables of the train set by its <code class="highlighter-rouge">prep</code> method. In the <code class="highlighter-rouge">bake</code> method the names of the columns to be prepared are already provided by the names of the means and there is need to use the <code class="highlighter-rouge">columns</code> argument.</p>
+<p>Now we are going to write the first of the recipes functions. This is the constructor that produces new instances of the object of class <code class="language-plaintext highlighter-rouge">step_signed_log</code>. The first four arguments are present in each step or check, they are therefore part of the skeletons. The <code class="language-plaintext highlighter-rouge">terms</code> argument will hold the information on which columns the step should be performed. For <code class="language-plaintext highlighter-rouge">role</code>, <code class="language-plaintext highlighter-rouge">train</code> and <code class="language-plaintext highlighter-rouge">skip</code>, please see the documentation in one of the skeletons. <code class="language-plaintext highlighter-rouge">base</code> is <code class="language-plaintext highlighter-rouge">step_signed_log</code> specific, as used in 1). In <code class="language-plaintext highlighter-rouge">prep.step_signed_log</code> the tidyselect arguments will be converted to a character vector holding the actual column names. <code class="language-plaintext highlighter-rouge">columns</code> will store these names in the <code class="language-plaintext highlighter-rouge">step_signed_log</code> object. This container argument will not be necessary if the columns names are also present in another way. For instance, <code class="language-plaintext highlighter-rouge">step_center</code> has the argument <code class="language-plaintext highlighter-rouge">means</code>, that will be populated by the means of the variables of the train set by its <code class="language-plaintext highlighter-rouge">prep</code> method. In the <code class="language-plaintext highlighter-rouge">bake</code> method the names of the columns to be prepared are already provided by the names of the means and there is need to use the <code class="language-plaintext highlighter-rouge">columns</code> argument.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">step_signed_log_new</span><span class="w"> </span><span class="o">&lt;-</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">step_signed_log_new</span><span class="w"> </span><span class="o">&lt;-</span><span class="w">
   </span><span class="k">function</span><span class="p">(</span><span class="n">terms</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">,</span><span class="w">
            </span><span class="n">role</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="kc">NA</span><span class="p">,</span><span class="w">
            </span><span class="n">skip</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w">
@@ -256,14 +251,13 @@
       </span><span class="n">columns</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">columns</span><span class="w">
     </span><span class="p">)</span><span class="w">
   </span><span class="p">}</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<h4 id="the-function-to-add-it-to-the-recipe">4) the function to add it to the recipe</h4>
+<h4 id="4-the-function-to-add-it-to-the-recipe">4) the function to add it to the recipe</h4>
 
-<p>Next up is the function that will be called by the user to add the step to its recipe. You’ll see the internal helper function <code class="highlighter-rouge">add_step</code> is called. It will expand the recipe with the <code class="highlighter-rouge">step_signed_log</code> object that is produced by the constructor we just created.</p>
+<p>Next up is the function that will be called by the user to add the step to its recipe. You’ll see the internal helper function <code class="language-plaintext highlighter-rouge">add_step</code> is called. It will expand the recipe with the <code class="language-plaintext highlighter-rouge">step_signed_log</code> object that is produced by the constructor we just created.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">step_signed_log</span><span class="w"> </span><span class="o">&lt;-</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">step_signed_log</span><span class="w"> </span><span class="o">&lt;-</span><span class="w">
   </span><span class="k">function</span><span class="p">(</span><span class="n">recipe</span><span class="p">,</span><span class="w">
            </span><span class="n">...</span><span class="p">,</span><span class="w">
            </span><span class="n">role</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="kc">NA</span><span class="p">,</span><span class="w">
@@ -283,14 +277,13 @@
       </span><span class="p">)</span><span class="w">
     </span><span class="p">)</span><span class="w">
   </span><span class="p">}</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<h4 id="the-prep-method">5) the <code class="highlighter-rouge">prep</code> method</h4>
+<h4 id="5-the-prep-method">5) the <code class="language-plaintext highlighter-rouge">prep</code> method</h4>
 
-<p>As recognized in 2) we don’t have to do much in the <code class="highlighter-rouge">prep</code> method of this particular step, since the preparation of new sets does not depend on statistics learned on the train set. The only thing we do here is applying the internal function <code class="highlighter-rouge">terms_select</code> function to replace the <code class="highlighter-rouge">tidyselect</code> selections, by the actual names of the columns on which <code class="highlighter-rouge">step_signed_log</code> should be applied. We call the constructor again, indicating that the step is trained and we supplying the column names at the <code class="highlighter-rouge">columns</code> argument.</p>
+<p>As recognized in 2) we don’t have to do much in the <code class="language-plaintext highlighter-rouge">prep</code> method of this particular step, since the preparation of new sets does not depend on statistics learned on the train set. The only thing we do here is applying the internal function <code class="language-plaintext highlighter-rouge">terms_select</code> function to replace the <code class="language-plaintext highlighter-rouge">tidyselect</code> selections, by the actual names of the columns on which <code class="language-plaintext highlighter-rouge">step_signed_log</code> should be applied. We call the constructor again, indicating that the step is trained and we supplying the column names at the <code class="language-plaintext highlighter-rouge">columns</code> argument.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">prep.step_signed_log</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">prep.step_signed_log</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w">
                                  </span><span class="n">training</span><span class="p">,</span><span class="w">
                                  </span><span class="n">info</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">,</span><span class="w"> 
                                   </span><span class="n">...</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
@@ -304,14 +297,13 @@
     </span><span class="n">columns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">col_names</span><span class="w">
   </span><span class="p">)</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<h4 id="the-bake-method">6) the <code class="highlighter-rouge">bake</code> method</h4>
+<h4 id="6-the-bake-method">6) the <code class="language-plaintext highlighter-rouge">bake</code> method</h4>
 
 <p>We are now ready to apply the baking function, designed at 1), inside the recipes framework. We loop through the variables, apply the function and return the updated data frame.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">bake.step_signed_log</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">object</span><span class="p">,</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">bake.step_signed_log</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">object</span><span class="p">,</span><span class="w">
                                  </span><span class="n">newdata</span><span class="p">,</span><span class="w">
                                  </span><span class="n">...</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="n">col_names</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">object</span><span class="o">$</span><span class="n">columns</span><span class="w">
@@ -324,27 +316,25 @@
   </span><span class="p">}</span><span class="w">
   </span><span class="n">as_tibble</span><span class="p">(</span><span class="n">newdata</span><span class="p">)</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<h4 id="the-print-method">7) the <code class="highlighter-rouge">print</code> method</h4>
+<h4 id="7-the-print-method">7) the <code class="language-plaintext highlighter-rouge">print</code> method</h4>
 
-<p>This assures pretty printing of the <code class="highlighter-rouge">recipe</code> object to which <code class="highlighter-rouge">step_signed_log</code> is added. You use the internal <code class="highlighter-rouge">printer</code> function with a message specific for the step.</p>
+<p>This assures pretty printing of the <code class="language-plaintext highlighter-rouge">recipe</code> object to which <code class="language-plaintext highlighter-rouge">step_signed_log</code> is added. You use the internal <code class="language-plaintext highlighter-rouge">printer</code> function with a message specific for the step.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">print.step_signed_log</span><span class="w"> </span><span class="o">&lt;-</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">print.step_signed_log</span><span class="w"> </span><span class="o">&lt;-</span><span class="w">
   </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">max</span><span class="p">(</span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="n">options</span><span class="p">()</span><span class="o">$</span><span class="n">width</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">30</span><span class="p">),</span><span class="w"> </span><span class="n">...</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="n">cat</span><span class="p">(</span><span class="s2">"Taking the signed log for "</span><span class="p">,</span><span class="w"> </span><span class="n">sep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">""</span><span class="p">)</span><span class="w">
     </span><span class="n">printer</span><span class="p">(</span><span class="n">x</span><span class="o">$</span><span class="n">columns</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="o">$</span><span class="n">terms</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="o">$</span><span class="n">trained</span><span class="p">,</span><span class="w"> </span><span class="n">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">width</span><span class="p">)</span><span class="w">
     </span><span class="nf">invisible</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<h4 id="the-tidy-method">8) the <code class="highlighter-rouge">tidy</code> method</h4>
+<h4 id="8-the-tidy-method">8) the <code class="language-plaintext highlighter-rouge">tidy</code> method</h4>
 
-<p>Finally, <code class="highlighter-rouge">tidy</code> will add a line for this step to the data frame when the <code class="highlighter-rouge">tidy</code> method is called on a recipe.</p>
+<p>Finally, <code class="language-plaintext highlighter-rouge">tidy</code> will add a line for this step to the data frame when the <code class="language-plaintext highlighter-rouge">tidy</code> method is called on a recipe.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">tidy.step_signed_log</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">tidy.step_signed_log</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">is_trained</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="n">res</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">tibble</span><span class="p">(</span><span class="n">terms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="o">$</span><span class="n">columns</span><span class="p">)</span><span class="w">
   </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
@@ -352,19 +342,17 @@
   </span><span class="p">}</span><span class="w">
   </span><span class="n">res</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p>Lets do a quick check to see if it works as expected</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">recipe</span><span class="p">(</span><span class="n">data_frame</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">recipe</span><span class="p">(</span><span class="n">data_frame</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">step_signed_log</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">prep</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">bake</span><span class="p">(</span><span class="n">data_frame</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">-3</span><span class="o">:</span><span class="m">3</span><span class="p">))</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## # A tibble: 7 x 1
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## # A tibble: 7 x 1
 ##            x
 ##        &lt;dbl&gt;
 ## 1 -1.0986123
@@ -374,18 +362,17 @@
 ## 5  0.0000000
 ## 6  0.6931472
 ## 7  1.0986123
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <h3 id="example-2-a-range-check">Example 2: A range check</h3>
 
 <p>Model predictions might be invalid when the range of a variable in new data is shifted from the range of the variable in the train set. Lets do a second example in which we check if the range of a numeric variable is approximately equal to the range of the variable in the train set. We do so by checking if the variable’s minimum value in the new data is not smaller than its minimum value in the train set. The variable’s maximum value in the test set should not exceed the maximum in the train set. We allow for some slack (proportion of the variable range in the train set) to account for natural variation.</p>
 
-<h4 id="preparing-the-function-1">1) preparing the function</h4>
+<h4 id="1-preparing-the-function-1">1) preparing the function</h4>
 
-<p>As mentioned, <code class="highlighter-rouge">checks</code> are about throwing informative errors if assumptions are not met. This is a function we could apply on new variables, without bothering about <code class="highlighter-rouge">recipes</code>:</p>
+<p>As mentioned, <code class="language-plaintext highlighter-rouge">checks</code> are about throwing informative errors if assumptions are not met. This is a function we could apply on new variables, without bothering about <code class="language-plaintext highlighter-rouge">recipes</code>:</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">range_check_func</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">range_check_func</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w">
                              </span><span class="n">lower</span><span class="p">,</span><span class="w">
                              </span><span class="n">upper</span><span class="p">,</span><span class="w">
                              </span><span class="n">slack_prop</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.05</span><span class="p">,</span><span class="w">
@@ -405,18 +392,17 @@
          </span><span class="n">call.</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<h4 id="think-about-the-arguments-1">2) think about the arguments</h4>
+<h4 id="2-think-about-the-arguments-1">2) think about the arguments</h4>
 
-<p>The <code class="highlighter-rouge">slack_prop</code> is a choice that the user of the check should make upfront. This is thus an argument of <code class="highlighter-rouge">check_range</code>. Then there are two statistics to be learned in the <code class="highlighter-rouge">prep</code> method: <code class="highlighter-rouge">lower</code> and <code class="highlighter-rouge">upper</code>. These should be arguments of the function and the constructor as well. However, when calling the function these are always <code class="highlighter-rouge">NULL</code>, they are container arguments that will filled when calling <code class="highlighter-rouge">prep.check_range</code>.</p>
+<p>The <code class="language-plaintext highlighter-rouge">slack_prop</code> is a choice that the user of the check should make upfront. This is thus an argument of <code class="language-plaintext highlighter-rouge">check_range</code>. Then there are two statistics to be learned in the <code class="language-plaintext highlighter-rouge">prep</code> method: <code class="language-plaintext highlighter-rouge">lower</code> and <code class="language-plaintext highlighter-rouge">upper</code>. These should be arguments of the function and the constructor as well. However, when calling the function these are always <code class="language-plaintext highlighter-rouge">NULL</code>, they are container arguments that will filled when calling <code class="language-plaintext highlighter-rouge">prep.check_range</code>.</p>
 
-<h4 id="the-constructor-1">3) the constructor</h4>
+<h4 id="3-the-constructor-1">3) the constructor</h4>
 
 <p>We start again with the four arguments present in every step or check. Subsequently we add the three arguments that we recognized to be part of the check.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">check_range_new</span><span class="w"> </span><span class="o">&lt;-</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">check_range_new</span><span class="w"> </span><span class="o">&lt;-</span><span class="w">
   </span><span class="k">function</span><span class="p">(</span><span class="n">terms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">,</span><span class="w">
            </span><span class="n">role</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="kc">NA</span><span class="p">,</span><span class="w">
            </span><span class="n">skip</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w">
@@ -432,14 +418,13 @@
           </span><span class="n">upper</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">upper</span><span class="p">,</span><span class="w">
           </span><span class="n">slack_prop</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">slack_prop</span><span class="p">)</span><span class="w">
   </span><span class="p">}</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<h4 id="the-function-to-add-it-to-the-recipe-1">4) the function to add it to the recipe</h4>
+<h4 id="4-the-function-to-add-it-to-the-recipe-1">4) the function to add it to the recipe</h4>
 
 <p>As we know by now, it is just calling the constructor and adding it to the recipe.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">check_range</span><span class="w"> </span><span class="o">&lt;-</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">check_range</span><span class="w"> </span><span class="o">&lt;-</span><span class="w">
   </span><span class="k">function</span><span class="p">(</span><span class="n">recipe</span><span class="p">,</span><span class="w">
            </span><span class="n">...</span><span class="p">,</span><span class="w">
            </span><span class="n">role</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NA</span><span class="p">,</span><span class="w">
@@ -461,14 +446,13 @@
       </span><span class="p">)</span><span class="w">
     </span><span class="p">)</span><span class="w">
   </span><span class="p">}</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<h4 id="the-prep-method-1">5) the <code class="highlighter-rouge">prep</code> method</h4>
+<h4 id="5-the-prep-method-1">5) the <code class="language-plaintext highlighter-rouge">prep</code> method</h4>
 
-<p>Here the method is getting a lot more interesting, because we actually have work to do. We are calling <code class="highlighter-rouge">vapply</code> on each of the columns the check should be applied on, to derive the minimum and maximum. Again the constructor is called and the learned statistics are now populating the <code class="highlighter-rouge">lower</code> and <code class="highlighter-rouge">upper</code> arguments.</p>
+<p>Here the method is getting a lot more interesting, because we actually have work to do. We are calling <code class="language-plaintext highlighter-rouge">vapply</code> on each of the columns the check should be applied on, to derive the minimum and maximum. Again the constructor is called and the learned statistics are now populating the <code class="language-plaintext highlighter-rouge">lower</code> and <code class="language-plaintext highlighter-rouge">upper</code> arguments.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">prep.check_range</span><span class="w"> </span><span class="o">&lt;-</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">prep.check_range</span><span class="w"> </span><span class="o">&lt;-</span><span class="w">
   </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w">
            </span><span class="n">training</span><span class="p">,</span><span class="w">
            </span><span class="n">info</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">,</span><span class="w">
@@ -487,14 +471,13 @@
       </span><span class="n">slack_prop</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="o">$</span><span class="n">slack_prop</span><span class="w">
     </span><span class="p">)</span><span class="w">
   </span><span class="p">}</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<h4 id="the-bake-method-1">6) the <code class="highlighter-rouge">bake</code> method</h4>
+<h4 id="6-the-bake-method-1">6) the <code class="language-plaintext highlighter-rouge">bake</code> method</h4>
 
 <p>The hard work has been done already. We just get the columns on which to apply the check and check them with the function we created at 1).</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">bake.check_range</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">object</span><span class="p">,</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">bake.check_range</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">object</span><span class="p">,</span><span class="w">
                              </span><span class="n">newdata</span><span class="p">,</span><span class="w">
                              </span><span class="n">...</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="n">col_names</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">names</span><span class="p">(</span><span class="n">object</span><span class="o">$</span><span class="n">lower</span><span class="p">)</span><span class="w">
@@ -508,23 +491,21 @@
   </span><span class="p">}</span><span class="w">
   </span><span class="n">as_tibble</span><span class="p">(</span><span class="n">newdata</span><span class="p">)</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<h4 id="the-print-method-1">7) the <code class="highlighter-rouge">print</code> method</h4>
+<h4 id="7-the-print-method-1">7) the <code class="language-plaintext highlighter-rouge">print</code> method</h4>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">print.check_range</span><span class="w"> </span><span class="o">&lt;-</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">print.check_range</span><span class="w"> </span><span class="o">&lt;-</span><span class="w">
   </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">max</span><span class="p">(</span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="n">options</span><span class="p">()</span><span class="o">$</span><span class="n">width</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">30</span><span class="p">),</span><span class="w"> </span><span class="n">...</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="n">cat</span><span class="p">(</span><span class="s2">"Checking range of "</span><span class="p">,</span><span class="w"> </span><span class="n">sep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">""</span><span class="p">)</span><span class="w">
     </span><span class="n">printer</span><span class="p">(</span><span class="nf">names</span><span class="p">(</span><span class="n">x</span><span class="o">$</span><span class="n">lower</span><span class="p">),</span><span class="w"> </span><span class="n">x</span><span class="o">$</span><span class="n">terms</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="o">$</span><span class="n">trained</span><span class="p">,</span><span class="w"> </span><span class="n">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">width</span><span class="p">)</span><span class="w">
     </span><span class="nf">invisible</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w">
   </span><span class="p">}</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<h4 id="the-tidy-method-1">8) the <code class="highlighter-rouge">tidy</code> method</h4>
+<h4 id="8-the-tidy-method-1">8) the <code class="language-plaintext highlighter-rouge">tidy</code> method</h4>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">tidy.check_range</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">tidy.check_range</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">is_trained</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="n">res</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">tibble</span><span class="p">(</span><span class="n">terms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="o">$</span><span class="n">columns</span><span class="p">)</span><span class="w">
   </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
@@ -532,52 +513,47 @@
   </span><span class="p">}</span><span class="w">
   </span><span class="n">res</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p>Again, we check quickly if it works</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">cr1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data_frame</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="o">:</span><span class="m">100</span><span class="p">)</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cr1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data_frame</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="o">:</span><span class="m">100</span><span class="p">)</span><span class="w">
 </span><span class="n">cr2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data_frame</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">-1</span><span class="o">:</span><span class="m">101</span><span class="p">)</span><span class="w">
 </span><span class="n">cr3</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data_frame</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">-6</span><span class="o">:</span><span class="m">100</span><span class="p">)</span><span class="w">
 </span><span class="n">cr4</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data_frame</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="o">:</span><span class="m">106</span><span class="p">)</span><span class="w">
 </span><span class="n">recipe_cr</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">recipe</span><span class="p">(</span><span class="n">cr1</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">check_range</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">prep</span><span class="p">()</span><span class="w">
 </span><span class="n">cr2_baked</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">recipe_cr</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">bake</span><span class="p">(</span><span class="n">cr2</span><span class="p">)</span><span class="w">
 </span><span class="n">cr3_baked</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">recipe_cr</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">bake</span><span class="p">(</span><span class="n">cr3</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## Error: min x is -6, lower bound is -5
-</code></pre>
-</div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## Error: min x is -6, lower bound is -5
+</code></pre></div></div>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">cr4_baked</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">recipe_cr</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">bake</span><span class="p">(</span><span class="n">cr4</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cr4_baked</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">recipe_cr</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">bake</span><span class="p">(</span><span class="n">cr4</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## Error: max x is 106, upper bound is 105
-</code></pre>
-</div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## Error: max x is 106, upper bound is 105
+</code></pre></div></div>
 
 <h2 id="conclusion">Conclusion</h2>
 
-<p>If you like to add your own data preparation steps and data checks to the <code class="highlighter-rouge">recipes</code> package, I advise you to do this in a structured way so you are not distracting by the bookkeeping while implementing the functionality. I propose eight subsequent parts to develop a new step or check:</p>
+<p>If you like to add your own data preparation steps and data checks to the <code class="language-plaintext highlighter-rouge">recipes</code> package, I advise you to do this in a structured way so you are not distracting by the bookkeeping while implementing the functionality. I propose eight subsequent parts to develop a new step or check:</p>
 
-<p>1) Create a function on a vector that could be applied in the <code class="highlighter-rouge">bake</code> method, but does not bother about <code class="highlighter-rouge">recipes</code> yet.
-2) Recognize which function arguments should be provided upfront and which should be learned in the <code class="highlighter-rouge">prep</code> method.
-3) Create a constructor in the form <code class="highlighter-rouge">step_&lt;name&gt;_new</code> or <code class="highlighter-rouge">check_&lt;name&gt;_new</code>.
-4) Create the actual function to add the step or check to a recipe, in the form <code class="highlighter-rouge">step_&lt;name&gt;</code> or <code class="highlighter-rouge">check_&lt;name&gt;</code>.
-5) Write the <code class="highlighter-rouge">prep</code> method.
-6) Write the <code class="highlighter-rouge">bake</code> method.
-7) Write the <code class="highlighter-rouge">print</code> method.
-8) Write the <code class="highlighter-rouge">tidy</code> method.</p>
+<p>1) Create a function on a vector that could be applied in the <code class="language-plaintext highlighter-rouge">bake</code> method, but does not bother about <code class="language-plaintext highlighter-rouge">recipes</code> yet.
+2) Recognize which function arguments should be provided upfront and which should be learned in the <code class="language-plaintext highlighter-rouge">prep</code> method.
+3) Create a constructor in the form <code class="language-plaintext highlighter-rouge">step_&lt;name&gt;_new</code> or <code class="language-plaintext highlighter-rouge">check_&lt;name&gt;_new</code>.
+4) Create the actual function to add the step or check to a recipe, in the form <code class="language-plaintext highlighter-rouge">step_&lt;name&gt;</code> or <code class="language-plaintext highlighter-rouge">check_&lt;name&gt;</code>.
+5) Write the <code class="language-plaintext highlighter-rouge">prep</code> method.
+6) Write the <code class="language-plaintext highlighter-rouge">bake</code> method.
+7) Write the <code class="language-plaintext highlighter-rouge">print</code> method.
+8) Write the <code class="language-plaintext highlighter-rouge">tidy</code> method.</p>
 
 <p>As mentioned, the source code is maintained <a href="https://github.com/topepo/recipes">here</a>. Make sure to clone the latest version to access the package internal functions.</p>
 
 <div class="footnotes">
   <ol>
     <li id="fn:1">
-      <p>Together with Max I added the <code class="highlighter-rouge">checks</code> framework to the package. Where <code class="highlighter-rouge">steps</code> are transformations of variables, <code class="highlighter-rouge">checks</code> are assertions of them. If a check passes nothing happens. If it fails, it will break the <code class="highlighter-rouge">bake</code> method of the recipe and throws an informative error. <a href="#fnref:1" class="reversefootnote">&#8617;</a></p>
+      <p>Together with Max I added the <code class="language-plaintext highlighter-rouge">checks</code> framework to the package. Where <code class="language-plaintext highlighter-rouge">steps</code> are transformations of variables, <code class="language-plaintext highlighter-rouge">checks</code> are assertions of them. If a check passes nothing happens. If it fails, it will break the <code class="language-plaintext highlighter-rouge">bake</code> method of the recipe and throws an informative error. <a href="#fnref:1" class="reversefootnote">&#8617;</a></p>
     </li>
   </ol>
 </div>

@@ -150,7 +150,7 @@
 <p>I would never had expected that R would also be the go-to tool for decorating our bathrooms. When looking for inspiration online and in showrooms we came across many ugly and boring examples. Just when we were about to settle for a design like this 
 <img src="/images/2016-08-01/ugly_bathroom.jpg" alt="Ugly bathroom" /></p>
 
-<p>we came to the luminous idea to create a random pattern from a few colors we liked. It is very difficult for human beings to produce a random pattern, since we tend to avoid clutters of the same color. Of course R’s random number generator does not suffer from this. Turning the random pattern into a nice design is (of course!) done with <code class="highlighter-rouge">geom_tile</code> from <code class="highlighter-rouge">ggplot2</code>. It is funny how you keep underestimating randomness, even when you work with data daily. I was looking for a nicely scattered design of the four colors we selected, rather we got <em>Tetris-on-steroids patterns</em> like this
+<p>we came to the luminous idea to create a random pattern from a few colors we liked. It is very difficult for human beings to produce a random pattern, since we tend to avoid clutters of the same color. Of course R’s random number generator does not suffer from this. Turning the random pattern into a nice design is (of course!) done with <code class="language-plaintext highlighter-rouge">geom_tile</code> from <code class="language-plaintext highlighter-rouge">ggplot2</code>. It is funny how you keep underestimating randomness, even when you work with data daily. I was looking for a nicely scattered design of the four colors we selected, rather we got <em>Tetris-on-steroids patterns</em> like this
 <img src="/images/2016-08-01/true_random.jpg" alt="True random" /></p>
 
 <p>Nature needed to be a bit constrained in order to produce the design we were after. An adjustment was made to the function by adding a parameter for the maximum number of adjacent tiles of the same color. Allowing for two adjacent tiles of the same color gave us a very nice result.
@@ -158,22 +158,20 @@
 
 <p>Here are the functions that were used, the first two are helpers for the main function. Go ahead and redecorate your own bathroom!</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span><span class="w">
 </span><span class="n">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span><span class="w">
 </span><span class="n">library</span><span class="p">(</span><span class="n">data.table</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## 
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## 
 ## This data.table install has not detected OpenMP support. It will work but slower in single threaded mode.
-</code></pre>
-</div>
+</code></pre></div></div>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">magrittr</span><span class="p">)</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">magrittr</span><span class="p">)</span><span class="w">
 
-</span><span class="c1"># helper function that checks for the next tile to be sampled if there
-# are any colors that should be excluded because the max adjacent was
-# reached either vertically or horizontally
+</span><span class="c1"># helper function that checks for the next tile to be sampled if there</span><span class="w">
+</span><span class="c1"># are any colors that should be excluded because the max adjacent was</span><span class="w">
+</span><span class="c1"># reached either vertically or horizontally</span><span class="w">
 </span><span class="n">check_colors</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">plot_data</span><span class="p">,</span><span class="w">
                          </span><span class="n">cur_width</span><span class="p">,</span><span class="w">
                          </span><span class="n">cur_height</span><span class="p">,</span><span class="w">
@@ -203,9 +201,9 @@
   </span><span class="nf">return</span><span class="p">(</span><span class="n">exclude</span><span class="p">)</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span><span class="c1"># helper function that samples a tile color from a vector with remaining tiles
-# excluding a color if necesarry. Returns the sample color and the vector with
-# remaining colors for the next iteration.
+</span><span class="c1"># helper function that samples a tile color from a vector with remaining tiles</span><span class="w">
+</span><span class="c1"># excluding a color if necesarry. Returns the sample color and the vector with</span><span class="w">
+</span><span class="c1"># remaining colors for the next iteration.</span><span class="w">
 </span><span class="n">sample_color</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">exclude</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w">
                          </span><span class="n">cts</span><span class="p">){</span><span class="w">
   </span><span class="k">if</span><span class="p">(</span><span class="n">cts</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">is_in</span><span class="p">(</span><span class="n">exclude</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">all</span><span class="p">){</span><span class="w">
@@ -225,13 +223,13 @@
   </span><span class="nf">return</span><span class="p">(</span><span class="n">return_list</span><span class="p">)</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span><span class="c1"># This function will generate a random pattern of tiles.
+</span><span class="c1"># This function will generate a random pattern of tiles.</span><span class="w">
 </span><span class="n">tiles_pattern</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="w">
-  </span><span class="n">colors</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s1">'darkblue'</span><span class="p">,</span><span class="w"> </span><span class="s1">'cyan3'</span><span class="p">,</span><span class="w"> </span><span class="s1">'lightblue1'</span><span class="p">,</span><span class="w"> </span><span class="s1">'white'</span><span class="p">),</span><span class="w">   </span><span class="c1"># vector with the colors
-</span><span class="w">  </span><span class="n">nr_of_each_col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="m">40</span><span class="p">,</span><span class="w"> </span><span class="m">4</span><span class="p">),</span><span class="w">     </span><span class="c1"># prevalence of each color in colors vector
-</span><span class="w">  </span><span class="n">nr_height</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="c1"># nr of tiles in vertical direction
-</span><span class="w">  </span><span class="n">nr_width</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="c1"># nr of tiles in horizontal directions
-</span><span class="w">  </span><span class="n">max_adjacent</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w">  </span><span class="c1"># maximimum nr of adjacent tiles of the same color
+  </span><span class="n">colors</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s1">'darkblue'</span><span class="p">,</span><span class="w"> </span><span class="s1">'cyan3'</span><span class="p">,</span><span class="w"> </span><span class="s1">'lightblue1'</span><span class="p">,</span><span class="w"> </span><span class="s1">'white'</span><span class="p">),</span><span class="w">   </span><span class="c1"># vector with the colors</span><span class="w">
+  </span><span class="n">nr_of_each_col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="m">40</span><span class="p">,</span><span class="w"> </span><span class="m">4</span><span class="p">),</span><span class="w">     </span><span class="c1"># prevalence of each color in colors vector</span><span class="w">
+  </span><span class="n">nr_height</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="c1"># nr of tiles in vertical direction</span><span class="w">
+  </span><span class="n">nr_width</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="c1"># nr of tiles in horizontal directions</span><span class="w">
+  </span><span class="n">max_adjacent</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w">  </span><span class="c1"># maximimum nr of adjacent tiles of the same color</span><span class="w">
 </span><span class="p">{</span><span class="w">
   
   </span><span class="k">if</span><span class="p">(</span><span class="nf">length</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">nr_of_each_col</span><span class="p">)){</span><span class="w">
@@ -258,8 +256,8 @@
   
   </span><span class="n">plot_data</span><span class="p">[</span><span class="w"> </span><span class="p">,</span><span class="n">color</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">color</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">as.character</span><span class="p">]</span><span class="w">
   
-  </span><span class="c1"># build the plot
-</span><span class="w">  </span><span class="n">ggplot</span><span class="p">(</span><span class="n">plot_data</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">Width</span><span class="p">,</span><span class="w"> </span><span class="n">Height</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+  </span><span class="c1"># build the plot</span><span class="w">
+  </span><span class="n">ggplot</span><span class="p">(</span><span class="n">plot_data</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">Width</span><span class="p">,</span><span class="w"> </span><span class="n">Height</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
     </span><span class="n">geom_tile</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">color</span><span class="p">),</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'grey'</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
     </span><span class="n">scale_fill_manual</span><span class="p">(</span><span class="n">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s1">'1'</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">colors</span><span class="p">[</span><span class="m">1</span><span class="p">],</span><span class="w">
                                  </span><span class="s1">'2'</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">colors</span><span class="p">[</span><span class="m">2</span><span class="p">],</span><span class="w">
@@ -281,8 +279,7 @@
     </span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
     </span><span class="n">coord_fixed</span><span class="p">()</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 
         

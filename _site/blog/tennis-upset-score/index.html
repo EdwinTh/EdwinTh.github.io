@@ -228,10 +228,9 @@
 
 <p>Jeff Sackman maintains a database of all the tennis matches played on both the atp (men’s) and wta (women’s) tour. It is on github so I simply cloned the git repositories on which they are maintained. Using the following code.</p>
 
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code>git clone https://github.com/JeffSackmann/tennis_atp
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/JeffSackmann/tennis_atp
 git clone https://github.com/JeffSackmann/tennis_wta
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Resulting in two folders with a csv file for every year. Many thanks to Jeff for making our lives so easy here.</p>
 
@@ -241,9 +240,9 @@ git clone https://github.com/JeffSackmann/tennis_wta
 
 <p><img src="/figure/source/2019-05-26-tennis-upset-score/unnamed-chunk-4-1.png" alt="plot of chunk unnamed-chunk-4" /></p>
 
-<p>Indeed the men’s events are more predictable than the women’s, but too my great surprise this is only the case for the last ten years. In the thirty years before that the top women players consistently outperformed the top men players at the big tournaments. However, with players like Federer, Nadal and Djokovic starting to dominate on every surface, the probability of seeing an upset rapidly decreased at the men’s events the last years. Whereas, the women’s tour rapidly grew in unpredictability over the last decade. Many things to explore here. What happened in the late nineties on the men’s tour? Why do we see so many upsets at the women’s? Can we forecast the number of upsets we will see the upcoming tournaments? I leave those questions for someone else to answer, or maybe future-me. Here is the full code of this analysis (if you want to reproduce set the <code class="highlighter-rouge">data_path</code> to the folder where you stored the data first).</p>
+<p>Indeed the men’s events are more predictable than the women’s, but too my great surprise this is only the case for the last ten years. In the thirty years before that the top women players consistently outperformed the top men players at the big tournaments. However, with players like Federer, Nadal and Djokovic starting to dominate on every surface, the probability of seeing an upset rapidly decreased at the men’s events the last years. Whereas, the women’s tour rapidly grew in unpredictability over the last decade. Many things to explore here. What happened in the late nineties on the men’s tour? Why do we see so many upsets at the women’s? Can we forecast the number of upsets we will see the upcoming tournaments? I leave those questions for someone else to answer, or maybe future-me. Here is the full code of this analysis (if you want to reproduce set the <code class="language-plaintext highlighter-rouge">data_path</code> to the folder where you stored the data first).</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span><span class="w">
 
 </span><span class="n">gs_data_one_year</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="w"> </span><span class="n">tour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s2">"atp"</span><span class="p">,</span><span class="w"> </span><span class="s2">"wta"</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="n">read_csv</span><span class="p">(</span><span class="n">str_glue</span><span class="p">(</span><span class="s2">"{data_path}tennis_{tour}/{tour}_matches_{year}.csv"</span><span class="p">),</span><span class="w">
@@ -297,8 +296,7 @@ git clone https://github.com/JeffSackmann/tennis_wta
        </span><span class="n">subtitle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"A comparison across time, tournamants and tours"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
   </span><span class="n">theme_bw</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w">
   </span><span class="n">scale_color_manual</span><span class="p">(</span><span class="n">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s2">"forestgreen"</span><span class="p">,</span><span class="w"> </span><span class="s2">"firebrick"</span><span class="p">))</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 
         

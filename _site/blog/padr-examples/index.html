@@ -148,70 +148,64 @@ They might serve as recipes for time series problems you want to solve. The data
         
       </footer>
       <div class="entry-content">
-        <p>Two months ago <code class="highlighter-rouge">padr</code> was introduced, followed by an improved version that allowed for applying <code class="highlighter-rouge">pad</code> on group level. See the <a href="https://edwinth.github.io/blog/padr-intro/">introduction blogs</a> or the <code class="highlighter-rouge">vignette("padr")</code> for more package information. In this blog I give four more elaborate examples on how to go from raw data to insight with <code class="highlighter-rouge">padr</code>, <code class="highlighter-rouge">dplyr</code> and <code class="highlighter-rouge">ggplot2</code>. 
-They might serve as recipes for time series problems you want to solve. The dataset <code class="highlighter-rouge">emergency</code> is available in <code class="highlighter-rouge">padr</code>, and contains about a year of emergency data in Montgomery County, PA. For this blog I only use the twelve most prevalent emergencies.</p>
+        <p>Two months ago <code class="language-plaintext highlighter-rouge">padr</code> was introduced, followed by an improved version that allowed for applying <code class="language-plaintext highlighter-rouge">pad</code> on group level. See the <a href="https://edwinth.github.io/blog/padr-intro/">introduction blogs</a> or the <code class="language-plaintext highlighter-rouge">vignette("padr")</code> for more package information. In this blog I give four more elaborate examples on how to go from raw data to insight with <code class="language-plaintext highlighter-rouge">padr</code>, <code class="language-plaintext highlighter-rouge">dplyr</code> and <code class="language-plaintext highlighter-rouge">ggplot2</code>. 
+They might serve as recipes for time series problems you want to solve. The dataset <code class="language-plaintext highlighter-rouge">emergency</code> is available in <code class="language-plaintext highlighter-rouge">padr</code>, and contains about a year of emergency data in Montgomery County, PA. For this blog I only use the twelve most prevalent emergencies.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span><span class="w">
 </span><span class="n">library</span><span class="p">(</span><span class="n">padr</span><span class="p">)</span><span class="w">
 </span><span class="n">top12</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">emergency</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">count</span><span class="p">(</span><span class="n">title</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">arrange</span><span class="p">(</span><span class="n">desc</span><span class="p">(</span><span class="n">n</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">slice</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">12</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">select</span><span class="p">(</span><span class="n">title</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">inner_join</span><span class="p">(</span><span class="n">emergency</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<h1 id="a-proportion-plot-over-the-months">1) A proportion plot over the months</h1>
+<h1 id="1-a-proportion-plot-over-the-months">1) A proportion plot over the months</h1>
 
-<p>Lets start with a fairly simple problem, we are calculating the relative distribution of events within each month. We normalize the counts within each month, and then plot through time. <code class="highlighter-rouge">geom_bar</code> does most of the heavy lifiting here, we just need the months counts for each event. (I checked, all events have calls in each month, there is no need for padding.)</p>
+<p>Lets start with a fairly simple problem, we are calculating the relative distribution of events within each month. We normalize the counts within each month, and then plot through time. <code class="language-plaintext highlighter-rouge">geom_bar</code> does most of the heavy lifiting here, we just need the months counts for each event. (I checked, all events have calls in each month, there is no need for padding.)</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">top12</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">thicken</span><span class="p">(</span><span class="s1">'month'</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'month'</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">top12</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">thicken</span><span class="p">(</span><span class="s1">'month'</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'month'</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">count</span><span class="p">(</span><span class="n">title</span><span class="p">,</span><span class="w"> </span><span class="n">month</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
   </span><span class="n">ggplot</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">month</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
   </span><span class="n">geom_bar</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">title</span><span class="p">),</span><span class="w"> 
            </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"black"</span><span class="p">,</span><span class="w">
            </span><span class="n">stat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'identity'</span><span class="p">,</span><span class="w"> 
            </span><span class="n">position</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"fill"</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p><img src="/figure/source/2017-03-19-padr-examples/unnamed-chunk-2-1.png" alt="plot of chunk unnamed-chunk-2" /></p>
 
-<h2 id="get-a-distribution-per-event-per-time-unit">2) Get a distribution, per event, per time unit</h2>
+<h2 id="2-get-a-distribution-per-event-per-time-unit">2) Get a distribution, per event, per time unit</h2>
 
-<p>For each clock hour, for each event, we want to compute the average of the number of occurences. The first step is to make the hourly distribution out of the raw data. For every hour we need to count the number of calls per event. This would give no records if there were no calls within a givin hour. If we did not account for this, the calculated averages would be too high. (Recently called “the zero-bug” in <a href="http://www.win-vector.com/blog/2017/02/the-zero-bug/">this blog post</a>). Therefore we use <code class="highlighter-rouge">pad</code> and <code class="highlighter-rouge">fill_by_value</code> to insert records and give them the value 0.</p>
+<p>For each clock hour, for each event, we want to compute the average of the number of occurences. The first step is to make the hourly distribution out of the raw data. For every hour we need to count the number of calls per event. This would give no records if there were no calls within a givin hour. If we did not account for this, the calculated averages would be too high. (Recently called “the zero-bug” in <a href="http://www.win-vector.com/blog/2017/02/the-zero-bug/">this blog post</a>). Therefore we use <code class="language-plaintext highlighter-rouge">pad</code> and <code class="language-plaintext highlighter-rouge">fill_by_value</code> to insert records and give them the value 0.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">hourly_distribution</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">top12</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">thicken</span><span class="p">(</span><span class="s1">'hour'</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">hourly_distribution</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">top12</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">thicken</span><span class="p">(</span><span class="s1">'hour'</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">count</span><span class="p">(</span><span class="n">title</span><span class="p">,</span><span class="w"> </span><span class="n">time_stamp_hour</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">pad</span><span class="p">(</span><span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'title'</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">fill_by_value</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="w"> 
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p>Next step is extracting the clock hour from each timestamp, and calculate the mean per event, per clock hour.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">hourly_distribution</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">hourly_distribution</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">mutate</span><span class="p">(</span><span class="n">clock_hour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lubridate</span><span class="o">::</span><span class="n">hour</span><span class="p">(</span><span class="n">time_stamp_hour</span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">group_by</span><span class="p">(</span><span class="n">clock_hour</span><span class="p">,</span><span class="w"> </span><span class="n">title</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">summarise</span><span class="p">(</span><span class="n">mn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mean</span><span class="p">(</span><span class="n">n</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">ggplot</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">clock_hour</span><span class="p">,</span><span class="w"> </span><span class="n">mn</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
   </span><span class="n">geom_line</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> 
   </span><span class="n">facet_wrap</span><span class="p">(</span><span class="o">~</span><span class="n">title</span><span class="p">,</span><span class="w"> </span><span class="n">scales</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'free'</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p><img src="/figure/source/2017-03-19-padr-examples/unnamed-chunk-4-1.png" alt="plot of chunk unnamed-chunk-4" /></p>
 
-<h2 id="get-the-30th-observation-per-time-unit">3) Get the 30th observation per time unit</h2>
+<h2 id="3-get-the-30th-observation-per-time-unit">3) Get the 30th observation per time unit</h2>
 
-<p>For this dataset it might not be terribly interesting, but there are many situations were it is very useful to extract the first, last, or nth observation per time unit. Lets find the 30th observation per week, where weeks are starting on Mondays. We need an offset in <code class="highlighter-rouge">thicken</code> here, to make the weeks start on Mondays.</p>
+<p>For this dataset it might not be terribly interesting, but there are many situations were it is very useful to extract the first, last, or nth observation per time unit. Lets find the 30th observation per week, where weeks are starting on Mondays. We need an offset in <code class="language-plaintext highlighter-rouge">thicken</code> here, to make the weeks start on Mondays.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">first_day</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">top12</span><span class="o">$</span><span class="n">time_stamp</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">as.Date</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">min</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">first_day</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">top12</span><span class="o">$</span><span class="n">time_stamp</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">as.Date</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">min</span><span class="w">
 </span><span class="n">first_day</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">weekdays</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "Thursday"
-</code></pre>
-</div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] "Thursday"
+</code></pre></div></div>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">top12</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">thicken</span><span class="p">(</span><span class="s1">'week'</span><span class="p">,</span><span class="w"> </span><span class="n">start_val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">first_day</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">3</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">top12</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">thicken</span><span class="p">(</span><span class="s1">'week'</span><span class="p">,</span><span class="w"> </span><span class="n">start_val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">first_day</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">3</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">group_by</span><span class="p">(</span><span class="n">title</span><span class="p">,</span><span class="w"> </span><span class="n">time_stamp_week</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">filter</span><span class="p">(</span><span class="n">min_rank</span><span class="p">(</span><span class="n">time_stamp</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">30</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">mutate</span><span class="p">(</span><span class="n">weekday</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">weekdays</span><span class="p">(</span><span class="n">time_stamp</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
@@ -222,18 +216,17 @@ They might serve as recipes for time series problems you want to solve. The data
   </span><span class="n">coord_flip</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w">
   </span><span class="n">guides</span><span class="p">(</span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
   </span><span class="n">facet_wrap</span><span class="p">(</span><span class="o">~</span><span class="n">title</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p><img src="/figure/source/2017-03-19-padr-examples/unnamed-chunk-5-1.png" alt="plot of chunk unnamed-chunk-5" /></p>
 
 <p>So here we have a distribution on which day the 30th call came in, for each of the twelve events.</p>
 
-<h2 id="make-a-moving-average">4) Make a moving average</h2>
+<h2 id="4-make-a-moving-average">4) Make a moving average</h2>
 
-<p>Moving averages are very helpful for smoothing time series. It is often a better indication of the underlying trend than the raw data. I recently learned about the <code class="highlighter-rouge">RcppRoll</code> package, when I was browsing through <em>R for Data Science</em>. This is a nice package by Kevin Ushey, that makes it terribly easy to calculate rolling stats on a vector. Here we want the moving average of the daily count of each of the events.</p>
+<p>Moving averages are very helpful for smoothing time series. It is often a better indication of the underlying trend than the raw data. I recently learned about the <code class="language-plaintext highlighter-rouge">RcppRoll</code> package, when I was browsing through <em>R for Data Science</em>. This is a nice package by Kevin Ushey, that makes it terribly easy to calculate rolling stats on a vector. Here we want the moving average of the daily count of each of the events.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">top12</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">thicken</span><span class="p">(</span><span class="s1">'day'</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'day'</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">top12</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">thicken</span><span class="p">(</span><span class="s1">'day'</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'day'</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">count</span><span class="p">(</span><span class="n">day</span><span class="p">,</span><span class="w"> </span><span class="n">title</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">pad</span><span class="p">(</span><span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'title'</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">fill_by_value</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">group_by</span><span class="p">(</span><span class="n">title</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
@@ -242,8 +235,7 @@ They might serve as recipes for time series problems you want to solve. The data
   </span><span class="n">geom_line</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w">
   </span><span class="n">geom_line</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">moving_average</span><span class="p">),</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'red'</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
   </span><span class="n">facet_wrap</span><span class="p">(</span><span class="o">~</span><span class="n">title</span><span class="p">,</span><span class="w"> </span><span class="n">scales</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'free'</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p><img src="/figure/source/2017-03-19-padr-examples/unnamed-chunk-6-1.png" alt="plot of chunk unnamed-chunk-6" /></p>
 

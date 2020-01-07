@@ -149,56 +149,51 @@
 
 <p>I guess we all use it, the good old histogram. One of the first things we are taught in <em>Introduction to Statistics</em> and routinely applied whenever coming across a new continuous variable. However, it easily gets messed up by outliers. Putting most of the data into a single bin or a few bins, and scattering the outliers barely visible over the x-axis. This distribution might look familiar</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span><span class="w">
 </span><span class="n">set.seed</span><span class="p">(</span><span class="m">42</span><span class="p">)</span><span class="w">
 </span><span class="n">hist_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">tibble</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">rexp</span><span class="p">(</span><span class="m">1000</span><span class="p">,</span><span class="w"> </span><span class="m">.5</span><span class="p">),</span><span class="w">
                           </span><span class="n">runif</span><span class="p">(</span><span class="m">50</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">500</span><span class="p">)))</span><span class="w">
 
 </span><span class="n">ggplot</span><span class="p">(</span><span class="n">hist_data</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> 
   </span><span class="n">geom_histogram</span><span class="p">(</span><span class="n">binwidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">.1</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"black"</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"cornflowerblue"</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p><img src="/figure/source/2017-04-26-outlier-bin/unnamed-chunk-2-1.png" alt="plot of chunk unnamed-chunk-2" /></p>
 
 <p>Two strategies that make the above into something more interpretable are taking the logarithm of the variable, or omitting the outliers. Both do not show the original distribution, however. Another way to go, is to create one bin for all the outlier values. This way we would see the original distribution where the density is the highest, while at the same time getting a feel for the number of outliers. A quick and dirty implementation of this would be</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">hist_data</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">hist_data</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">mutate</span><span class="p">(</span><span class="n">x_new</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ifelse</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">ggplot</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">x_new</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
   </span><span class="n">geom_histogram</span><span class="p">(</span><span class="n">binwidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">.1</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"black"</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"cornflowerblue"</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p><img src="/figure/source/2017-04-26-outlier-bin/unnamed-chunk-3-1.png" alt="plot of chunk unnamed-chunk-3" /></p>
 
-<p>Not bad. However, it now suggests incorrectly that many observations are exactly 10. I routinely make these plots for my own information, but they cannot be shared without explaining what happened to the outliers and what there original range was. Since a plot with a manual is not that great either, I recently did a hacking session into the <code class="highlighter-rouge">ggplot</code> object. The resulting <code class="highlighter-rouge">gg_outlier_bin</code> function not only indicates the range of the last bin, it also allows for a different fill color of the bin. Now we are clearly distinguishing the outlier aggregation</p>
+<p>Not bad. However, it now suggests incorrectly that many observations are exactly 10. I routinely make these plots for my own information, but they cannot be shared without explaining what happened to the outliers and what there original range was. Since a plot with a manual is not that great either, I recently did a hacking session into the <code class="language-plaintext highlighter-rouge">ggplot</code> object. The resulting <code class="language-plaintext highlighter-rouge">gg_outlier_bin</code> function not only indicates the range of the last bin, it also allows for a different fill color of the bin. Now we are clearly distinguishing the outlier aggregation</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">gg_outlier_bin</span><span class="p">(</span><span class="n">hist_data</span><span class="p">,</span><span class="w"> 
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gg_outlier_bin</span><span class="p">(</span><span class="n">hist_data</span><span class="p">,</span><span class="w"> 
                </span><span class="s2">"x"</span><span class="p">,</span><span class="w"> 
                </span><span class="n">cut_off_floor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NA</span><span class="p">,</span><span class="w">
                </span><span class="n">cut_off_ceiling</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span><span class="p">,</span><span class="w">
                </span><span class="n">binwidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.1</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p><img src="/figure/source/2017-04-26-outlier-bin/unnamed-chunk-4-1.png" alt="plot of chunk unnamed-chunk-4" /></p>
 
-<p>It is still a bit experimental, but it seems to work in most situations. Below you find the function code for making histograms with outlier bins. You can also get it by installing the package accompanying this blog <code class="highlighter-rouge">devtools::install_github("edwinth/thatssorandom")</code>. By the way, it works on both floor and ceiling outliers. Like in the following</p>
+<p>It is still a bit experimental, but it seems to work in most situations. Below you find the function code for making histograms with outlier bins. You can also get it by installing the package accompanying this blog <code class="language-plaintext highlighter-rouge">devtools::install_github("edwinth/thatssorandom")</code>. By the way, it works on both floor and ceiling outliers. Like in the following</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">data_frame</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">runif</span><span class="p">(</span><span class="m">100</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">100</span><span class="p">),</span><span class="w"> </span><span class="n">rnorm</span><span class="p">(</span><span class="m">1000</span><span class="p">,</span><span class="w"> </span><span class="m">50</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data_frame</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">runif</span><span class="p">(</span><span class="m">100</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">100</span><span class="p">),</span><span class="w"> </span><span class="n">rnorm</span><span class="p">(</span><span class="m">1000</span><span class="p">,</span><span class="w"> </span><span class="m">50</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
   </span><span class="n">gg_outlier_bin</span><span class="p">(</span><span class="s2">"x"</span><span class="p">,</span><span class="w"> </span><span class="m">45</span><span class="p">,</span><span class="w"> </span><span class="m">55</span><span class="p">,</span><span class="w"> </span><span class="n">binwidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">.1</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## Warning: `data_frame()` is deprecated, use `tibble()`.
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## Warning: `data_frame()` is deprecated, use `tibble()`.
 ## This warning is displayed once per session.
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p><img src="/figure/source/2017-04-26-outlier-bin/unnamed-chunk-5-1.png" alt="plot of chunk unnamed-chunk-5" /></p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">gg_outlier_bin</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gg_outlier_bin</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w">
                            </span><span class="n">var_name</span><span class="p">,</span><span class="w">
                            </span><span class="n">cut_off_floor</span><span class="p">,</span><span class="w">
                            </span><span class="n">cut_off_ceiling</span><span class="p">,</span><span class="w">
@@ -297,8 +292,7 @@
   </span><span class="n">ticks_dif</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">positions</span><span class="p">[</span><span class="m">2</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">positions</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w">
   </span><span class="p">(</span><span class="n">positions</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">cut_off</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">ticks_dif</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">0.25</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 
         

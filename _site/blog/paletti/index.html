@@ -164,17 +164,17 @@ we would refactor the  ochRe functions, thus creating functions that create the 
 by the wonderful <a href="https://github.com/ropenscilabs/ochRe">ochRe package</a>. As 
 mentioned I shamelessly copied the package. I replaced the list with character 
 vectors containing hex colors and did a find and replace to make it 
-<code class="highlighter-rouge">dutchmasters</code> instead of <code class="highlighter-rouge">ochRe</code>. This was pretty ugly.  I realized that when 
-we would refactor the  <code class="highlighter-rouge">ochRe</code> functions, thus creating functions that create the functions, there would no longer be a need to copy-paste and find-and-replace. So that is what I did. I refactored and expanded <code class="highlighter-rouge">ochRe</code>’s chore into <code class="highlighter-rouge">paletti</code>. (Name chosen because I liked the ring of it). You grab it from Github, with <code class="highlighter-rouge">devtools::install_github("edwinth/paletti")</code>.</p>
+<code class="language-plaintext highlighter-rouge">dutchmasters</code> instead of <code class="language-plaintext highlighter-rouge">ochRe</code>. This was pretty ugly.  I realized that when 
+we would refactor the  <code class="language-plaintext highlighter-rouge">ochRe</code> functions, thus creating functions that create the functions, there would no longer be a need to copy-paste and find-and-replace. So that is what I did. I refactored and expanded <code class="language-plaintext highlighter-rouge">ochRe</code>’s chore into <code class="language-plaintext highlighter-rouge">paletti</code>. (Name chosen because I liked the ring of it). You grab it from Github, with <code class="language-plaintext highlighter-rouge">devtools::install_github("edwinth/paletti")</code>.</p>
 
 <h2 id="single-palettes">Single palettes</h2>
 
-<p><code class="highlighter-rouge">paletti</code> takes both single palettes (character vectors with hex codes) and 
-lists with palettes, like the <code class="highlighter-rouge">ochRe</code> and <code class="highlighter-rouge">dutchmasters</code> lists. Lets start with 
+<p><code class="language-plaintext highlighter-rouge">paletti</code> takes both single palettes (character vectors with hex codes) and 
+lists with palettes, like the <code class="language-plaintext highlighter-rouge">ochRe</code> and <code class="language-plaintext highlighter-rouge">dutchmasters</code> lists. Lets start with 
 a single palette, this might be useful when you want your coporate identity 
 colors translated into R. Here I just pick some colors found on the <a href="http://blog.visme.co/website-color-schemes/">interweb</a></p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">paletti</span><span class="p">)</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">paletti</span><span class="p">)</span><span class="w">
 </span><span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span><span class="w">
 </span><span class="n">mycols</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="w">
   </span><span class="n">red</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s2">"#E27D60"</span><span class="p">,</span><span class="w">
@@ -184,88 +184,80 @@ colors translated into R. Here I just pick some colors found on the <a href="htt
   </span><span class="n">green</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">"#41B3A3"</span><span class="w">
 </span><span class="p">)</span><span class="w">
 </span><span class="n">viz_palette</span><span class="p">(</span><span class="n">mycols</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p><img src="/figure/source/2017-12-21-paletti/unnamed-chunk-1-1.png" alt="plot of chunk unnamed-chunk-1" /></p>
 
-<p>Now, ochRe provided us with two functions, one two create a <code class="highlighter-rouge">ggplot</code> scale for 
+<p>Now, ochRe provided us with two functions, one two create a <code class="language-plaintext highlighter-rouge">ggplot</code> scale for 
 colours and to create one for fills. These functions can be created in the 
 following fashion</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">mycols_fill</span><span class="w">  </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">get_scale_fill</span><span class="p">(</span><span class="n">get_pal</span><span class="p">(</span><span class="n">mycols</span><span class="p">))</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">mycols_fill</span><span class="w">  </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">get_scale_fill</span><span class="p">(</span><span class="n">get_pal</span><span class="p">(</span><span class="n">mycols</span><span class="p">))</span><span class="w">
 </span><span class="n">mycols_color</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">get_scale_color</span><span class="p">(</span><span class="n">get_pal</span><span class="p">(</span><span class="n">mycols</span><span class="p">))</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<p>Both now can be used in <code class="highlighter-rouge">ggplot</code></p>
+<p>Both now can be used in <code class="language-plaintext highlighter-rouge">ggplot</code></p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">mtcars</span><span class="o">$</span><span class="n">cyl</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.character</span><span class="p">(</span><span class="n">mtcars</span><span class="o">$</span><span class="n">cyl</span><span class="p">)</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">mtcars</span><span class="o">$</span><span class="n">cyl</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.character</span><span class="p">(</span><span class="n">mtcars</span><span class="o">$</span><span class="n">cyl</span><span class="p">)</span><span class="w">
 </span><span class="n">col_plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">mtcars</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">mpg</span><span class="p">,</span><span class="w"> </span><span class="n">drat</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cyl</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
   </span><span class="n">geom_point</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">4</span><span class="p">)</span><span class="w"> 
 </span><span class="n">col_plot</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">mycols_color</span><span class="p">()</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p><img src="/figure/source/2017-12-21-paletti/unnamed-chunk-3-1.png" alt="plot of chunk unnamed-chunk-3" /></p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">fill_plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">mtcars</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">cyl</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cyl</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> 
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fill_plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">mtcars</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">cyl</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cyl</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> 
   </span><span class="n">geom_bar</span><span class="p">()</span><span class="w">
 </span><span class="n">fill_plot</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">mycols_fill</span><span class="p">()</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p><img src="/figure/source/2017-12-21-paletti/unnamed-chunk-3-2.png" alt="plot of chunk unnamed-chunk-3" /></p>
 
-<p>Now, I said I expanded the <code class="highlighter-rouge">ochRe</code> code a bit. The function <code class="highlighter-rouge">get_hex</code> will 
+<p>Now, I said I expanded the <code class="language-plaintext highlighter-rouge">ochRe</code> code a bit. The function <code class="language-plaintext highlighter-rouge">get_hex</code> will 
 produce a function that will return a function in which you can directly return
 the hex code by typing its unquoted name. Handy if you want an exact color from
 your palette. Prerequisit is that your palette is a named character vector.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">mycols_hex</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">get_hex</span><span class="p">(</span><span class="n">mycols</span><span class="p">)</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">mycols_hex</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">get_hex</span><span class="p">(</span><span class="n">mycols</span><span class="p">)</span><span class="w">
 </span><span class="n">fill_plot</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">scale_fill_manual</span><span class="p">(</span><span class="n">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mycols_hex</span><span class="p">(</span><span class="n">blue</span><span class="p">,</span><span class="w"> </span><span class="n">purple</span><span class="p">,</span><span class="w"> </span><span class="n">red</span><span class="p">))</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p><img src="/figure/source/2017-12-21-paletti/unnamed-chunk-4-1.png" alt="plot of chunk unnamed-chunk-4" /></p>
 
 <h2 id="multiple-palettes-in-a-list">Multiple palettes in a list</h2>
 
-<p>Both <code class="highlighter-rouge">ochRe</code> and <code class="highlighter-rouge">dutchmasters</code> offer multiple palettes in a list. The only 
+<p>Both <code class="language-plaintext highlighter-rouge">ochRe</code> and <code class="language-plaintext highlighter-rouge">dutchmasters</code> offer multiple palettes in a list. The only 
 difference from a single palette is that in the returned function you have to 
 specify the name of the palette youw want to use. If you don’t, it defaults to 
 the first palette in the list.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">ochRe_col</span><span class="w">         </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">get_scale_color</span><span class="p">(</span><span class="n">get_pal</span><span class="p">(</span><span class="n">ochre_palettes</span><span class="p">))</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ochRe_col</span><span class="w">         </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">get_scale_color</span><span class="p">(</span><span class="n">get_pal</span><span class="p">(</span><span class="n">ochre_palettes</span><span class="p">))</span><span class="w">
 </span><span class="n">dutchmasters_fill</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">get_scale_fill</span><span class="p">(</span><span class="n">get_pal</span><span class="p">(</span><span class="n">dutchmasters</span><span class="p">))</span><span class="w">
 
 </span><span class="n">col_plot</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ochRe_col</span><span class="p">(</span><span class="s2">"lorikeet"</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p><img src="/figure/source/2017-12-21-paletti/unnamed-chunk-5-1.png" alt="plot of chunk unnamed-chunk-5" /></p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">fill_plot</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dutchmasters_fill</span><span class="p">(</span><span class="s2">"view_of_Delft"</span><span class="p">)</span><span class="w">
-</span></code></pre>
-</div>
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fill_plot</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dutchmasters_fill</span><span class="p">(</span><span class="s2">"view_of_Delft"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
 
 <p><img src="/figure/source/2017-12-21-paletti/unnamed-chunk-5-2.png" alt="plot of chunk unnamed-chunk-5" /></p>
 
-<p>And the same holds for the <code class="highlighter-rouge">get_hex</code> function. You can feed a list with palettes
+<p>And the same holds for the <code class="language-plaintext highlighter-rouge">get_hex</code> function. You can feed a list with palettes
 as well. Note that the palettes that you are going to call must have named
 elements.</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">dutchmasters_hex</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">get_hex</span><span class="p">(</span><span class="n">dutchmasters</span><span class="p">)</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">dutchmasters_hex</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">get_hex</span><span class="p">(</span><span class="n">dutchmasters</span><span class="p">)</span><span class="w">
 </span><span class="n">fill_plot</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">scale_fill_manual</span><span class="p">(</span><span class="n">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dutchmasters_hex</span><span class="p">(</span><span class="s2">"anatomy"</span><span class="p">,</span><span class="w">
                               </span><span class="n">black</span><span class="p">(</span><span class="n">cloak</span><span class="p">),</span><span class="w"> </span><span class="n">red</span><span class="p">(</span><span class="n">muscle</span><span class="p">),</span><span class="w"> </span><span class="n">brown</span><span class="p">(</span><span class="n">table</span><span class="p">)))</span><span class="w">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p><img src="/figure/source/2017-12-21-paletti/unnamed-chunk-6-1.png" alt="plot of chunk unnamed-chunk-6" /></p>
 
 <p>That’s it, off you go! Add your own color palette(s) and start plotting. Once 
 again a major thanks to the ochRe team for the inspiration and the foundations 
-on which <code class="highlighter-rouge">paletti</code> is built.</p>
+on which <code class="language-plaintext highlighter-rouge">paletti</code> is built.</p>
 
         
           <div id="disqus_thread"></div><!-- /#disqus_thread -->
