@@ -4,6 +4,8 @@ author: "Edwin Thoen"
 base-url: https://EdwinTh.github.io
 date: "2018-02-19 21:15:00"
 output: html_document
+layout: post
+categories: blog
 tags: [blogging, R, data science, learning]
 ---
 

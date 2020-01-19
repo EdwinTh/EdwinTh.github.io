@@ -2,6 +2,8 @@
 title: "Gold diggers at the Olympics"
 author: "Edwin Thoen"
 output: html_document
+layout: post
+categories: blog
 base-url: https://EdwinTh.github.io
 date: "2018-03-11 21:10:00"
 tags: [R, Winter Olympics, PCA, ggplo2]

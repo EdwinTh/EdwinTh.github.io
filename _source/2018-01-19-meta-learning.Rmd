@@ -1,6 +1,8 @@
 ---
 title: "Curb your imposterism, start meta-learning"
 author: "Edwin Thoen"
+layout: post
+categories: blog
 base-url: https://EdwinTh.github.io
 date: "2018-01-19 18:55:00"
 output: html_document
