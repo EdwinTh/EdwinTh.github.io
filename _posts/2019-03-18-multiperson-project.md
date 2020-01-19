@@ -1,6 +1,9 @@
 ---
 title: "Code and Data in a large Machine Learning project"
+categories: blog
+layout: post
 output: html_document
+date: "2019-03-18 14:00:00"
 ---
 
 We did a large machine learning project at work recently. It involved two data scientists, two backend engineers and a data engineer, all working on-and-off on the R code during the project. The project had many interesting and new aspects to me, among them are doing data science in an agilish way, how to keep track of the different model versions and how to deal with directories, data and code on different machines. I planned to do a series of write-ups this summer, describing each of them, but then this happened 

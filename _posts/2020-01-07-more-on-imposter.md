@@ -2,6 +2,8 @@
 title: "Some More Thoughts on Impostering"
 author: "Edwin Thoen"
 base-url: https://EdwinTh.github.io
+categories: blog
+layout: post
 date: "2020-01-07 16:30:00"
 output: html_document
 tags: [imposter syndrome, data science, intellectual humility]
