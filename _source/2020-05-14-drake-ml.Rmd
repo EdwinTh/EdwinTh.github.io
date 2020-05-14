@@ -1,0 +1,38 @@
+---
+title: "Using {drake} for Machine Learning"
+author: "Edwin Thoen"
+base-url: https://EdwinTh.github.io
+categories: blog
+layout: post
+date: "2020-05-14 15:00:00"
+output: html_document
+tags: [machine learning, workflow, drake, R]
+---
+
+A few weeks ago, Miles McBain toke us for a tour through his project organisation in [this blogpost](https://milesmcbain.xyz/the-drake-post/). Not surprisingly given Miles' frequent shoutouts about the package, it is completely centered around `drake`. About a year ago on twitter, he convinced me to take this package for a spin. I was immediately sold. It cured a number of pains I had over the years in machine learning projects; storing intermediate results, reproducibility, having a single version of the truth, forgetting in which order steps should be applied, etc. In addition to Miles, I'd like to share my `drake`-centered workflow. As I found out from reading the blog, there is a great deal of overlap in our workflows.
+
+This blog post highlights the differences and additions in my workflow from the one described by Miles. It is assumed you have read his blog post. I just highlight a few of the benefits he mentioned, on which I totally agree. 
+
+- `drake` figures out which of the targets needs to be recalculated, this saves heaps of time.
+- abstracting away steps in functions, will make your plan a clear and concise overview of your entire workflow.
+- with R's endless options to interact with other languages and platforms, the plan does not only serve as the concert master of the R part of the project, but it can direct all aspects of it start to finish.
+
+## Building machine learning models with `drake`
+
+Where Miles' workflow focuses on delivering insights on short notice with R markdown, most of the projects I am involved in are about the delivery of machine learning models. They typically span many months, in which the model is incrementally improved until it reaches a satisfactory level of prediction (or we fail, and the plug is pulled). As described at length in [Agile Data Science with R](https://edwinth.github.io/ADSwR/), I have adopted a two-way approach to model development. Either I am researching how the model can be improved, or I am improving the model. You might wonder what the difference is. The former is quick-and-dirty, aimed at testing a hypothesis as quickly as possible. For the second, there are high standards to code quality, reproducibility and *building a coherent product*.
+
+In terms of building a coherent product, to me, there is a time before and a time after `drake`. One of the biggest struggles I had over the years, is how to manage data flows through all the different stages of data fetching, wrangling, determining cases in scope, model-related preprocessing, modelling, evaluating, predicting, etc. I have adopted many systems and naming conventions, but never was this stress alleviated. Out-of-the box `drake` takes care of this. It is immediately clear how the output of one step serves as input for the next. Even more than the cache-management, the dependency-management is what makes `drake` such a breakthrough in workflow to me. The entire project is staged around the pipeline(s), it is the heart of the product. From here, everything branches out. It is also a build check to me. As long as it runs start to finish without interference, the work is sufficiently automated. 
+
+## Using R packages with `drake`
+
+I always organize my work in an R package structure, even though I rarely actually build them. A great benefit of this is that you always have all your function available in memory. Within the package folder, all functions are simply loaded by `devtools::load_all()`, which I often follow by a utils function called `settings()` that will set all the necessary settings and load the dependencies. A second reason I love to work with packages, is that they enforce you to develop every step in the form of functions. As Miles stipulated, functions are not just means to reduce repetitions, they are also great to abstract away complexity. The combination of functions and a `drake` plan express your workflow as a narrative, without being bothered by the technical details of implementation. The `drake` plans I keep outside the /R folder, so it is not part of the package. These are part of scripts that run inside the package folder, so that all the code and dependencies needed are loaded by specifying `devtools::load_all()` at the `prework` argument when calling `drake::make()`. 
+
+I adopted a **`drake` + R packages workflow** because its potential for creating robust data science products with high reproducibility. It did not disappoint on this. However, there appeared to be a second, equally important benefit, that I did not anticipate. It enables me to test hypotheses for improvements way faster than I did before. Not only are all the functions used readily available by using `devtools::load_all()`, also all the different stages of data preparations are stored in `drake`'s cache. Before `drake`, a significant amount of time had to be spent in determining in what shape of form the data should be in order to test an idea, and subsequently get it in that form (often by just copying-and-pasting large code chunks from different scripts). This was messy and time consuming. Now, all the data stages are neatly laid out in the plan, and we can just grab the appropriate intermediate result from the cache using `drake::readd()` or `drake::loadd()`. Moreover, after we have made the modifications to the data according to the hypothesis, we can plug the data back into the pipeline to have all subsequent steps ran on it. The cross-validated model performance is always part of the pipeline, so we can quickly figure out if the changes made result in an improvement in the relevant model quality statistics.
+
+## Fire queries to data bases and call other languages with `drake`
+
+As mentioned before, we use `drake` as the concert master to not only manage the R part of the project, but all the steps start to finish. This always involves calls to data bases or clusters and oftentimes modelling tools and languages such as Stan and H20. Something I struggled for a while is how to ensure the sequence of the steps if there are no objects returned to R. Oftentimes, we have a sequence of queries, each storing their output so the next query uses the previous' result. Only the last result is fetched to R. In order to execute the queries in the right order the `drake` steps have to depend on an earlier target. An effective way to do this is wrapping all the steps that don't return results in R in a function that simply returns the `Sys.time()`. That is stored in a target, which is used as an input of a subsequent step. Not only does it tell `drake` on which target a step is dependent, you are as well creating logging as part of your pipeline, telling you when the external code ran for the last time.
+
+## A word of thanks
+
+I cannot stop being amazed about the fantastic packages that keep being created for this language. Creating a tool that is so complex and still works so smoothly, I cannot imagine the number of hours and the sweat it took to create `drake`. A major thanks goes to Will Landau and all the people of ROpenSci that helped him creating it. I would not have give `drake` a try if I did not here Miles McBain repeatedly promote it. `drake` is a revolutionary package in my opinion, and it needs more people like Miles that helps promote it and convince people to take the first hurdle.  
