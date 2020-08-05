@@ -7,7 +7,7 @@
 <meta charset="utf-8">
 <head></head>
 <title>Binning Outliers in a Histogram &#8211; That's so Random</title>
-<meta name="description" content="Note, the code has been modified to make it compatible with v.3 of ggplot
+<meta name="description" content="The functionality has been implemented in the function ggoutlier_hist in the ggoutlier package, which you can find here https://github.com/EdwinTh/ggoutlier. Please use this as your source, this is where the code will be maintained.
 
 ">
 <meta name="keywords" content="R, ggplot, histogram, outliers">
@@ -15,31 +15,31 @@
 
 <!-- Twitter Cards -->
 <meta name="twitter:title" content="Binning Outliers in a Histogram">
-<meta name="twitter:description" content="Note, the code has been modified to make it compatible with v.3 of ggplot
+<meta name="twitter:description" content="The functionality has been implemented in the function ggoutlier_hist in the ggoutlier package, which you can find here https://github.com/EdwinTh/ggoutlier. Please use this as your source, this is where the code will be maintained.
 
 ">
 <meta name="twitter:site" content="@edwin_thoen">
 <meta name="twitter:creator" content="@edwin_thoen">
 
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://localhost:4000/images/site-logo.png">
+<meta name="twitter:image" content="https://EdwinTh.github.io/images/site-logo.png">
 
 <!-- Open Graph -->
 <meta property="og:locale" content="en_US">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Binning Outliers in a Histogram">
-<meta property="og:description" content="Note, the code has been modified to make it compatible with v.3 of ggplot
+<meta property="og:description" content="The functionality has been implemented in the function ggoutlier_hist in the ggoutlier package, which you can find here https://github.com/EdwinTh/ggoutlier. Please use this as your source, this is where the code will be maintained.
 
 ">
-<meta property="og:url" content="http://localhost:4000/blog/outlier-bin/">
+<meta property="og:url" content="https://EdwinTh.github.io/blog/outlier-bin/">
 <meta property="og:site_name" content="That's so Random">
 
 
 
 
 
-<link rel="canonical" href="http://localhost:4000/blog/outlier-bin/">
-<link href="http://localhost:4000/feed.xml" type="application/atom+xml" rel="alternate" title="That's so Random Feed">
+<link rel="canonical" href="https://EdwinTh.github.io/blog/outlier-bin/">
+<link href="https://EdwinTh.github.io/feed.xml" type="application/atom+xml" rel="alternate" title="That's so Random Feed">
 
 <!-- https://t.co/dKP3o1e -->
 <meta name="HandheldFriendly" content="True">
@@ -47,7 +47,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- For all browsers -->
-<link rel="stylesheet" href="http://localhost:4000/assets/css/main.css">
+<link rel="stylesheet" href="https://EdwinTh.github.io/assets/css/main.css">
 <!-- Webfonts -->
 <script src="https://use.edgefonts.net/source-sans-pro:n2,i2,n3,i3,n4,i4,n6,i6,n7,i7,n9,i9;source-code-pro:n4,n7;volkhov.js"></script>
 
@@ -55,12 +55,12 @@
 
 <!-- HTML5 Shiv and Media Query Support -->
 <!--[if lt IE 9]>
-  <script src="http://localhost:4000/assets/js/vendor/html5shiv.min.js"></script>
-  <script src="http://localhost:4000/assets/js/vendor/respond.min.js"></script>
+  <script src="https://EdwinTh.github.io/assets/js/vendor/html5shiv.min.js"></script>
+  <script src="https://EdwinTh.github.io/assets/js/vendor/respond.min.js"></script>
 <![endif]-->
 
 <!-- Modernizr -->
-<script src="http://localhost:4000/assets/js/vendor/modernizr-2.7.1.custom.min.js"></script>
+<script src="https://EdwinTh.github.io/assets/js/vendor/modernizr-2.7.1.custom.min.js"></script>
 
 
 <!-- MathJax -->
@@ -69,17 +69,17 @@
 
 <!-- Icons -->
 <!-- 16x16 -->
-<link rel="shortcut icon" href="http://localhost:4000/favicon.ico">
+<link rel="shortcut icon" href="https://EdwinTh.github.io/favicon.ico">
 <!-- 32x32 -->
-<link rel="shortcut icon" href="http://localhost:4000/favicon.png">
+<link rel="shortcut icon" href="https://EdwinTh.github.io/favicon.png">
 <!-- 57x57 (precomposed) for iPhone 3GS, pre-2011 iPod Touch and older Android devices -->
-<link rel="apple-touch-icon-precomposed" href="http://localhost:4000/images/apple-touch-icon-precomposed.png">
+<link rel="apple-touch-icon-precomposed" href="https://EdwinTh.github.io/images/apple-touch-icon-precomposed.png">
 <!-- 72x72 (precomposed) for 1st generation iPad, iPad 2 and iPad mini -->
-<link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://localhost:4000/images/apple-touch-icon-72x72-precomposed.png">
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="https://EdwinTh.github.io/images/apple-touch-icon-72x72-precomposed.png">
 <!-- 114x114 (precomposed) for iPhone 4, 4S, 5 and post-2011 iPod Touch -->
-<link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://localhost:4000/images/apple-touch-icon-114x114-precomposed.png">
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="https://EdwinTh.github.io/images/apple-touch-icon-114x114-precomposed.png">
 <!-- 144x144 (precomposed) for iPad 3rd and 4th generation -->
-<link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://localhost:4000/images/apple-touch-icon-144x144-precomposed.png">
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://EdwinTh.github.io/images/apple-touch-icon-144x144-precomposed.png">
 
 
 
@@ -93,13 +93,13 @@
 	    <ul>
       
 		    
-		    <li><a href="http://localhost:4000/about/" >About</a></li>
+		    <li><a href="https://EdwinTh.github.io/about/" >About</a></li>
 		  
 		    
-		    <li><a href="http://localhost:4000/blog/" >Blog</a></li>
+		    <li><a href="https://EdwinTh.github.io/blog/" >Blog</a></li>
 		  
 		    
-		    <li><a href="http://localhost:4000/blogs-I-read/" >Blogs I read</a></li>
+		    <li><a href="https://EdwinTh.github.io/blogs-I-read/" >Blogs I read</a></li>
 		  
 	    </ul>
 	</nav>
@@ -110,9 +110,9 @@
 <header class="masthead">
 	<div class="wrap">
       
-  		<a href="http://localhost:4000/" class="site-logo" rel="home" title="That's so Random"><img src="http://localhost:4000/images/site-logo.png" width="200" height="200" alt="That's so Random logo" class="animated fadeInDown"></a>
+  		<a href="https://EdwinTh.github.io/" class="site-logo" rel="home" title="That's so Random"><img src="https://EdwinTh.github.io/images/site-logo.png" width="200" height="200" alt="That's so Random logo" class="animated fadeInDown"></a>
       
-      <h1 class="site-title animated fadeIn"><a href="http://localhost:4000/">That's so Random</a></h1>
+      <h1 class="site-title animated fadeIn"><a href="https://EdwinTh.github.io/">That's so Random</a></h1>
 		<h2 class="site-description animated fadeIn" itemprop="description">A playground for data analysis and R programming.</h2>
 	</div>
 </header><!-- /.masthead -->
@@ -126,7 +126,7 @@
     <div class="entry-wrapper">
       <header class="entry-header">
         <ul class="entry-tags">
-          <li><a href="http://localhost:4000/tags/#R" title="Pages tagged R">R</a></li><li><a href="http://localhost:4000/tags/#ggplot" title="Pages tagged ggplot">ggplot</a></li><li><a href="http://localhost:4000/tags/#histogram" title="Pages tagged histogram">histogram</a></li><li><a href="http://localhost:4000/tags/#outliers" title="Pages tagged outliers">outliers</a></li>
+          <li><a href="https://EdwinTh.github.io/tags/#R" title="Pages tagged R">R</a></li><li><a href="https://EdwinTh.github.io/tags/#ggplot" title="Pages tagged ggplot">ggplot</a></li><li><a href="https://EdwinTh.github.io/tags/#histogram" title="Pages tagged histogram">histogram</a></li><li><a href="https://EdwinTh.github.io/tags/#outliers" title="Pages tagged outliers">outliers</a></li>
         </ul>
         
           <h1 class="entry-title">Binning Outliers in a Histogram</h1>
@@ -135,7 +135,7 @@
       <footer class="entry-meta">
         
         
-          <img src="http://localhost:4000/images/bio-photo.jpg" class="bio-photo" alt="Edwin Thoen bio photo"></a>
+          <img src="https://EdwinTh.github.io/images/bio-photo.jpg" class="bio-photo" alt="Edwin Thoen bio photo"></a>
         
         <span class="author vcard">By <span class="fn">Edwin Thoen</span></span>
         <span class="entry-date date published"><time datetime="2017-04-26T14:30:00+02:00"><i class="fa fa-calendar-o"></i> April 26, 2017</time></span>
@@ -145,7 +145,7 @@
         
       </footer>
       <div class="entry-content">
-        <p><strong>Note, the code has been modified to make it compatible with v.3 of ggplot</strong></p>
+        <p><strong>The functionality has been implemented in the function ggoutlier_hist in the ggoutlier package, which you can find here https://github.com/EdwinTh/ggoutlier. Please use this as your source, this is where the code will be maintained.</strong></p>
 
 <p>I guess we all use it, the good old histogram. One of the first things we are taught in <em>Introduction to Statistics</em> and routinely applied whenever coming across a new continuous variable. However, it easily gets messed up by outliers. Putting most of the data into a single bin or a few bins, and scattering the outliers barely visible over the x-axis. This distribution might look familiar</p>
 
@@ -174,7 +174,6 @@
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gg_outlier_bin</span><span class="p">(</span><span class="n">hist_data</span><span class="p">,</span><span class="w"> 
                </span><span class="s2">"x"</span><span class="p">,</span><span class="w"> 
-               </span><span class="n">cut_off_floor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NA</span><span class="p">,</span><span class="w">
                </span><span class="n">cut_off_ceiling</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span><span class="p">,</span><span class="w">
                </span><span class="n">binwidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.1</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
@@ -187,108 +186,186 @@
   </span><span class="n">gg_outlier_bin</span><span class="p">(</span><span class="s2">"x"</span><span class="p">,</span><span class="w"> </span><span class="m">45</span><span class="p">,</span><span class="w"> </span><span class="m">55</span><span class="p">,</span><span class="w"> </span><span class="n">binwidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">.1</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## Warning: `data_frame()` is deprecated, use `tibble()`.
-## This warning is displayed once per session.
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## Warning: `data_frame()` is deprecated as of tibble 1.1.0.
+## Please use `tibble()` instead.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_warnings()` to see where this warning was generated.
 </code></pre></div></div>
 
 <p><img src="/figure/source/2017-04-26-outlier-bin/unnamed-chunk-5-1.png" alt="plot of chunk unnamed-chunk-5" /></p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gg_outlier_bin</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w">
-                           </span><span class="n">var_name</span><span class="p">,</span><span class="w">
-                           </span><span class="n">cut_off_floor</span><span class="p">,</span><span class="w">
-                           </span><span class="n">cut_off_ceiling</span><span class="p">,</span><span class="w">
-                           </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"black"</span><span class="p">,</span><span class="w">
-                           </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"cornflowerblue"</span><span class="p">,</span><span class="w">
-                           </span><span class="n">fill_outlier_bins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"forestgreen"</span><span class="p">,</span><span class="w">
-                           </span><span class="n">binwidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
-  
-  </span><span class="n">printing_min_max</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">summarise_</span><span class="p">(</span><span class="n">sprintf</span><span class="p">(</span><span class="s2">"round(min(%s, na.rm = TRUE), 1)"</span><span class="p">,</span><span class="w"> </span><span class="n">var_name</span><span class="p">),</span><span class="w">
-                                       </span><span class="n">sprintf</span><span class="p">(</span><span class="s2">"round(max(%s, na.rm = TRUE), 1)"</span><span class="p">,</span><span class="w"> </span><span class="n">var_name</span><span class="p">))</span><span class="w">
-  
-  </span><span class="n">ceiling_filter</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ifelse</span><span class="p">(</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">cut_off_ceiling</span><span class="p">),</span><span class="w">
-                           </span><span class="n">sprintf</span><span class="p">(</span><span class="s2">"%s &lt; %f"</span><span class="p">,</span><span class="w"> </span><span class="n">var_name</span><span class="p">,</span><span class="w"> </span><span class="n">cut_off_ceiling</span><span class="p">),</span><span class="w">
-                           </span><span class="s2">"1 == 1"</span><span class="p">)</span><span class="w"> 
-  </span><span class="n">floor_filter</span><span class="w">   </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ifelse</span><span class="p">(</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">cut_off_floor</span><span class="p">),</span><span class="w">
-                           </span><span class="n">sprintf</span><span class="p">(</span><span class="s2">"%s &gt; %f"</span><span class="p">,</span><span class="w"> </span><span class="n">var_name</span><span class="p">,</span><span class="w"> </span><span class="n">cut_off_floor</span><span class="p">),</span><span class="w">
-                           </span><span class="s2">"1 == 1"</span><span class="p">)</span><span class="w">
-  
-  </span><span class="n">x_regular</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">filter_</span><span class="p">(</span><span class="n">ceiling_filter</span><span class="p">,</span><span class="w"> </span><span class="n">floor_filter</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> 
-    </span><span class="n">select_</span><span class="p">(</span><span class="n">var_name</span><span class="p">)</span><span class="w">
-  
-  </span><span class="n">x_to_roll_ceiling</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">filter_</span><span class="p">(</span><span class="w">
-    </span><span class="n">sprintf</span><span class="p">(</span><span class="s2">"%s &gt;= %f"</span><span class="p">,</span><span class="w"> </span><span class="n">var_name</span><span class="p">,</span><span class="w"> </span><span class="n">cut_off_ceiling</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">select_</span><span class="p">(</span><span class="n">var_name</span><span class="p">)</span><span class="w">
-  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">cut_off_ceiling</span><span class="p">))</span><span class="w"> </span><span class="n">x_to_roll_ceiling</span><span class="p">[,</span><span class="w"> </span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">cut_off_ceiling</span><span class="w">
-  
-  </span><span class="n">x_to_roll_floor</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">filter_</span><span class="p">(</span><span class="w">
-    </span><span class="n">sprintf</span><span class="p">(</span><span class="s2">"%s &lt;= %f"</span><span class="p">,</span><span class="w"> </span><span class="n">var_name</span><span class="p">,</span><span class="w"> </span><span class="n">cut_off_floor</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">select_</span><span class="p">(</span><span class="n">var_name</span><span class="p">)</span><span class="w">
-  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">cut_off_floor</span><span class="p">))</span><span class="w"> </span><span class="n">x_to_roll_floor</span><span class="p">[,</span><span class="w"> </span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">cut_off_floor</span><span class="w">
-  
-  </span><span class="n">plot_obj</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">x_regular</span><span class="p">,</span><span class="w"> </span><span class="n">aes_string</span><span class="p">(</span><span class="n">var_name</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
-    </span><span class="n">geom_histogram</span><span class="p">(</span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">col</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fill</span><span class="p">,</span><span class="w"> </span><span class="n">binwidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">binwidth</span><span class="p">)</span><span class="w">
-  
+                            </span><span class="n">var_name</span><span class="p">,</span><span class="w">
+                            </span><span class="n">cut_off_floor</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="kc">NA_real_</span><span class="p">,</span><span class="w">
+                            </span><span class="n">cut_off_ceiling</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="kc">NA_real_</span><span class="p">,</span><span class="w">
+                            </span><span class="n">col</span><span class="w">               </span><span class="o">=</span><span class="w"> </span><span class="s2">"black"</span><span class="p">,</span><span class="w">
+                            </span><span class="n">fill</span><span class="w">              </span><span class="o">=</span><span class="w"> </span><span class="s2">"cornflowerblue"</span><span class="p">,</span><span class="w">
+                            </span><span class="n">fill_outlier_bins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"forestgreen"</span><span class="p">,</span><span class="w">
+                            </span><span class="n">binwidth</span><span class="w">          </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+
+  </span><span class="n">hist_input_checking</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w">
+                      </span><span class="n">var_name</span><span class="p">,</span><span class="w">
+                      </span><span class="n">cut_off_floor</span><span class="p">,</span><span class="w">
+                      </span><span class="n">cut_off_ceiling</span><span class="p">,</span><span class="w">
+                      </span><span class="n">col</span><span class="p">,</span><span class="w">
+                      </span><span class="n">fill</span><span class="p">,</span><span class="w">
+                      </span><span class="n">fill_outlier_bins</span><span class="p">,</span><span class="w">
+                      </span><span class="n">binwidth</span><span class="p">)</span><span class="w">
+
+  </span><span class="n">printing_min_max</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">get_printing_min_max</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">var_name</span><span class="p">)</span><span class="w">
+
+  </span><span class="n">regular_x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">filter_regular_x</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">var_name</span><span class="p">,</span><span class="w"> </span><span class="n">cut_off_floor</span><span class="p">,</span><span class="w"> </span><span class="n">cut_off_ceiling</span><span class="p">)</span><span class="w">
+
+  </span><span class="n">plot_obj</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggplot2</span><span class="o">::</span><span class="n">ggplot</span><span class="p">(</span><span class="n">regular_x</span><span class="p">,</span><span class="w"> </span><span class="n">ggplot2</span><span class="o">::</span><span class="n">aes_string</span><span class="p">())</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">ggplot2</span><span class="o">::</span><span class="n">geom_histogram</span><span class="p">(</span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">col</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fill</span><span class="p">,</span><span class="w"> </span><span class="n">binwidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">binwidth</span><span class="p">)</span><span class="w">
+
   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">cut_off_ceiling</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">x_ceil</span><span class="w">            </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="n">x</span><span class="p">[[</span><span class="n">var_name</span><span class="p">]]</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">cut_off_ceiling</span><span class="p">,</span><span class="w"> </span><span class="n">var_name</span><span class="p">,</span><span class="w"> </span><span class="n">drop</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">]</span><span class="w">
+    </span><span class="n">x_ceil</span><span class="p">[,</span><span class="w"> </span><span class="m">1</span><span class="p">]</span><span class="w">       </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">cut_off_ceiling</span><span class="w">
     </span><span class="n">ticks_for_ceiling</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">update_tickmarks_ceiling</span><span class="p">(</span><span class="n">plot_obj</span><span class="p">,</span><span class="w"> </span><span class="n">cut_off_ceiling</span><span class="p">,</span><span class="w">
-                                                  </span><span class="n">printing_min_max</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">])</span><span class="w">
+                                                  </span><span class="n">printing_min_max</span><span class="p">[</span><span class="m">2</span><span class="p">])</span><span class="w">
     </span><span class="n">plot_obj</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">plot_obj</span><span class="w"> </span><span class="o">+</span><span class="w">
-      </span><span class="n">geom_histogram</span><span class="p">(</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x_to_roll_ceiling</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fill_outlier_bins</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">col</span><span class="p">,</span><span class="w">
-                     </span><span class="n">binwidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">binwidth</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
-      </span><span class="n">scale_x_continuous</span><span class="p">(</span><span class="n">breaks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ticks_for_ceiling</span><span class="o">$</span><span class="n">tick_positions</span><span class="p">,</span><span class="w">
-                         </span><span class="n">labels</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ticks_for_ceiling</span><span class="o">$</span><span class="n">tick_labels</span><span class="p">)</span><span class="w">
+      </span><span class="n">ggplot2</span><span class="o">::</span><span class="n">geom_histogram</span><span class="p">(</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x_ceil</span><span class="p">,</span><span class="w">
+                              </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fill_outlier_bins</span><span class="p">,</span><span class="w">
+                              </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">col</span><span class="p">,</span><span class="w">
+                              </span><span class="n">binwidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">binwidth</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+      </span><span class="n">ggplot2</span><span class="o">::</span><span class="n">scale_x_continuous</span><span class="p">(</span><span class="n">breaks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ticks_for_ceiling</span><span class="o">$</span><span class="n">tick_positions</span><span class="p">,</span><span class="w">
+                                  </span><span class="n">labels</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ticks_for_ceiling</span><span class="o">$</span><span class="n">tick_labels</span><span class="p">)</span><span class="w">
   </span><span class="p">}</span><span class="w">
-  
+
   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">cut_off_floor</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">x_floor</span><span class="w">         </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="n">x</span><span class="p">[[</span><span class="n">var_name</span><span class="p">]]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">cut_off_floor</span><span class="p">,</span><span class="w"> </span><span class="n">var_name</span><span class="p">,</span><span class="w"> </span><span class="n">drop</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">]</span><span class="w">
+    </span><span class="n">x_floor</span><span class="p">[,</span><span class="w"> </span><span class="m">1</span><span class="p">]</span><span class="w">    </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">cut_off_floor</span><span class="w">
     </span><span class="n">ticks_for_floor</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">update_tickmarks_floor</span><span class="p">(</span><span class="n">plot_obj</span><span class="p">,</span><span class="w"> </span><span class="n">cut_off_floor</span><span class="p">,</span><span class="w">
-                                              </span><span class="n">printing_min_max</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">])</span><span class="w">
-    </span><span class="n">plot_obj</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">plot_obj</span><span class="w"> </span><span class="o">+</span><span class="w">
-      </span><span class="n">geom_histogram</span><span class="p">(</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x_to_roll_floor</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fill_outlier_bins</span><span class="p">,</span><span class="w"> 
-                     </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">col</span><span class="p">,</span><span class="w"> </span><span class="n">binwidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">binwidth</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
-      </span><span class="n">scale_x_continuous</span><span class="p">(</span><span class="n">breaks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ticks_for_floor</span><span class="o">$</span><span class="n">tick_positions</span><span class="p">,</span><span class="w">
-                         </span><span class="n">labels</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ticks_for_floor</span><span class="o">$</span><span class="n">tick_labels</span><span class="p">)</span><span class="w">
+                                              </span><span class="n">printing_min_max</span><span class="p">[</span><span class="m">1</span><span class="p">])</span><span class="w">
+    </span><span class="n">plot_obj</span><span class="w"> </span><span class="o">&lt;-</span><span class="w">
+      </span><span class="n">suppressMessages</span><span class="p">(</span><span class="w">
+        </span><span class="n">plot_obj</span><span class="w"> </span><span class="o">+</span><span class="w">
+          </span><span class="n">ggplot2</span><span class="o">::</span><span class="n">geom_histogram</span><span class="p">(</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x_floor</span><span class="p">,</span><span class="w">
+                                  </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fill_outlier_bins</span><span class="p">,</span><span class="w">
+                                  </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">col</span><span class="p">,</span><span class="w"> </span><span class="n">binwidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">binwidth</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+          </span><span class="n">ggplot2</span><span class="o">::</span><span class="n">scale_x_continuous</span><span class="p">(</span><span class="n">breaks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ticks_for_floor</span><span class="o">$</span><span class="n">tick_positions</span><span class="p">,</span><span class="w">
+                                      </span><span class="n">labels</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ticks_for_floor</span><span class="o">$</span><span class="n">tick_labels</span><span class="p">)</span><span class="w">
+      </span><span class="p">)</span><span class="w">
   </span><span class="p">}</span><span class="w">
-  
-  </span><span class="nf">return</span><span class="p">(</span><span class="n">plot_obj</span><span class="p">)</span><span class="w">
+  </span><span class="n">plot_obj</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
 
-</span><span class="n">update_tickmarks_ceiling</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">gg_obj</span><span class="p">,</span><span class="w"> 
-                                     </span><span class="n">co</span><span class="p">,</span><span class="w"> 
+</span><span class="n">hist_input_checking</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w">
+                                </span><span class="n">var_name</span><span class="p">,</span><span class="w">
+                                </span><span class="n">cut_off_floor</span><span class="p">,</span><span class="w">
+                                </span><span class="n">cut_off_ceiling</span><span class="p">,</span><span class="w">
+                                </span><span class="n">col</span><span class="p">,</span><span class="w">
+                                </span><span class="n">fill</span><span class="p">,</span><span class="w">
+                                </span><span class="n">fill_outlier_bins</span><span class="p">,</span><span class="w">
+                                </span><span class="n">binwidth</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+
+  </span><span class="n">stopifnot</span><span class="p">(</span><span class="n">is.data.frame</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="w">
+            </span><span class="nf">is.character</span><span class="p">(</span><span class="n">var_name</span><span class="p">),</span><span class="w">
+            </span><span class="nf">is.numeric</span><span class="p">(</span><span class="n">cut_off_floor</span><span class="p">),</span><span class="w">
+            </span><span class="nf">is.numeric</span><span class="p">(</span><span class="n">cut_off_ceiling</span><span class="p">),</span><span class="w">
+            </span><span class="nf">is.character</span><span class="p">(</span><span class="n">col</span><span class="p">),</span><span class="w">
+            </span><span class="nf">is.character</span><span class="p">(</span><span class="n">fill</span><span class="p">),</span><span class="w">
+            </span><span class="nf">is.character</span><span class="p">(</span><span class="n">fill_outlier_bins</span><span class="p">))</span><span class="w">
+
+  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">var_name</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="n">colnames</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">stop</span><span class="p">(</span><span class="n">sprintf</span><span class="p">(</span><span class="s2">"%s is not a column in x"</span><span class="p">,</span><span class="w"> </span><span class="n">var_name</span><span class="p">))</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+
+  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="nf">is.na</span><span class="p">(</span><span class="n">cut_off_floor</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="nf">is.na</span><span class="p">(</span><span class="n">cut_off_ceiling</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">stop</span><span class="p">(</span><span class="s2">"Neither cut_off_floor, nor cut_off_ceiling are specified"</span><span class="p">)</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+
+  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">cut_off_floor</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">cut_off_ceiling</span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cut_off_floor</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">cut_off_ceiling</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">stop</span><span class="p">(</span><span class="s2">"cut_off_floor should be smaller than cut_off_ceiling"</span><span class="p">)</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+
+  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">cut_off_floor</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cut_off_floor</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nf">min</span><span class="p">(</span><span class="n">x</span><span class="p">[[</span><span class="n">var_name</span><span class="p">]]))</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">stop</span><span class="p">(</span><span class="n">sprintf</span><span class="p">(</span><span class="s2">"cut_off_floor lower than the lowest value in %s"</span><span class="p">,</span><span class="w">
+                   </span><span class="n">var_name</span><span class="p">))</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cut_off_floor</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="nf">max</span><span class="p">(</span><span class="n">x</span><span class="p">[[</span><span class="n">var_name</span><span class="p">]]))</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">stop</span><span class="p">(</span><span class="n">sprintf</span><span class="p">(</span><span class="s2">"cut_off_floor higher than the highest value in %s"</span><span class="p">,</span><span class="w">
+                   </span><span class="n">var_name</span><span class="p">))</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+
+  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">cut_off_ceiling</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cut_off_ceiling</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nf">min</span><span class="p">(</span><span class="n">x</span><span class="p">[[</span><span class="n">var_name</span><span class="p">]]))</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">stop</span><span class="p">(</span><span class="n">sprintf</span><span class="p">(</span><span class="s2">"cut_off_ceiling lower than the lowest value in %s"</span><span class="p">,</span><span class="w">
+                   </span><span class="n">var_name</span><span class="p">))</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cut_off_ceiling</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="nf">max</span><span class="p">(</span><span class="n">x</span><span class="p">[[</span><span class="n">var_name</span><span class="p">]]))</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">stop</span><span class="p">(</span><span class="n">sprintf</span><span class="p">(</span><span class="s2">"cut_off_ceiling higher than the highest value in %s"</span><span class="p">,</span><span class="w">
+                   </span><span class="n">var_name</span><span class="p">))</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span><span class="n">get_printing_min_max</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">var_name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+
+  </span><span class="n">var</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">x</span><span class="p">[[</span><span class="n">var_name</span><span class="p">]]</span><span class="w">
+  </span><span class="nf">c</span><span class="p">(</span><span class="n">min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="nf">min</span><span class="p">(</span><span class="n">var</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">),</span><span class="w"> </span><span class="m">1</span><span class="p">),</span><span class="w">
+    </span><span class="n">max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="nf">max</span><span class="p">(</span><span class="n">var</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">),</span><span class="w"> </span><span class="m">1</span><span class="p">))</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span><span class="n">filter_regular_x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w">
+                             </span><span class="n">var_name</span><span class="p">,</span><span class="w">
+                             </span><span class="n">cut_off_floor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NA_real_</span><span class="p">,</span><span class="w">
+                             </span><span class="n">cut_off_ceiling</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NA_real_</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">x_var</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">x</span><span class="p">[[</span><span class="n">var_name</span><span class="p">]]</span><span class="w">
+  </span><span class="n">ind</span><span class="w">   </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">x_var</span><span class="p">))</span><span class="w">
+  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">cut_off_floor</span><span class="p">))</span><span class="w"> </span><span class="n">ind</span><span class="p">[</span><span class="n">x_var</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">cut_off_floor</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kc">FALSE</span><span class="w">
+  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">cut_off_ceiling</span><span class="p">))</span><span class="w"> </span><span class="n">ind</span><span class="p">[</span><span class="n">x_var</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">cut_off_ceiling</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kc">FALSE</span><span class="w">
+  </span><span class="n">x</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span><span class="w"> </span><span class="n">var_name</span><span class="p">,</span><span class="w"> </span><span class="n">drop</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span><span class="n">update_tickmarks_ceiling</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">plot_obj</span><span class="p">,</span><span class="w">
+                                     </span><span class="n">cut_off</span><span class="p">,</span><span class="w">
                                      </span><span class="n">max_print</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="n">ranges</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">suppressMessages</span><span class="p">(</span><span class="w">
-    </span><span class="n">ggplot_build</span><span class="p">(</span><span class="n">gg_obj</span><span class="p">)</span><span class="o">$</span><span class="n">layout</span><span class="o">$</span><span class="n">panel_params</span><span class="p">[[</span><span class="m">1</span><span class="p">]])</span><span class="w">
-  </span><span class="n">label_to_add</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sprintf</span><span class="p">(</span><span class="s2">"(%s , %s)"</span><span class="p">,</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="n">co</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="n">max_print</span><span class="p">)</span><span class="w">
-  </span><span class="n">tick_positions</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ranges</span><span class="o">$</span><span class="n">x.major_source</span><span class="w">
-  </span><span class="n">tick_labels</span><span class="w">    </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ranges</span><span class="o">$</span><span class="n">x.labels</span><span class="w">
-  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">overlap_ceiling</span><span class="p">(</span><span class="n">tick_positions</span><span class="p">,</span><span class="w"> </span><span class="n">co</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">ggplot2</span><span class="o">::</span><span class="n">ggplot_build</span><span class="p">(</span><span class="n">plot_obj</span><span class="p">)</span><span class="o">$</span><span class="n">layout</span><span class="o">$</span><span class="n">panel_params</span><span class="p">[[</span><span class="m">1</span><span class="p">]]</span><span class="o">$</span><span class="n">x</span><span class="p">)</span><span class="w">
+  </span><span class="n">label_to_add</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sprintf</span><span class="p">(</span><span class="s2">"(%s , %s)"</span><span class="p">,</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="n">cut_off</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="n">max_print</span><span class="p">)</span><span class="w">
+  </span><span class="n">tick_positions</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ranges</span><span class="o">$</span><span class="n">get_breaks</span><span class="p">()</span><span class="w">
+  </span><span class="n">tick_labels</span><span class="w">    </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ranges</span><span class="o">$</span><span class="n">get_labels</span><span class="p">()</span><span class="w">
+  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">overlap_ceiling</span><span class="p">(</span><span class="n">tick_positions</span><span class="p">,</span><span class="w"> </span><span class="n">cut_off</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="n">tick_positions</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">tick_positions</span><span class="p">[</span><span class="o">-</span><span class="nf">length</span><span class="p">(</span><span class="n">tick_positions</span><span class="p">)]</span><span class="w">
     </span><span class="n">tick_labels</span><span class="w">    </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">tick_labels</span><span class="p">[</span><span class="o">-</span><span class="nf">length</span><span class="p">(</span><span class="n">tick_labels</span><span class="p">)]</span><span class="w">
   </span><span class="p">}</span><span class="w">
-  </span><span class="nf">return</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">tick_positions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">tick_positions</span><span class="p">,</span><span class="w"> </span><span class="n">co</span><span class="p">),</span><span class="w">
+  </span><span class="nf">return</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">tick_positions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">tick_positions</span><span class="p">,</span><span class="w"> </span><span class="n">cut_off</span><span class="p">),</span><span class="w">
               </span><span class="n">tick_labels</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">tick_labels</span><span class="p">,</span><span class="w"> </span><span class="n">label_to_add</span><span class="p">)))</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
 </span><span class="n">overlap_ceiling</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span><span class="w"> </span><span class="n">cut_off</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">positions</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">positions</span><span class="p">[</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">positions</span><span class="p">)]</span><span class="w">
   </span><span class="n">n</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span><span class="w">
   </span><span class="n">ticks_dif</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">positions</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">positions</span><span class="p">[</span><span class="n">n</span><span class="m">-1</span><span class="p">]</span><span class="w">
   </span><span class="p">(</span><span class="n">cut_off</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">positions</span><span class="p">[</span><span class="n">n</span><span class="p">])</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">ticks_dif</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">0.25</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span><span class="n">update_tickmarks_floor</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">gg_obj</span><span class="p">,</span><span class="w"> 
-                                   </span><span class="n">co</span><span class="p">,</span><span class="w"> 
+</span><span class="n">update_tickmarks_floor</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">plot_obj</span><span class="p">,</span><span class="w">
+                                   </span><span class="n">cut_off</span><span class="p">,</span><span class="w">
                                    </span><span class="n">min_print</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="n">ranges</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">suppressMessages</span><span class="p">(</span><span class="w">
-    </span><span class="n">ggplot_build</span><span class="p">(</span><span class="n">gg_obj</span><span class="p">)</span><span class="o">$</span><span class="n">layout</span><span class="o">$</span><span class="n">panel_params</span><span class="p">[[</span><span class="m">1</span><span class="p">]])</span><span class="w">
-  </span><span class="n">label_to_add</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sprintf</span><span class="p">(</span><span class="s2">"(%s , %s)"</span><span class="p">,</span><span class="w"> </span><span class="n">min_print</span><span class="p">,</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="n">co</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">))</span><span class="w">
-  </span><span class="n">tick_positions</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ranges</span><span class="o">$</span><span class="n">x.major_source</span><span class="w">
-  </span><span class="n">tick_labels</span><span class="w">    </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ranges</span><span class="o">$</span><span class="n">x.labels</span><span class="w">
-  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">overlap_floor</span><span class="p">(</span><span class="n">tick_positions</span><span class="p">,</span><span class="w"> </span><span class="n">co</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">ggplot2</span><span class="o">::</span><span class="n">ggplot_build</span><span class="p">(</span><span class="n">plot_obj</span><span class="p">)</span><span class="o">$</span><span class="n">layout</span><span class="o">$</span><span class="n">panel_params</span><span class="p">[[</span><span class="m">1</span><span class="p">]]</span><span class="o">$</span><span class="n">x</span><span class="p">)</span><span class="w">
+  </span><span class="n">label_to_add</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sprintf</span><span class="p">(</span><span class="s2">"(%s , %s)"</span><span class="p">,</span><span class="w"> </span><span class="n">min_print</span><span class="p">,</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="n">cut_off</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">))</span><span class="w">
+  </span><span class="n">tick_positions</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ranges</span><span class="o">$</span><span class="n">get_breaks</span><span class="p">()</span><span class="w">
+  </span><span class="n">tick_labels</span><span class="w">    </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ranges</span><span class="o">$</span><span class="n">get_labels</span><span class="p">()</span><span class="w">
+
+  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">overlap_floor</span><span class="p">(</span><span class="n">tick_positions</span><span class="p">,</span><span class="w"> </span><span class="n">cut_off</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="n">tick_positions</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">tick_positions</span><span class="p">[</span><span class="m">-1</span><span class="p">]</span><span class="w">
     </span><span class="n">tick_labels</span><span class="w">    </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">tick_labels</span><span class="p">[</span><span class="m">-1</span><span class="p">]</span><span class="w">
   </span><span class="p">}</span><span class="w">
-  </span><span class="nf">return</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">tick_positions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">co</span><span class="p">,</span><span class="w"> </span><span class="n">tick_positions</span><span class="p">),</span><span class="w">
+  </span><span class="nf">return</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">tick_positions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">cut_off</span><span class="p">,</span><span class="w"> </span><span class="n">tick_positions</span><span class="p">),</span><span class="w">
               </span><span class="n">tick_labels</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">label_to_add</span><span class="p">,</span><span class="w"> </span><span class="n">tick_labels</span><span class="p">)))</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
 </span><span class="n">overlap_floor</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span><span class="w"> </span><span class="n">cut_off</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">positions</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">positions</span><span class="p">[</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">positions</span><span class="p">)]</span><span class="w">
   </span><span class="n">ticks_dif</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">positions</span><span class="p">[</span><span class="m">2</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">positions</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w">
   </span><span class="p">(</span><span class="n">positions</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">cut_off</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">ticks_dif</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">0.25</span><span class="w">
 </span><span class="p">}</span><span class="w">
@@ -325,10 +402,10 @@
     </div><!-- /.entry-wrapper -->
     <nav class="pagination" role="navigation">
       
-        <a href="http://localhost:4000/blog/padr-examples/" class="btn" title="Preparing Datetime Data for Analysis with padr and dplyr">Previous</a>
+        <a href="https://EdwinTh.github.io/blog/padr-examples/" class="btn" title="Preparing Datetime Data for Analysis with padr and dplyr">Previous</a>
       
       
-        <a href="http://localhost:4000/blog/padr-v0-3-0/" class="btn" title="Here is the new padr">Next</a>
+        <a href="https://EdwinTh.github.io/blog/padr-v0-3-0/" class="btn" title="Here is the new padr">Next</a>
       
     </nav><!-- /.pagination -->
   </article>
@@ -351,19 +428,19 @@
 	
   
 	
-  <a href="http://localhost:4000/feed.xml" title="Atom/RSS feed"><i class="fa fa-rss-square fa-2x"></i></a>
+  <a href="https://EdwinTh.github.io/feed.xml" title="Atom/RSS feed"><i class="fa fa-rss-square fa-2x"></i></a>
 </div><!-- /.social-icons -->
 
   </footer>
 </div><!-- /.footer-wrapper -->
 
 <script type="text/javascript">
-  var BASE_URL = 'http://localhost:4000';
+  var BASE_URL = 'https://EdwinTh.github.io';
 </script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script>window.jQuery || document.write('<script src="http://localhost:4000/assets/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
-<script src="http://localhost:4000/assets/js/scripts.min.js"></script>
+<script>window.jQuery || document.write('<script src="https://EdwinTh.github.io/assets/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+<script src="https://EdwinTh.github.io/assets/js/scripts.min.js"></script>
 
 
 
