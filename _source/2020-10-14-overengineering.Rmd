@@ -1,5 +1,5 @@
 ---
-title: '"Overprediction" - business life is not a Kaggle competition'
+title: 'Overengineering in ML - business life is not a Kaggle competition'
 author: "Edwin Thoen"
 base-url: https://EdwinTh.github.io
 categories: blog
@@ -19,9 +19,9 @@ In the ML competition context, there is no such thing as "predicting too well". 
 
 But costs can also be in the complexity of the implementation. I don't mean the model complexity here, but the complexity of the product as a whole. The amount of code written might increase sharply when more complex features are introduced. Or using a more involved model might require the training to run on multiple cores or will increase the training time by, say, fivefold. Making your product more complex makes it more vulnerable for bugs and more dificult to maintain in the future. Although the predictions of a more complex model might be (slightly) better, it's business value might actually be lower than a simpler solution, because of this vulnaribility.
 
-The strange-sounding statement in the introduction of this blog "We might create machine learning models that perform too well", might make more sense now. Too much time and money can be invested, creating a product that is too complex and performs too well for the business needs it serves. With other words, we are overengineering the machine learning solution. We might say that we are *overpredicting*.
+The strange-sounding statement in the introduction of this blog "We might create machine learning models that perform too well", might make more sense now. Too much time and money can be invested, creating a product that is too complex and performs too well for the business needs it serves. With other words, we are overengineering the machine learning solution. 
 
-#### Figthing overprediction
+#### Figthing overengineering
 
 There are at least two ways that will help you not to overengineer a machine learning product. First of all, by building a product incrementally. Probably no surprise coming from a [proponent of working in an agile way](https://edwinth.github.io/ADSwR/index.html), I think starting small and simple is the way to go. If the predictions are not up to par with the business requirements, see where the biggest improvement can be made in the least amount of time adding the least amount of complexity to the product. Then, assess again and start another cycle if needed. Until you arrive at a solution that is just good enough for the business need. We could call this [*Occam's model*](https://simple.wikipedia.org/wiki/Occam%27s_razor#), the simplest possible solution that fulfills the requirements.
 
